@@ -65,6 +65,7 @@ latestUpdateController.getLatestUpdate = async (payload) => {
             })
         ]);
         const documentUpdateResponse = {
+            id: folderDocumentResult?.id,
             folderName: folderDocumentResult?.name,
             documentUrl: folderDocumentResult?.folderDocuments[0]?.url
         }
