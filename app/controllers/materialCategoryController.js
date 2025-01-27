@@ -1,0 +1,140 @@
+const HELPERS = require("../helpers");
+const { Op } = require("sequelize");
+const { MESSAGES, ERROR_TYPES } = require("../utils/constants");
+const materialCategoryModel = require("../models/materialCategoryModel");
+
+/**************************************************
+ ***************** Material Category controller ***************
+ **************************************************/
+let materialCategoryController = {};
+
+/**
+ * Function to create material category
+ * @param {*} payload
+ * @returns
+ */
+materialCategoryController.createMaterialCategory = async (payload) => {
+  try {
+    const { name, description } = payload?.fields;
+    const materialCategoryPayload = {
+      name,
+      description,
+      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+    };
+    const materialCategoryExist = await materialCategoryModel.findOne({
+      where: {
+        name: name,
+        isDeleted: { [Op.ne]: true },
+      },
+    });
+
+    if (materialCategoryExist) {
+      return HELPERS.responseHelper.createErrorResponse(
+        MESSAGES.MATERIAL_CATEGORY_ALREADY_EXIST,
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
+    const stage = await materialCategoryModel.create(materialCategoryPayload);
+    const response = {
+      id: stage?.id,
+    };
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_CATEGORY_CREATED_SUCCESSFULLY
+      ),
+      { data: response }
+    );
+  } catch (error) {
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
+/**
+ * Function to update development stage
+ * @param {*} payload
+ * @returns
+ */
+materialCategoryController.updateDevelopmentStag = async (payload) => {
+  try {
+    const { materialCategoryId, name, description, status, image } = payload;
+
+    const updatePayload = {
+      name,
+      description,
+      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+    };
+    await materialCategoryModel.update(updatePayload, {
+      where: { id: materialCategoryId, isDeleted: { [Op.ne]: true } },
+    });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_CATEGORY_UPDATED_SUCCESSFULLY
+      ),
+      { data: null }
+    );
+  } catch (error) {
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
+/**
+ * Function to list development stages
+ * @param {*} payload
+ * @returns
+ */
+materialCategoryController.materialCategoryList = async (payload) => {
+  try {
+    const materialCategories = await materialCategoryModel.findAll({
+      where: {
+        isDeleted: { [Op.ne]: true },
+      },
+      attributes: ["id", "name", "description", "image"],
+      order: [["id", "ASC"]],
+    });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_CATEGORY_LIST_SUCCESSFULLY
+      ),
+      { data: materialCategories }
+    );
+  } catch (error) {
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
+materialCategoryController.deleteDevelopmentStage = async (payload) => {
+  try {
+    const { stageId } = payload;
+
+    const updated = await developmentStageModel.update(
+      { isDeleted: true },
+      { where: { id: stageId } }
+    );
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_CATEGORY_DELETED_SUCCESSFULLY
+      ),
+      { data: null }
+    );
+  } catch (error) {
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
+module.exports = materialCategoryController;
