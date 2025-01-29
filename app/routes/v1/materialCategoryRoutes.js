@@ -33,22 +33,24 @@ let routes = [
     method: "PUT",
     path: "/v1/materialCategory/update",
     joiSchemaForSwagger: {
-      body: {
+      formData: {
         materialCategoryId: Joi.number()
           .required()
           .description("Material category ID"),
-        name: Joi.string().description("Enter material category name"),
-        description: Joi.string().description(
-          "Enter material category description"
-        ),
-        image: Joi.string().description("Enter material category image"),
+        file: {
+          type: "file",
+          required: true,
+          description: "Document file to upload",
+        },
+        name: Joi.string().required().description("Enter stage name"),
+        description: Joi.string().description("Enter stage description"),
       },
       group: "MaterialCategory",
       description: "Route to update material category",
       model: "updateMaterialCategory",
     },
     auth: false,
-    handler: materialCategoryController,
+    handler: materialCategoryController.updateMaterialCategory,
   },
   {
     method: "GET",

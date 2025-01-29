@@ -54,13 +54,13 @@ materialCategoryController.createMaterialCategory = async (payload) => {
 };
 
 /**
- * Function to update development stage
+ * Function to update material category
  * @param {*} payload
  * @returns
  */
-materialCategoryController.updateDevelopmentStag = async (payload) => {
+materialCategoryController.updateMaterialCategory = async (payload) => {
   try {
-    const { materialCategoryId, name, description, status, image } = payload;
+    const { materialCategoryId, name, description } = payload?.fields;
 
     const updatePayload = {
       name,
@@ -114,13 +114,13 @@ materialCategoryController.materialCategoryList = async (payload) => {
   }
 };
 
-materialCategoryController.deleteDevelopmentStage = async (payload) => {
+materialCategoryController.deleteMaterialCategory = async (payload) => {
   try {
-    const { stageId } = payload;
+    const { materialCategoryId } = payload;
 
-    const updated = await developmentStageModel.update(
+    await materialCategoryModel.update(
       { isDeleted: true },
-      { where: { id: stageId } }
+      { where: { id: materialCategoryId } }
     );
 
     return Object.assign(
