@@ -77,7 +77,7 @@ let routes = [
       model: "deleteMaterialCategory",
     },
     auth: false,
-    handler: materialCategoryController.deleteDevelopmentStage,
+    handler: materialCategoryController.deleteMaterialCategory,
   },
 ];
 
