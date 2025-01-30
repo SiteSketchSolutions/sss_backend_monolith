@@ -3,10 +3,8 @@ const BCRYPT = require("bcrypt");
 const JWT = require("jsonwebtoken");
 const CONFIG = require("../../config");
 const fs = require("fs");
-const moment = require("moment-timezone");
 const { Op } = require("sequelize");
 const R = require("ramda");
-const globalVar = require("./globalvariable");
 let commonFunctions = {};
 
 const getWasteItemObjByWasteTypeId = R.pipe(
@@ -365,7 +363,7 @@ commonFunctions.generateUniqueId = (prefix = "SSS") => {
  * @returns {object}
  */
 commonFunctions.getPaginationResponse = (paginationData) => {
-  const { count, pageNo, pageLimit, rows } = paginationData
+  const { count, pageNo, pageLimit, rows } = paginationData;
 
   const paginationResponse = {
     pagination: {

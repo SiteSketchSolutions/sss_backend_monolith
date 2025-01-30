@@ -63,6 +63,22 @@ let routes = [
     auth: false,
     handler: authController.adminLogin,
   },
+  {
+    method: "POST",
+    path: "/v1/auth/generatePresignedUrl",
+    joiSchemaForSwagger: {
+      body: {
+        fileName: Joi.string().required().description("Name of the file want to upload "),
+        fileType: Joi.string().required().description("like application/pdf"),
+        folderPath: Joi.string().required().description("like userId/folderId/folderDocument"),
+      },
+      group: "Auth",
+      description: "Route to generate presigned url",
+      model: "generatePresignedUrl",
+    },
+    auth: false,
+    handler: authController.generatePresignedUrl,
+  },
 ];
 
 module.exports = routes;

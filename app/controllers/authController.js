@@ -6,6 +6,7 @@ const projectModel = require("../models/projectModel");
 const userModel = require("../models/userModel");
 const adminModel = require("../models/adminModel");
 const { encryptJwt } = require("../utils/utils");
+const s3Utils = require("../utils/s3Utils");
 
 /**************************************************
  ***************** Auth controller ***************
@@ -169,5 +170,35 @@ authController.adminLogin = async (payload) => {
   }
 };
 
+authController.generatePresignedUrl = async (payload) => {
+  try {
+    /**
+     * 1. get the filename,fileType,folderPath from the FE.
+     * 2. Make an request to s3 to get the presigned URl and return to FE.
+     * 3. UI makes a PUT request to S3 to upload the file with the returned presigned URL.
+     */
+    const { fileName, fileType, folderPath } = payload;
+
+    // Generate S3 key with folder structure
+    const s3Key = `${folderPath}/${fileName}`;
+    const preSignedUrl = await s3Utils.generatePresignedUrl(process.env.AWS_S3_MEDIA_BUCKET_NAME, s3Key, fileType);
+    const response = {
+      uploadUrl: preSignedUrl,
+      publicUrl: `${process.env.CLOUDFRONT_URL}/${s3Key}`
+    }
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.SUCCESS
+      ),
+      { data: response }
+    );
+  } catch (error) {
+    console.log(error, "errro")
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+}
 /* export authController */
 module.exports = authController;
