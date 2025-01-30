@@ -28,8 +28,8 @@ latestUpdateController.getLatestUpdate = async (payload) => {
         }
         const [recentSiteUpdateResult, materialUpdateResult, folderDocumentResult] = await Promise.all([
             siteUpdateModel.findOne({
-                where: { userId: userId },
-                order: [["id", "DESC"]],
+                where: criteria,
+                order: [["updatedAt", "DESC"]],
                 attributes: [
                     "id",
                     "name",
@@ -41,7 +41,7 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                 ],
             }),
             materialSelectedItemModel.findOne({
-                where: { userId: userId },
+                where: criteria,
                 attributes: ["id", "selected"],
                 include: [
                     {
@@ -49,25 +49,25 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                         attributes: ["name", "image", "description"],
                     },
                 ],
-                order: [["id", "DESC"]],
+                order: [["updatedAt", "DESC"]],
             }),
             folderModel.findOne({
-                where: { userId: userId },
+                where: criteria,
                 attributes: ['id', 'name'],
-                order: [["id", "DESC"]],
+                order: [["updatedAt", "DESC"]],
                 limit: 1,
                 include: [{
                     model: folderDocumentModel,
                     attributes: ['id', 'url'],
-                    order: [["id", "DESC"]],
+                    order: [["updatedAt", "DESC"]],
                     limit: 1
                 }],
             })
         ]);
         const documentUpdateResponse = {
-            id: folderDocumentResult?.id,
-            folderName: folderDocumentResult?.name,
-            documentUrl: folderDocumentResult?.folderDocuments[0]?.url
+            id: folderDocumentResult?.id || null,
+            folderName: folderDocumentResult?.name || null,
+            documentUrl: folderDocumentResult?.folderDocuments[0]?.url || null
         }
         const response = {
             siteUpdate: recentSiteUpdateResult,
