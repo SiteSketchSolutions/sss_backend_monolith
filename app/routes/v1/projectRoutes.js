@@ -9,32 +9,7 @@ let routes = [
     method: "POST",
     path: "/v1/project/create",
     joiSchemaForSwagger: {
-      // body: {
-      //   userId: Joi.number().required().description("Enter user id"),
-      //   name: Joi.string().required().description("Enter project name"),
-      //   area: Joi.string().required().description("Enter site area"),
-      //   numberOfFloor: Joi.string()
-      //     .required()
-      //     .description("Enter number of floors"),
-      //   percentageOfCompletion: Joi.string()
-      //     .required()
-      //     .description("Enter percentage of project completion"),
-      //   status: Joi.string()
-      //     .required()
-      //     .description("Enter status of the project"),
-      //   price: Joi.number()
-      //     .required()
-      //     .description("Enter project estimated price"),
-      //   package: Joi.string()
-      //     .required()
-      //     .description("Enter project package selected"),
-      // },
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         userId: Joi.number().required().description("Enter user id"),
         name: Joi.string().required().description("Enter project name"),
         area: Joi.string().required().description("Enter site area"),
@@ -55,7 +30,8 @@ let routes = [
           .description("Enter project package selected"),
         description: Joi.string().description("Enter project description"),
         location: Joi.string().description("Enter project location"),
-        startDate: Joi.string().description("Enter project startDate")
+        startDate: Joi.string().description("Enter project startDate"),
+        url: Joi.string().required().description("Enter project image url")
       },
       group: "Project",
       description: "Route to create project",
@@ -68,12 +44,7 @@ let routes = [
     method: "PUT",
     path: "/v1/project/update",
     joiSchemaForSwagger: {
-      formData: {
-        file: {
-          type: "file",
-          required: false,
-          description: "Document file to upload",
-        },
+      body: {
         projectId: Joi.number().required().description("Enter project id"),
         name: Joi.string().description("Enter project name"),
         area: Joi.string().description("Enter site area"),
@@ -88,6 +59,7 @@ let routes = [
         location: Joi.string().description("Enter project location"),
         startDate: Joi.string().description("Enter project startDate"),
         status: Joi.string().description("Enter project status"),
+        url: Joi.string().description("Enter project image url"),
       },
       group: "Project",
       description: "Route to update project details",

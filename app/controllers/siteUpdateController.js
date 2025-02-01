@@ -15,14 +15,16 @@ let siteUpdateController = {};
  */
 siteUpdateController.createSiteUpdate = async (payload) => {
   try {
-    const { name, description, author, userId } = payload?.fields;
+    const { name, description, author, userId, url } = payload;
     const siteUpdatePayload = {
       name,
       description,
       userId: userId,
-      author: author,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      author: author
     };
+    if (url) {
+      siteUpdatePayload.image = url
+    }
     const siteUpdate = await siteUpdateModel.create(siteUpdatePayload);
     const response = {
       id: siteUpdate?.id,
@@ -48,13 +50,16 @@ siteUpdateController.createSiteUpdate = async (payload) => {
  */
 siteUpdateController.updateSiteUpdate = async (payload) => {
   try {
-    const { name, description, author, siteUpdateId } = payload;
+    const { name, description, author, siteUpdateId, url } = payload;
 
     let updatePayload = {
       name,
       description,
-      author,
+      author
     };
+    if (url) {
+      updatePayload.image = url
+    }
     await siteUpdateModel.update(updatePayload, {
       where: { id: siteUpdateId, isDeleted: { [Op.ne]: true } },
     });

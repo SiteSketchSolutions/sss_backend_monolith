@@ -29,7 +29,8 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
-    } = payload?.fields;
+      url
+    } = payload;
     const projectPayload = {
       userId,
       name,
@@ -39,11 +40,13 @@ projectController.createProject = async (payload) => {
       status,
       price,
       package,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
       location,
       description,
       startDate,
     };
+    if (url) {
+      projectPayload.image = url
+    }
     let projectDetails = await projectModel.findOne({
       where: { userId: parseInt(userId), isDeleted: { [Op.ne]: true } },
       attributes: ["id"],
@@ -93,7 +96,8 @@ projectController.updateProject = async (payload) => {
       location,
       description,
       startDate,
-    } = payload?.fields;
+      url,
+    } = payload;
     let projectPayload = {
       name,
       area,
@@ -106,8 +110,8 @@ projectController.updateProject = async (payload) => {
       description,
       startDate,
     };
-    if (payload?.file?.filename) {
-      projectPayload.image = `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`;
+    if (url) {
+      projectPayload.image = url
     }
     const projectResponse = await projectModel.update(projectPayload, {
       where: { id: projectId },

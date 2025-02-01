@@ -7,16 +7,12 @@ let routes = [
     method: "POST",
     path: "/v1/siteUpdate/create",
     joiSchemaForSwagger: {
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         userId: Joi.number().required().description("Enter user id"),
         name: Joi.string().required().description("Enter update name"),
         description: Joi.string().description("Enter update description"),
         author: Joi.string().description("Enter author name"),
+        url: Joi.string().required().description("Enter image url"),
       },
       group: "SiteUpdate",
       description: "Route to create update",
@@ -34,6 +30,7 @@ let routes = [
         name: Joi.string().description("Enter update name"),
         description: Joi.string().description("Enter update description"),
         author: Joi.string().description("Enter author name"),
+        url: Joi.string().description("Enter image url"),
       },
       group: "SiteUpdate",
       description: "Route to update site update",
