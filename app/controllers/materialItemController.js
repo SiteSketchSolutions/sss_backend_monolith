@@ -15,12 +15,12 @@ let materialItemController = {};
  */
 materialItemController.createMaterialItem = async (payload) => {
   try {
-    const { name, description, materialCategoryId } = payload?.fields;
+    const { name, description, materialCategoryId, url } = payload;
     const materialItemPayload = {
       name,
       description,
       materialCategoryId: materialCategoryId,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      image: url
     };
     const materialItemExist = await materialItemModel.findOne({
       where: {
@@ -62,14 +62,14 @@ materialItemController.createMaterialItem = async (payload) => {
  */
 materialItemController.updateMaterialItem = async (payload) => {
   try {
-    const { materialItemId, name, description } = payload;
+    const { materialItemId, name, description, url } = payload;
 
     let updatePayload = {
       name,
       description,
     };
-    if (payload?.file?.filename) {
-      updatePayload.image = `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`;
+    if (url) {
+      updatePayload.image = url;
     }
     await materialItemModel.update(updatePayload, {
       where: { id: materialItemId, isDeleted: { [Op.ne]: true } },

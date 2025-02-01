@@ -17,10 +17,10 @@ let folderDocumentController = {};
  */
 folderDocumentController.createFolderDocument = async (payload) => {
   try {
-    const { folderId } = payload?.fields;
+    const { folderId, url } = payload?.fields;
     const folderDocumentPayload = {
       folderId: folderId,
-      url: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      url: url,
     };
     const folderDocument = await folderDocumentModel.create(
       folderDocumentPayload
@@ -46,10 +46,10 @@ folderDocumentController.createFolderDocument = async (payload) => {
  */
 folderDocumentController.updateFolderDocument = async (payload) => {
   try {
-    const { folderDocumentId } = payload?.fields;
+    const { folderDocumentId, url } = payload?.fields;
 
     const folderDocumentPayload = {
-      url: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      url: url,
     };
     const folderDocumentExist = await folderDocumentModel.findOne({
       where: { id: folderDocumentId },

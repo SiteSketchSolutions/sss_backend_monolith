@@ -7,20 +7,11 @@ let routes = [
     method: "POST",
     path: "/v1/materialCategory/create",
     joiSchemaForSwagger: {
-      // body: {
-      //   name: Joi.string().required().description("Enter stage name"),
-      //   description: Joi.string().description("Enter stage description"),
-      //   image: Joi.string().description("Enter stage image"),
-      //   status: Joi.string().description("Enter stage status"),
-      // },
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         name: Joi.string().required().description("Enter stage name"),
         description: Joi.string().description("Enter stage description"),
+        url: Joi.string().required().description("Enter category doc url"),
+        status: Joi.string().description("Enter stage status"),
       },
       group: "MaterialCategory",
       description: "Route to create material category",
@@ -33,17 +24,14 @@ let routes = [
     method: "PUT",
     path: "/v1/materialCategory/update",
     joiSchemaForSwagger: {
-      formData: {
+      body: {
         materialCategoryId: Joi.number()
           .required()
           .description("Material category ID"),
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
         name: Joi.string().required().description("Enter stage name"),
         description: Joi.string().description("Enter stage description"),
+        url: Joi.string().description("Enter category doc url"),
+
       },
       group: "MaterialCategory",
       description: "Route to update material category",

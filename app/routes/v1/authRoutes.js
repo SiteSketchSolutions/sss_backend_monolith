@@ -68,6 +68,7 @@ let routes = [
     path: "/v1/auth/generatePresignedUrl",
     joiSchemaForSwagger: {
       body: {
+        // secretMessage: Joi.string().required().description("Enter the secret message for the handshake"),
         fileName: Joi.string().required().description("Name of the file want to upload "),
         fileType: Joi.string().required().description("like application/pdf"),
         folderPath: Joi.string().required().description("like userId/folderId/folderDocument"),

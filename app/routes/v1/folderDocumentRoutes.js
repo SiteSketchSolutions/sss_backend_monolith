@@ -7,13 +7,9 @@ let routes = [
     method: "POST",
     path: "/v1/folderDocument/upload",
     joiSchemaForSwagger: {
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         folderId: Joi.number().required().description("Enter folder id"),
+        url: Joi.string().required().description("Enter folder document url"),
       },
       group: "FolderDocument",
       description: "Route to upload document to folder",
@@ -26,15 +22,12 @@ let routes = [
     method: "PUT",
     path: "/v1/folderDocument/update",
     joiSchemaForSwagger: {
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         folderDocumentId: Joi.number()
           .required()
           .description("Folder Document ID"),
+        url: Joi.string().required().description("Enter folder document url"),
+
       },
       group: "FolderDocument",
       description: "Route to update folder document",

@@ -7,22 +7,11 @@ let routes = [
     method: "POST",
     path: "/v1/development-stage/create",
     joiSchemaForSwagger: {
-      // body: {
-      //   projectId: Joi.number().required().description("Enter project id"),
-      //   name: Joi.string().required().description("Enter stage name"),
-      //   description: Joi.string().description("Enter stage description"),
-      //   image: Joi.string().description("Enter stage image"),
-      //   order: Joi.number().required().description("Enter stage order number"),
-      // },
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         projectId: Joi.number().required().description("Enter project id"),
         name: Joi.string().required().description("Enter stage name"),
         description: Joi.string().description("Enter stage description"),
+        url: Joi.string().required().description("Enter stage image url"),
         order: Joi.number().required().description("Enter stage order number"),
       },
       group: "DevelopmentStage",
@@ -40,7 +29,7 @@ let routes = [
         stageId: Joi.number().required().description("Development stage ID"),
         name: Joi.string().description("Enter stage name"),
         description: Joi.string().description("Enter stage description"),
-        image: Joi.string().description("Enter stage image"),
+        url: Joi.string().description("Enter stage image url"),
         order: Joi.number().description("Enter stage order number"),
       },
       group: "DevelopmentStage",

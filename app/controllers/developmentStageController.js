@@ -15,14 +15,16 @@ let developmentStageController = {};
  */
 developmentStageController.createDevelopmentStage = async (payload) => {
   try {
-    const { projectId, name, description, order, image } = payload?.fields;
-    const stagePayload = {
+    const { projectId, name, description, order, url } = payload;
+    let stagePayload = {
       projectId,
       name,
       description,
-      order,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      order
     };
+    if (url) {
+      stagePayload.image = url
+    }
     const stageExist = await developmentStageModel.findOne({
       where: {
         projectId: projectId,
@@ -63,14 +65,16 @@ developmentStageController.createDevelopmentStage = async (payload) => {
  */
 developmentStageController.updateDevelopmentStage = async (payload) => {
   try {
-    const { stageId, name, description, order, image } = payload;
+    const { stageId, name, description, order, url } = payload;
 
     const updatePayload = {
       name,
       description,
-      order,
-      image,
+      order
     };
+    if (url) {
+      updatePayload.image = url
+    }
     await developmentStageModel.update(updatePayload, {
       where: { id: stageId, isDeleted: { [Op.ne]: true } },
     });
@@ -124,7 +128,7 @@ developmentStageController.deleteDevelopmentStage = async (payload) => {
   try {
     const { stageId } = payload;
 
-    const updated = await developmentStageModel.update(
+    await developmentStageModel.update(
       { isDeleted: true },
       { where: { id: stageId } }
     );

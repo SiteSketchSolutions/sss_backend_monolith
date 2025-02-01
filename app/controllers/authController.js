@@ -179,6 +179,7 @@ authController.generatePresignedUrl = async (payload) => {
      */
     const { fileName, fileType, folderPath } = payload;
 
+    // if(secretMessage === "sss+borewells#construction@2025$")
     // Generate S3 key with folder structure
     const s3Key = `${folderPath}/${fileName}`;
     const preSignedUrl = await s3Utils.generatePresignedUrl(process.env.AWS_S3_MEDIA_BUCKET_NAME, s3Key, fileType);

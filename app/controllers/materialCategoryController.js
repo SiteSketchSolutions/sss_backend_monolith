@@ -15,11 +15,11 @@ let materialCategoryController = {};
  */
 materialCategoryController.createMaterialCategory = async (payload) => {
   try {
-    const { name, description } = payload?.fields;
+    const { name, description, url } = payload;
     const materialCategoryPayload = {
       name,
       description,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      image: url
     };
     const materialCategoryExist = await materialCategoryModel.findOne({
       where: {
@@ -60,13 +60,15 @@ materialCategoryController.createMaterialCategory = async (payload) => {
  */
 materialCategoryController.updateMaterialCategory = async (payload) => {
   try {
-    const { materialCategoryId, name, description } = payload?.fields;
+    const { materialCategoryId, name, description, url } = payload;
 
-    const updatePayload = {
+    let updatePayload = {
       name,
-      description,
-      image: `${process.env.SERVER_URL}/uploads/${payload?.file?.filename}`,
+      description
     };
+    if (url) {
+      updatePayload.image = url
+    }
     await materialCategoryModel.update(updatePayload, {
       where: { id: materialCategoryId, isDeleted: { [Op.ne]: true } },
     });

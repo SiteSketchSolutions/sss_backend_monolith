@@ -7,17 +7,13 @@ let routes = [
     method: "POST",
     path: "/v1/materialItem/create",
     joiSchemaForSwagger: {
-      formData: {
-        file: {
-          type: "file",
-          required: true,
-          description: "Document file to upload",
-        },
+      body: {
         materialCategoryId: Joi.number()
           .required()
           .description("Enter material category id"),
         name: Joi.string().required().description("Enter item name"),
         description: Joi.string().description("Enter item description"),
+        url: Joi.string().required().description("Enter category doc url"),
       },
       group: "MaterialItem",
       description: "Route to create material Item",
@@ -36,17 +32,7 @@ let routes = [
         description: Joi.string().description(
           "Enter material category description"
         ),
-      },
-      formData: {
-        file: {
-          type: "file",
-          description: "Document file to upload",
-        },
-        materialItemId: Joi.number()
-          .required()
-          .description("Enter material Item id"),
-        name: Joi.string().required().description("Enter item name"),
-        description: Joi.string().description("Enter item description"),
+        url: Joi.string().description("Enter category doc url"),
       },
       group: "MaterialItem",
       description: "Route to update material category",
