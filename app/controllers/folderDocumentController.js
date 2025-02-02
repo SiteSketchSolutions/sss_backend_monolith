@@ -17,7 +17,7 @@ let folderDocumentController = {};
  */
 folderDocumentController.createFolderDocument = async (payload) => {
   try {
-    const { folderId, url } = payload?.fields;
+    const { folderId, url } = payload;
     const folderDocumentPayload = {
       folderId: folderId,
       url: url,
@@ -46,7 +46,7 @@ folderDocumentController.createFolderDocument = async (payload) => {
  */
 folderDocumentController.updateFolderDocument = async (payload) => {
   try {
-    const { folderDocumentId, url } = payload?.fields;
+    const { folderDocumentId, url } = payload;
 
     const folderDocumentPayload = {
       url: url,
