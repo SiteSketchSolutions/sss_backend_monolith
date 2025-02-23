@@ -376,4 +376,8 @@ commonFunctions.getPaginationResponse = (paginationData) => {
   }
   return paginationResponse
 }
+
+commonFunctions.convertStringToFloat = (value = null) => {
+  return value === null ? null : parseFloat(value);
+}
 module.exports = commonFunctions;

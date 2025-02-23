@@ -78,4 +78,17 @@ CONSTANTS.PAGINATION = {
   DEFAULT_PAGE_LIMIT: 10,
 };
 
+CONSTANTS.PAYMENT_STAGE_STATUS = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed"
+}
+
+CONSTANTS.PAYMENT_STATUS = {
+  UNPAID: "unpaid",
+  PARTIALLY_PAID: "partially_paid",
+  PAID: "paid",
+  OVERDUE: "overdue"
+}
+
 module.exports = CONSTANTS;
