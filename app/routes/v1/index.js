@@ -17,7 +17,8 @@ let v1Routes = [
   ...require("./materialSelectedItemRoute"),
   ...require("./siteUpdatesRoutes"),
   ...require("./latestUpdateRoute"),
-  ...require("./paymentStageRoutes")
+  ...require("./paymentStageRoutes"),
+  ...require("./walletRoutes")
 ];
 
 module.exports = v1Routes;

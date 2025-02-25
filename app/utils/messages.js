@@ -128,5 +128,14 @@ module.exports = {
   SITE_UPDATE_UPDATED_SUCCESSFULLY: "Site update updated successfully",
   SITE_UPDATE_LIST_SUCCESSFULLY: "Site update listed successfully",
   SITE_UPDATE_DELETED_SUCCESSFULLY: "Site update deleted successfully",
-  LATEST_UPDATE_FETCHED_SUCCESSFULLY: "Latest update fetched successfully"
+  LATEST_UPDATE_FETCHED_SUCCESSFULLY: "Latest update fetched successfully",
+
+  // Wallet
+  WALLET_CREATED_SUCCESSFULLY: "Wallet created successfully",
+  WALLET_ALREADY_EXIST: "Wallet already exist",
+  WALLET_DETAILS_FETCHED_SUCCESSFULLY: "Wallet details fetched successfully",
+  TRANSACTION_LIST_FETCHED_SUCCESSFULLY: "Transaction list fetched successfully",
+  NO_WALLET_FOUND: "No wallet found",
+  INSUFFICIENT_BALANCE: "Insufficient balance",
+  WITHDRAW_MONEY_FROM_WALLET: "Amount withdrawn successfully"
 };

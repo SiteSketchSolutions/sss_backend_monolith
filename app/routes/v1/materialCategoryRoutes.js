@@ -31,7 +31,6 @@ let routes = [
         name: Joi.string().required().description("Enter stage name"),
         description: Joi.string().description("Enter stage description"),
         url: Joi.string().description("Enter category doc url"),
-
       },
       group: "MaterialCategory",
       description: "Route to update material category",

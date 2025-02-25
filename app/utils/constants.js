@@ -91,4 +91,35 @@ CONSTANTS.PAYMENT_STATUS = {
   OVERDUE: "overdue"
 }
 
+CONSTANTS.COUNTRY_WISE_CURRENCY_LIST = {
+  INDIA: "₹"
+}
+
+
+CONSTANTS.TRANSACTION_STATUS = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  FAILED: "failed",
+  CANCELLED: "cancelled",
+  REFUNDED: "refunded",
+  REVERTED: "reverted",
+  PROCESSED: "processed",
+  SUCCESS: "success",
+  UNCLAIMED: "un_claimed",
+  RETURNED: "returned",
+  REQUESTED: "requested",
+};
+
+CONSTANTS.ORDER_TYPE = {
+  // WASTE_BOOKING: "waste_booking",
+  WALLET_TOPUP: "wallet_topup",
+  WALLET_WITHDRAWAL: "wallet_withdrawal",
+  // WASTE_PURCHASE: "waste_purchase",
+};
+
+CONSTANTS.TRANSACTION_TYPE = {
+  DEBIT: "debit",
+  CREDIT: "credit",
+};
 module.exports = CONSTANTS;
