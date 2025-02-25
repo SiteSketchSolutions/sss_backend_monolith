@@ -137,5 +137,6 @@ module.exports = {
   TRANSACTION_LIST_FETCHED_SUCCESSFULLY: "Transaction list fetched successfully",
   NO_WALLET_FOUND: "No wallet found",
   INSUFFICIENT_BALANCE: "Insufficient balance",
-  WITHDRAW_MONEY_FROM_WALLET: "Amount withdrawn successfully"
+  WITHDRAW_MONEY_FROM_WALLET: "Amount withdrawn successfully",
+  ADDED_MONEY_TO_WALLET: "Amount added successfully"
 };

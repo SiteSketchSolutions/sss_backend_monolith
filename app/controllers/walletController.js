@@ -44,7 +44,7 @@ walletController.addMoneyToWallet = async (payload) => {
         }
         await handleWalletTransaction(walletDetails.id, amount, TRANSACTION_TYPE["CREDIT"], ORDER_TYPE["WALLET_TOPUP"])
         return Object.assign(
-            HELPERS.responseHelper.createSuccessResponse(MESSAGES.WALLET.ADDED_MONEY_TO_WALLET));
+            HELPERS.responseHelper.createSuccessResponse(MESSAGES.ADDED_MONEY_TO_WALLET));
     } catch (error) {
         await transactionModel.update({ status: TRANSACTION_STATUS["FAILED"] }, { where: transactionCriteria });
         throw HELPERS.responseHelper.createErrorResponse(error.message, ERROR_TYPES.SOMETHING_WENT_WRONG);
