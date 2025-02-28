@@ -112,10 +112,10 @@ CONSTANTS.TRANSACTION_STATUS = {
 };
 
 CONSTANTS.ORDER_TYPE = {
-  // WASTE_BOOKING: "waste_booking",
+  PAYMENT_STAGE: "payment_stage",
+  PART_PAYMENT: "part_payment",
   WALLET_TOPUP: "wallet_topup",
   WALLET_WITHDRAWAL: "wallet_withdrawal",
-  // WASTE_PURCHASE: "waste_purchase",
 };
 
 CONSTANTS.TRANSACTION_TYPE = {

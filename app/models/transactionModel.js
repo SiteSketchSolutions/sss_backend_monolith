@@ -49,18 +49,10 @@ const Transaction = sequelize.define('transaction', {
         allowNull: false,
         defaultValue: TRANSACTION_STATUS.PENDING
     },
-    projectId: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
     currency: {
         type: DataTypes.STRING,
         allowNull: true
     },
-    transactionDetails: {
-        type: DataTypes.JSON,
-        allowNull: true
-    }
 }
 );
 

@@ -96,7 +96,7 @@ walletController.getTransactionList = async (payload) => {
             return {
                 ...transaction.toJSON(),
                 referenceId: transaction.referenceId ?? "-",
-                currency: ""
+                currency: transaction?.currency
             }
         })
         return Object.assign(HELPERS.responseHelper.createSuccessResponse(MESSAGES.TRANSACTION_LIST_FETCHED_SUCCESSFULLY), { data: transactionListWithCurrency });

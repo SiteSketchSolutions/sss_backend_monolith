@@ -14,11 +14,11 @@ const paymentStage = sequelize.define("paymentStage", {
         allowNull: false,
         autoIncrement: true,
     },
-    projectId: {
+    walletId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "projects",
+            model: "wallets",
             key: "id",
         },
     },
@@ -30,13 +30,23 @@ const paymentStage = sequelize.define("paymentStage", {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    amount: {
+    totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         get() {
-            const value = this.getDataValue('amount');
+            const value = this.getDataValue('totalAmount');
             return convertStringToFloat(value);
         },
+        defaultValue: 0
+    },
+    paidAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        get() {
+            const value = this.getDataValue('paidAmount');
+            return convertStringToFloat(value);
+        },
+        defaultValue: 0
     },
     dueDate: {
         type: DataTypes.DATE,
@@ -52,14 +62,6 @@ const paymentStage = sequelize.define("paymentStage", {
         allowNull: false,
         defaultValue: PAYMENT_STATUS.UNPAID
     },
-    paymentMethod: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    paymentDetails: {
-        type: DataTypes.JSON,
-        allowNull: true,
-    },
     approved: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -69,6 +71,11 @@ const paymentStage = sequelize.define("paymentStage", {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
+    },
+    fullPayment: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     },
     isDeleted: {
         type: DataTypes.BOOLEAN,

@@ -23,7 +23,8 @@ walletService.handleWalletTransaction = async (walletId, transactionAmount, tran
             amount: transactionAmount,
             transactionType,
             orderType,
-            referenceId: referenceId !== null ? String(referenceId) : null
+            referenceId: referenceId !== null ? String(referenceId) : null,
+            currency: "₹"
         }
         const transactionDetails = await transactionModel.create(transactionPayload);
         transactionCriteria = { id: transactionDetails.id };

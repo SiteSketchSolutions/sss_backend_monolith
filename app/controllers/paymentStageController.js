@@ -1,7 +1,8 @@
 const HELPERS = require("../helpers");
 const { Op } = require("sequelize");
-const { MESSAGES, ERROR_TYPES } = require("../utils/constants");
+const { MESSAGES, ERROR_TYPES, PAYMENT_STAGE_STATUS, PAYMENT_STATUS, TRANSACTION_TYPE, ORDER_TYPE } = require("../utils/constants");
 const paymentStageModel = require("../models/paymentStageModel");
+const walletService = require("../services/walletService");
 
 /**************************************************
  ***************** Payment Stage controller ***************
@@ -15,26 +16,27 @@ let paymentStageController = {};
  */
 paymentStageController.createPaymentStage = async (payload) => {
     try {
-        const { projectId, name, description, amount, dueDate, status, paymentStatus, paymentMethod, paymentDetails, approved, order } = payload;
+        const { walletId, name, description, totalAmount, paidAmount, dueDate, status, paymentStatus, approved, order, fullPayment } = payload;
         let stagePayload = {
-            projectId,
+            walletId,
             name,
             description,
-            amount,
+            totalAmount,
+            paidAmount,
             dueDate,
             status,
             paymentStatus,
-            paymentMethod,
-            paymentDetails,
             approved,
-            order
+            order,
+            fullPayment
         };
         const stageExist = await paymentStageModel.findOne({
             where: {
-                projectId: projectId,
+                walletId: walletId,
                 order: order,
                 isDeleted: { [Op.ne]: true },
             },
+            attributes: ['id']
         });
 
         if (stageExist) {
@@ -44,7 +46,14 @@ paymentStageController.createPaymentStage = async (payload) => {
             );
         }
 
+        if (fullPayment) {
+            stagePayload.status = PAYMENT_STAGE_STATUS.COMPLETED,
+                stagePayload.paymentStatus = PAYMENT_STATUS.PAID
+            stagePayload.paidAmount = stagePayload.totalAmount
+        }
         const stage = await paymentStageModel.create(stagePayload);
+        await walletService.handleWalletTransaction(walletId, totalAmount, TRANSACTION_TYPE.DEBIT, ORDER_TYPE.PAYMENT_STAGE, stage.id)
+
         const response = {
             id: stage?.id,
         };
@@ -69,19 +78,24 @@ paymentStageController.createPaymentStage = async (payload) => {
  */
 paymentStageController.updatePaymentStage = async (payload) => {
     try {
-        const { stageId, name, description, amount, dueDate, status, paymentStatus, paymentMethod, paymentDetails, approved, order } = payload;
+        const { stageId, name, description, totalAmount, paidAmount, dueDate, status, paymentStatus, approved, order } = payload;
         let updatePayload = {
             name,
             description,
-            amount,
+            totalAmount,
+            paidAmount,
             dueDate,
             status,
             paymentStatus,
-            paymentMethod,
-            paymentDetails,
             approved,
             order
         };
+
+        // const existingStage = await paymentStageModel.findOne({
+        //     where: { id: stageId },
+        //     attributes: ['id', 'walletId', 'totalAmount']
+        // });
+
         await paymentStageModel.update(updatePayload, {
             where: { id: stageId, isDeleted: { [Op.ne]: true } },
         });
@@ -107,13 +121,13 @@ paymentStageController.updatePaymentStage = async (payload) => {
  */
 paymentStageController.paymentStageList = async (payload) => {
     try {
-        const { projectId } = payload;
+        const { walletId } = payload;
         const stages = await paymentStageModel.findAll({
             where: {
-                projectId: projectId,
+                walletId: walletId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "name", "description", "amount", "dueDate", "status", "paymentStatus", 'paymentMethod', 'paymentMethod', 'approved', 'order'],
+            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
             order: [["order", "ASC"]],
         });
 
@@ -145,7 +159,7 @@ paymentStageController.getPaymentStageDetails = async (payload) => {
                 id: stageId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "name", "description", "amount", "dueDate", "status", "paymentStatus", 'paymentMethod', 'paymentMethod', 'approved', 'order'],
+            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
             order: [["order", "ASC"]],
         });
 

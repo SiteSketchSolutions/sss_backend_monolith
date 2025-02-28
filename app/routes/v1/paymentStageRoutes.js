@@ -3,26 +3,35 @@ const { Joi } = require("../../utils/joiUtils");
 const paymentStageController = require("../../controllers/paymentStageController");
 const { PAYMENT_STAGE_STATUS, PAYMENT_STATUS } = require("../../utils/constants");
 
+
+/**
+ * 1. payment stage can be created with an help of walletId, name, desc,totalAmount,paidAmount, dueDate,status.order
+ * 2. stagePartPayments can have an stageId, status,method,referenceId,invoiceNo,approved.
+ * 3.vendorWisePaymentStage will have an stageId, name,desc,totalAmount,status,paidAmount,status
+ */
+
 let routes = [
     {
         method: "POST",
         path: "/v1/paymentStage/create",
         joiSchemaForSwagger: {
             body: {
-                projectId: Joi.number().required().description("Enter project id"),
+                walletId: Joi.number().required().description("Enter wallet id"),
                 name: Joi.string().required().description("Enter stage name"),
                 description: Joi.string().description("Enter stage description"),
-                amount: Joi.number().required().description("Enter stage image url"),
+                totalAmount: Joi.number().required().description("Enter stage total amount"),
+                paidAmount: Joi.number().description("Enter stage paid amount"),
                 dueDate: Joi.date().description("Enter payment due date"),
                 status: Joi.string().required().valid(...Object.values(PAYMENT_STAGE_STATUS)).default(PAYMENT_STAGE_STATUS.PENDING).description("Enter stage status"),
                 paymentStatus: Joi.string().required().valid(...Object.values(PAYMENT_STATUS)).default(PAYMENT_STATUS.UNPAID).description("Enter payment status"),
-                paymentMethod: Joi.string().description("Enter payment method like upi or card"),
-                paymentMethod: Joi.object({
-                    transactionId: Joi.string().description("Enter payment transaction id"),
-                    invoiceNo: Joi.string().description("Enter payment invoice number"),
-                }),
+                // paymentMethod: Joi.string().description("Enter payment method like upi or card"),
+                // paymentDetails: Joi.object({
+                //     transactionId: Joi.string().description("Enter payment transaction id"),
+                //     invoiceNo: Joi.string().description("Enter payment invoice number"),
+                // }),
                 approved: Joi.boolean().required().default(false).description("approved true or false"),
                 order: Joi.number().required().description("order number"),
+                fullPayment: Joi.boolean().default(false).description("full payment true or false"),
             },
             group: "PaymentStage",
             description: "Route to create payment stage",
@@ -36,18 +45,19 @@ let routes = [
         path: "/v1/paymentStage/update",
         joiSchemaForSwagger: {
             body: {
-                stageId: Joi.number().required().description("Enter payment id"),
+                stageId: Joi.number().required().description("Enter stage id"),
                 name: Joi.string().description("Enter stage name"),
                 description: Joi.string().description("Enter stage description"),
-                amount: Joi.number().description("Enter payment amount"),
+                totalAmount: Joi.number().description("Enter stage total amount"),
+                paidAmount: Joi.number().description("Enter stage paid amount"),
                 dueDate: Joi.date().description("Enter payment due date"),
                 status: Joi.string().valid(...Object.values(PAYMENT_STAGE_STATUS)).description("Enter stage status"),
-                paymentStatus: Joi.string().valid(...Object.values(PAYMENT_STATUS)).description("Enter payment status"),
-                paymentMethod: Joi.string().description("Enter payment method like upi or card"),
-                paymentDetails: Joi.object({
-                    transactionId: Joi.string().description("Enter payment transaction id"),
-                    invoiceNo: Joi.string().description("Enter payment invoice number"),
-                }),
+                // paymentStatus: Joi.string().valid(...Object.values(PAYMENT_STATUS)).description("Enter payment status"),
+                // paymentMethod: Joi.string().description("Enter payment method like upi or card"),
+                // paymentDetails: Joi.object({
+                //     transactionId: Joi.string().description("Enter payment transaction id"),
+                //     invoiceNo: Joi.string().description("Enter payment invoice number"),
+                // }),
                 approved: Joi.boolean().description("approved true or false"),
                 order: Joi.number().description("order number"),
             },
@@ -77,7 +87,7 @@ let routes = [
         path: "/v1/paymentStage/list",
         joiSchemaForSwagger: {
             query: {
-                projectId: Joi.number().required().description("Enter project id"),
+                walletId: Joi.number().required().description("Enter wallet id"),
             },
             group: "PaymentStage",
             description: "Route to list payment stages",

@@ -68,6 +68,9 @@ module.exports = {
   STAGE_UPDATED_SUCCESSFULLY: "Stage updated successfully",
   STAGE_LIST_SUCCESSFULLY: "Stage listed successfully",
   STAGE_DELETED_SUCCESSFULLY: "Stage deleted successfully",
+  STAGE_NOT_EXIST: "No stage exist.",
+  STAGE_ALREADY_COMPLETED: "Stage is already completed",
+
 
   //Material Category
   MATERIAL_CATEGORY_ALREADY_EXIST:
@@ -139,4 +142,5 @@ module.exports = {
   INSUFFICIENT_BALANCE: "Insufficient balance",
   WITHDRAW_MONEY_FROM_WALLET: "Amount withdrawn successfully",
   ADDED_MONEY_TO_WALLET: "Amount added successfully"
+
 };
