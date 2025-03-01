@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const { MESSAGES, ERROR_TYPES, PAYMENT_STAGE_STATUS, PAYMENT_STATUS, TRANSACTION_TYPE, ORDER_TYPE } = require("../utils/constants");
 const paymentStageModel = require("../models/paymentStageModel");
 const walletService = require("../services/walletService");
+const partPaymentStage = require("../models/partPaymentStageModel");
 
 /**************************************************
  ***************** Payment Stage controller ***************
@@ -127,8 +128,14 @@ paymentStageController.paymentStageList = async (payload) => {
                 walletId: walletId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
+            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order', 'fullPayment'],
             order: [["order", "ASC"]],
+            include: [
+                {
+                    model: partPaymentStage,
+                    attributes: ['id', 'referenceId', 'method', 'invoiceNo', 'amount']
+                }
+            ]
         });
 
         return Object.assign(
@@ -159,7 +166,7 @@ paymentStageController.getPaymentStageDetails = async (payload) => {
                 id: stageId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
+            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order', 'fullPayment'],
             order: [["order", "ASC"]],
         });
 
