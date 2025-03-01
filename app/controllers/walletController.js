@@ -40,7 +40,7 @@ walletController.addMoneyToWallet = async (payload) => {
     try {
         const walletDetails = await walletModel.findByPk(walletId);
         if (!walletDetails) {
-            HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.ALREADY_EXISTS);
+            return HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.DATA_NOT_FOUND);
         }
         await handleWalletTransaction(walletDetails.id, amount, TRANSACTION_TYPE["CREDIT"], ORDER_TYPE["WALLET_TOPUP"])
         return Object.assign(
@@ -57,7 +57,7 @@ walletController.withdrawMoneyFromWallet = async (payload) => {
     try {
         let walletDetails = await walletModel.findByPk(walletId);
         if (!walletDetails) {
-            HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.ALREADY_EXISTS);
+            return HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.DATA_NOT_FOUND);
         }
         const availableBalance = walletDetails.balance - walletDetails.holdBalance;
         if (availableBalance >= payload.amount) {
@@ -74,8 +74,13 @@ walletController.withdrawMoneyFromWallet = async (payload) => {
 
 walletController.getWalletDetails = async (payload) => {
     try {
-        const { walletId } = payload;
-        const walletDetails = await walletModel.findByPk(walletId);
+        const { projectId } = payload;
+        const walletDetails = await walletModel.findOne({
+            where: { projectId: projectId, isDeleted: { [Op.ne]: true } }
+        });
+        if (!walletDetails) {
+            return HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.DATA_NOT_FOUND);
+        }
         return Object.assign(HELPERS.responseHelper.createSuccessResponse(MESSAGES.WALLET_DETAILS_FETCHED_SUCCESSFULLY), { data: walletDetails });
     } catch (error) {
         throw HELPERS.responseHelper.createErrorResponse(error.message, ERROR_TYPES.SOMETHING_WENT_WRONG);

@@ -54,7 +54,7 @@ let routes = [
         path: '/v1/wallet',
         joiSchemaForSwagger: {
             query: {
-                walletId: Joi.number().required().description('Enter the walletId'),
+                projectId: Joi.number().required().description('Enter the projectId'),
             },
             group: 'Wallet',
             description: 'Route to get wallet details by id',

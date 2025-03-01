@@ -5,6 +5,7 @@ const { MESSAGES, ERROR_TYPES, USER_TYPES } = require("../utils/constants");
 const projectModel = require("../models/projectModel");
 const userModel = require("../models/userModel");
 const adminModel = require("../models/adminModel");
+const walletModel = require("../models/walletModel");
 const { encryptJwt } = require("../utils/utils");
 const s3Utils = require("../utils/s3Utils");
 
@@ -75,6 +76,14 @@ authController.userLogin = async (payload) => {
         ],
       }),
     ]);
+    let walletId = null;
+    if (projectDetails) {
+      const walletDetails = await walletModel.findOne({
+        where: { projectId: projectDetails?.id, isDeleted: { [Op.ne]: true } },
+        attributes: ['id']
+      });
+      walletId = walletDetails?.id;
+    }
 
     if (!validPassword) {
       return HELPERS.responseHelper.createErrorResponse(
@@ -89,6 +98,7 @@ authController.userLogin = async (payload) => {
       name: userDetails?.name,
       status: userDetails?.status,
       projectDetails: projectDetails,
+      walletId: walletId,
       token: encryptJwt({
         userId: userDetails?.id,
         userType: USER_TYPES.USER,
