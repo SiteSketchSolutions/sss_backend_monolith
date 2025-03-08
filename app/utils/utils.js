@@ -337,7 +337,7 @@ commonFunctions.getCurrentDateTime = () => {
   return currentUtcDate;
 };
 
-commonFunctions.convertStringToFloat = (value = "") => {
+commonFunctions.convertStringToFloat = (value = null) => {
   return value === null ? null : parseFloat(value);
 };
 
@@ -377,7 +377,31 @@ commonFunctions.getPaginationResponse = (paginationData) => {
   return paginationResponse
 }
 
-commonFunctions.convertStringToFloat = (value = null) => {
-  return value === null ? null : parseFloat(value);
-}
+/**
+ * Format a date to a readable string
+ * @param {Date} date - The date to format
+ * @returns {String} - Formatted date string (e.g., "11th January 2023")
+ */
+commonFunctions.formatDate = (date) => {
+  if (!date) return '';
+
+  const d = new Date(date);
+
+  // Get day with suffix (1st, 2nd, 3rd, etc.)
+  const day = d.getDate();
+  const suffix = (day) => {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+
+  // Format the date
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  return `${day}${suffix(day)} ${months[d.getMonth()]} ${d.getFullYear()}`;
+};
+
 module.exports = commonFunctions;

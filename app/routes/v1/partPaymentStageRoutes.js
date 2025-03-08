@@ -73,7 +73,7 @@ let routes = [
         path: "/v1/partPaymentStage",
         joiSchemaForSwagger: {
             body: {
-                stageId: Joi.number().required().description("payment stage ID"),
+                paymentId: Joi.number().required().description("payment stage ID"),
             },
             group: "PartPaymentStage",
             description: "Route to delete part payment",

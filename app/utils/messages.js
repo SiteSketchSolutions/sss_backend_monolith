@@ -70,7 +70,7 @@ module.exports = {
   STAGE_DELETED_SUCCESSFULLY: "Stage deleted successfully",
   STAGE_NOT_EXIST: "No stage exist.",
   STAGE_ALREADY_COMPLETED: "Stage is already completed",
-
+  STAGE_NOT_FOUND: "Payment stage not found",
 
   //Material Category
   MATERIAL_CATEGORY_ALREADY_EXIST:
@@ -141,6 +141,20 @@ module.exports = {
   NO_WALLET_FOUND: "No wallet found",
   INSUFFICIENT_BALANCE: "Insufficient balance",
   WITHDRAW_MONEY_FROM_WALLET: "Amount withdrawn successfully",
-  ADDED_MONEY_TO_WALLET: "Amount added successfully"
+  ADDED_MONEY_TO_WALLET: "Amount added successfully",
 
+  // Bank Account
+  BANK_ACCOUNT_CREATED_SUCCESSFULLY: "Bank account created successfully",
+  BANK_ACCOUNT_UPDATED_SUCCESSFULLY: "Bank account updated successfully",
+  BANK_ACCOUNT_DELETED_SUCCESSFULLY: "Bank account deleted successfully",
+  BANK_ACCOUNT_FETCHED_SUCCESSFULLY: "Bank account details fetched successfully",
+  BANK_ACCOUNT_LIST_FETCHED_SUCCESSFULLY: "Bank account list fetched successfully",
+  BANK_ACCOUNT_NOT_FOUND: "Bank account not found",
+  BANK_ACCOUNT_ALREADY_EXISTS: "Bank account with this account number already exists",
+  BANK_ACCOUNT_ACTIVATED_SUCCESSFULLY: "Bank account activated successfully",
+  BANK_ACCOUNT_DEACTIVATED_SUCCESSFULLY: "Bank account deactivated successfully",
+
+  // Email
+  EMAIL_SENT_SUCCESSFULLY: "Email sent successfully",
+  MISSING_REQUIRED_FIELDS: "Missing required fields"
 };

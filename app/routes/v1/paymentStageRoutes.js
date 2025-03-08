@@ -60,6 +60,7 @@ let routes = [
                 // }),
                 approved: Joi.boolean().description("approved true or false"),
                 order: Joi.number().description("order number"),
+                fullPayment: Joi.boolean().default(false).description("full payment true or false"),
             },
             group: "PaymentStage",
             description: "Route to update payment stage",

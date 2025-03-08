@@ -122,4 +122,24 @@ CONSTANTS.TRANSACTION_TYPE = {
   DEBIT: "debit",
   CREDIT: "credit",
 };
+
+CONSTANTS.EMAIL_TEMPLATE_LIST = {
+  RESET_PASSWORD_TEMPLATE: {
+    name: "ResetPasswordTemplate",
+    templateData: (firstName, resetLink) => `{\"firstName\":\"${firstName}\",\"resetLink\":\"${resetLink}\"}`
+  },
+  SUPPORT_REQUEST_TEMPLATE: {
+    name: "SupportRequestTemplate",
+    subject: (userEmail = "", phoneNumber = "") => `{"userEmail":"${userEmail}","phoneNumber":"${phoneNumber}"}`,
+    templateData: (userName = "", userEmail = "", phoneNumber = "", message = "") =>
+      `{"userName":"${userName}","userEmail":"${userEmail}","phoneNumber":"${phoneNumber}","message":"${message.replace(/\n/g, '\\n')}"}`
+  }
+}
+
+CONSTANTS.BANK_ACCOUNT_TYPE = {
+  SAVINGS: "Savings",
+  CURRENT: "Current",
+  OTHER: "Other"
+}
+
 module.exports = CONSTANTS;

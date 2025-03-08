@@ -25,8 +25,8 @@ var defaults = {
 
     DATABASE: {
         username: process.env.DB_USERNAME || "root",
-        password:process.env.DB_PASSWORD || "akash123",
-        database:process.env.DB_NAME || "backendDevDB",
+        password: process.env.DB_PASSWORD || "akash123",
+        database: process.env.DB_NAME || "backendDevDB",
         host: process.env.DB_HOST || 'localhost',
         dialect: process.env.DIALECT || 'postgres',
         get URL() { return `${this.HOST}:${this.PORT}/${this.DB_NAME}` }
@@ -52,7 +52,7 @@ var defaults = {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || `aws_access_key`,
         secretAccessKey: process.env.AWS_SECRET_ACESS_KEY || 'aws_secret_key',
         awsRegion: process.env.AWS_REGION || 'ohio',
-        smsSender: process.env.SMS_SENDER || 'youcan'
+        smsSender: process.env.SMS_SENDER || 'SSS'
     },
     PATH_TO_UPLOAD_FILES_ON_LOCAL: process.env.PATH_TO_UPLOAD_FILES_ON_LOCAL || '/uploads/files'
 };

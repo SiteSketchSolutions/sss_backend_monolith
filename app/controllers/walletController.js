@@ -42,7 +42,7 @@ walletController.addMoneyToWallet = async (payload) => {
         if (!walletDetails) {
             return HELPERS.responseHelper.createErrorResponse(MESSAGES.NO_WALLET_FOUND, ERROR_TYPES.DATA_NOT_FOUND);
         }
-        await handleWalletTransaction(walletDetails.id, amount, TRANSACTION_TYPE["CREDIT"], ORDER_TYPE["WALLET_TOPUP"])
+        await handleWalletTransaction(walletDetails.id, amount, TRANSACTION_TYPE["CREDIT"], ORDER_TYPE["WALLET_TOPUP"]);
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(MESSAGES.ADDED_MONEY_TO_WALLET));
     } catch (error) {
@@ -110,20 +110,4 @@ walletController.getTransactionList = async (payload) => {
     }
 };
 
-// walletController.getQuickAmountList = async (payload) => {
-//     try {
-//         const locale = payload.headers["content-language"];
-//         const { country, userType } = payload.user;
-//         let quickAmountList = [];
-//         if (CONSTANTS.WALLET_QUICK_AMOUNT_LIST[userType].hasOwnProperty(country)) {
-//             quickAmountList = CONSTANTS.WALLET_QUICK_AMOUNT_LIST[userType][country]
-//         } else {
-//             quickAmountList = CONSTANTS.WALLET_QUICK_AMOUNT_LIST[userType]['US']
-//         }
-//         return Object.assign(HELPERS.responseHelper.createSuccessResponse(MESSAGES.WALLET.QUICK_AMOUNT_LIST_FETCHED_SUCCESSFULLY, locale), { data: quickAmountList });
-//     } catch (error) {
-//         throw HELPERS.responseHelper.createErrorResponse(error.message, ERROR_TYPES.SOMETHING_WENT_WRONG);
-//     }
-// }
-/* export walletController */
 module.exports = walletController;

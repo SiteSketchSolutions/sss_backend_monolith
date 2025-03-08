@@ -19,7 +19,9 @@ let v1Routes = [
   ...require("./latestUpdateRoute"),
   ...require("./walletRoutes"),
   ...require("./paymentStageRoutes"),
-  ...require("./partPaymentStageRoutes")
+  ...require("./partPaymentStageRoutes"),
+  ...require("./bankAccountRoutes"),
+  ...require("./paymentAcknowledgementRoutes")
 ];
 
 module.exports = v1Routes;
