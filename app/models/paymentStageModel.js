@@ -77,6 +77,11 @@ const paymentStage = sequelize.define("paymentStage", {
         allowNull: false,
         defaultValue: false
     },
+    acknowledgementSent: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,

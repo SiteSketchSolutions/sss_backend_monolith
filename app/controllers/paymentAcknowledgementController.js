@@ -16,7 +16,7 @@ let paymentAcknowledgementController = {};
  */
 paymentAcknowledgementController.sendPaymentAcknowledgement = async (payload) => {
     try {
-        const { paymentStageId, partPaymentId } = payload;
+        const { paymentStageId, partPaymentId, comment } = payload;
 
         if (!paymentStageId && !partPaymentId) {
             return HELPERS.responseHelper.createErrorResponse(
@@ -27,7 +27,8 @@ paymentAcknowledgementController.sendPaymentAcknowledgement = async (payload) =>
 
         const response = await paymentAcknowledgementService.sendPaymentAcknowledgementEmail({
             paymentStageId,
-            partPaymentId
+            partPaymentId,
+            comment
         });
 
         return Object.assign(
@@ -37,6 +38,7 @@ paymentAcknowledgementController.sendPaymentAcknowledgement = async (payload) =>
             { data: response }
         );
     } catch (error) {
+        console.error("Error sending payment acknowledgement:", error);
         return HELPERS.responseHelper.createErrorResponse(
             error.message,
             ERROR_TYPES.SOMETHING_WENT_WRONG

@@ -156,5 +156,12 @@ module.exports = {
 
   // Email
   EMAIL_SENT_SUCCESSFULLY: "Email sent successfully",
-  MISSING_REQUIRED_FIELDS: "Missing required fields"
+  MISSING_REQUIRED_FIELDS: "Missing required fields",
+
+  // Branding Form
+  BRANDING_FORM_CREATED_SUCCESSFULLY: "Thank you! Your message has been sent successfully.",
+  BRANDING_FORM_UPDATED_SUCCESSFULLY: "Branding form updated successfully",
+  BRANDING_FORM_DELETED_SUCCESSFULLY: "Branding form deleted successfully",
+  BRANDING_FORM_FETCHED_SUCCESSFULLY: "Branding form details fetched successfully",
+  BRANDING_FORM_LIST_FETCHED_SUCCESSFULLY: "Branding form list fetched successfully",
 };

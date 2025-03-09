@@ -150,7 +150,7 @@ paymentAcknowledgementService.getPartPaymentDetails = async (partPaymentId) => {
  */
 paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) => {
     try {
-        const { paymentStageId, partPaymentId } = options;
+        const { paymentStageId, partPaymentId, comment } = options;
 
         if (!paymentStageId && !partPaymentId) {
             throw new Error("Either paymentStageId or partPaymentId must be provided");
@@ -194,7 +194,8 @@ paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) 
             projectCode: projectCode,
             projectName: data.project.name,
             projectLocation: data.project.location || 'N/A',
-            paymentStatus: balanceAmount <= 0 ? 'Completed' : 'Partially Paid'
+            paymentStatus: balanceAmount <= 0 ? 'Completed' : 'Partially Paid',
+            comment: comment
         };
 
         // Generate email HTML

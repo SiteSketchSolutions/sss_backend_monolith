@@ -21,7 +21,8 @@ let v1Routes = [
   ...require("./paymentStageRoutes"),
   ...require("./partPaymentStageRoutes"),
   ...require("./bankAccountRoutes"),
-  ...require("./paymentAcknowledgementRoutes")
+  ...require("./paymentAcknowledgementRoutes"),
+  ...require("./brandingFormRoutes")
 ];
 
 module.exports = v1Routes;

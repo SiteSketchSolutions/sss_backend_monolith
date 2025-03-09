@@ -42,6 +42,11 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
         },
         defaultValue: 0
     },
+    acknowledgementSent: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
