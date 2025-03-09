@@ -12,7 +12,7 @@ let brandingFormRoutes = [
                 email: Joi.string().allow("").description("Email of the form submission"),
                 phone: Joi.string().required().description("Phone number of the form submission"),
                 service: Joi.string().required().description("Service of the form submission"),
-                message: Joi.string().description("Message of the form submission"),
+                message: Joi.string().allow("").description("Message of the form submission"),
             },
             group: "BrandingForm",
             description: "Route to create branding form",
