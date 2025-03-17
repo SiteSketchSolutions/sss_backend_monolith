@@ -24,8 +24,7 @@ let routes = [
                 status: Joi.string().required().valid(...Object.values(PAYMENT_STAGE_STATUS)).default(PAYMENT_STAGE_STATUS.PENDING).description("Enter stage status"),
                 paymentStatus: Joi.string().required().valid(...Object.values(PAYMENT_STATUS)).default(PAYMENT_STATUS.UNPAID).description("Enter payment status"),
                 approved: Joi.boolean().required().default(false).description("approved true or false"),
-                order: Joi.number().required().description("order number"),
-                fullPayment: Joi.boolean().default(false).description("full payment true or false"),
+                order: Joi.number().required().description("order number")
             },
             group: "PaymentStage",
             description: "Route to create payment stage",
@@ -46,8 +45,7 @@ let routes = [
                 dueDate: Joi.date().description("Enter payment due date"),
                 status: Joi.string().valid(...Object.values(PAYMENT_STAGE_STATUS)).description("Enter stage status"),
                 approved: Joi.boolean().description("approved true or false"),
-                order: Joi.number().description("order number"),
-                fullPayment: Joi.boolean().default(false).description("full payment true or false"),
+                order: Joi.number().description("order number")
             },
             group: "PaymentStage",
             description: "Route to update payment stage",
