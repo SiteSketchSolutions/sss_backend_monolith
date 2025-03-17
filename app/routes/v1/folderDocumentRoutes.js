@@ -10,6 +10,9 @@ let routes = [
       body: {
         folderId: Joi.number().required().description("Enter folder id"),
         url: Joi.string().required().description("Enter folder document url"),
+        size: Joi.number().description("File size in bytes"),
+        fileName: Joi.string().description("Original file name"),
+        mimeType: Joi.string().description("File mime type")
       },
       group: "FolderDocument",
       description: "Route to upload document to folder",
@@ -26,8 +29,10 @@ let routes = [
         folderDocumentId: Joi.number()
           .required()
           .description("Folder Document ID"),
-        url: Joi.string().required().description("Enter folder document url"),
-
+        url: Joi.string().description("Enter folder document url"),
+        size: Joi.number().description("File size in bytes"),
+        fileName: Joi.string().description("Original file name"),
+        mimeType: Joi.string().description("File mime type")
       },
       group: "FolderDocument",
       description: "Route to update folder document",

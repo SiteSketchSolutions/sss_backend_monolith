@@ -9,9 +9,9 @@ let routes = [
     joiSchemaForSwagger: {
       body: {
         name: Joi.string().required().description("Enter stage name"),
-        description: Joi.string().description("Enter stage description"),
+        description: Joi.string().allow("").optional().description("Enter stage description"),
         url: Joi.string().required().description("Enter category doc url"),
-        status: Joi.string().description("Enter stage status"),
+        status: Joi.string().optional().description("Enter stage status"),
       },
       group: "MaterialCategory",
       description: "Route to create material category",
@@ -28,9 +28,9 @@ let routes = [
         materialCategoryId: Joi.number()
           .required()
           .description("Material category ID"),
-        name: Joi.string().required().description("Enter stage name"),
-        description: Joi.string().description("Enter stage description"),
-        url: Joi.string().description("Enter category doc url"),
+        name: Joi.string().optional().description("Enter stage name"),
+        description: Joi.string().allow("").optional().description("Enter stage description"),
+        url: Joi.string().optional().description("Enter category doc url"),
       },
       group: "MaterialCategory",
       description: "Route to update material category",

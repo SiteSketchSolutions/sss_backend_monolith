@@ -1,7 +1,7 @@
 const HELPERS = require("../helpers");
 const { MESSAGES, ERROR_TYPES } = require("../utils/constants");
 const paymentAcknowledgementService = require("../services/paymentAcknowledgementService");
-
+const partPaymentStageModel = require("../models/partPaymentStageModel");
 /**************************************************
  ************* Payment Acknowledgement Controller ***************
  **************************************************/
@@ -16,9 +16,9 @@ let paymentAcknowledgementController = {};
  */
 paymentAcknowledgementController.sendPaymentAcknowledgement = async (payload) => {
     try {
-        const { paymentStageId, partPaymentId, comment } = payload;
+        const { partPaymentId, comment } = payload;
 
-        if (!paymentStageId && !partPaymentId) {
+        if (!partPaymentId) {
             return HELPERS.responseHelper.createErrorResponse(
                 MESSAGES.MISSING_REQUIRED_FIELDS,
                 ERROR_TYPES.BAD_REQUEST
@@ -26,9 +26,16 @@ paymentAcknowledgementController.sendPaymentAcknowledgement = async (payload) =>
         }
 
         const response = await paymentAcknowledgementService.sendPaymentAcknowledgementEmail({
-            paymentStageId,
             partPaymentId,
             comment
+        });
+
+        await partPaymentStageModel.update({
+            acknowledgementSent: true
+        }, {
+            where: {
+                id: partPaymentId
+            }
         });
 
         return Object.assign(

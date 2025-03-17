@@ -8,9 +8,8 @@ let routes = [
         path: "/v1/payment/acknowledgement",
         joiSchemaForSwagger: {
             body: {
-                paymentStageId: Joi.number().description("Enter payment stage ID"),
                 partPaymentId: Joi.number().description("Enter part payment ID"),
-                comment: Joi.string().description("Enter comment"),
+                comment: Joi.string().allow("").description("Enter comment"),
             },
             group: "Payment",
             description: "Route to send payment acknowledgement email",

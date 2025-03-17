@@ -20,6 +20,19 @@ const FolderDocument = sequelize.define("folderDocument", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  size: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: "File size in bytes"
+  },
+  fileName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  mimeType: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   isDeleted: {
     type: DataTypes.BOOLEAN,
     allowNull: true,

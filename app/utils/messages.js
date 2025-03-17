@@ -164,4 +164,8 @@ module.exports = {
   BRANDING_FORM_DELETED_SUCCESSFULLY: "Branding form deleted successfully",
   BRANDING_FORM_FETCHED_SUCCESSFULLY: "Branding form details fetched successfully",
   BRANDING_FORM_LIST_FETCHED_SUCCESSFULLY: "Branding form list fetched successfully",
+
+  // Session Tracking
+  SESSION_TRACKED_SUCCESSFULLY: "User session tracked successfully",
+  SESSION_ANALYTICS_FETCHED_SUCCESSFULLY: "User session analytics fetched successfully",
 };

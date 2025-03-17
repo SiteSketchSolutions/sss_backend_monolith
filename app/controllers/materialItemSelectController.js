@@ -65,10 +65,12 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
   try {
     const { materialSelectedItemId, selected } = payload;
 
+    // Make sure selected is explicitly set to a boolean value
     let updatePayload = {
-      selected: selected,
+      selected: selected === true || selected === false ? selected : true,
     };
-    await materialItemModel.update(updatePayload, {
+
+    await materialSelectedItemModel.update(updatePayload, {
       where: { id: materialSelectedItemId },
     });
 
@@ -80,7 +82,7 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
     );
   } catch (error) {
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg,
+      error.msg || error.message,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }

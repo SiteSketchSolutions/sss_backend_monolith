@@ -77,6 +77,10 @@ const paymentStage = sequelize.define("paymentStage", {
         allowNull: false,
         defaultValue: false
     },
+    paymentMethod: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     acknowledgementSent: {
         type: DataTypes.BOOLEAN,
         allowNull: true,

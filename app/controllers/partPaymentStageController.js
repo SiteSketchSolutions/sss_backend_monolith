@@ -25,9 +25,9 @@ partPaymentStageController.createPartPayment = async (payload) => {
          * 1.payement stage 10 lakh wallet deduct 10lakh. -10lakh status completed
          * 2.part payment is add the amount to wallet
          */
-        const { stageId, amount, method, referenceId, invoiceNo } = payload;
+        const { stageId, amount, method, referenceId, invoiceNo, note } = payload;
         let stagePayload = {
-            stageId, amount, method, referenceId, invoiceNo
+            stageId, amount, method, referenceId, invoiceNo, note
         };
         const stageExist = await paymentStage.findOne({
             where: {

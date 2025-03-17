@@ -17,13 +17,13 @@ let paymentStageController = {};
  */
 paymentStageController.createPaymentStage = async (payload) => {
     try {
-        const { walletId, name, description, totalAmount, paidAmount, dueDate, status, paymentStatus, approved, order, fullPayment } = payload;
+        const { walletId, name, description, totalAmount, dueDate, status, paymentStatus, approved, order, fullPayment } = payload;
         let stagePayload = {
             walletId,
             name,
             description,
             totalAmount,
-            paidAmount,
+            paidAmount: 0, // Initialize paidAmount to 0
             dueDate,
             status,
             paymentStatus,
@@ -48,14 +48,33 @@ paymentStageController.createPaymentStage = async (payload) => {
         }
 
         if (fullPayment) {
-            stagePayload.status = PAYMENT_STAGE_STATUS.COMPLETED,
-                stagePayload.paymentStatus = PAYMENT_STATUS.PAID
-            stagePayload.paidAmount = stagePayload.totalAmount
-        } else if (paidAmount > 0) {
-            stagePayload.paymentStatus = PAYMENT_STATUS.PARTIALLY_PAID
+            stagePayload.status = PAYMENT_STAGE_STATUS.COMPLETED;
+            stagePayload.paymentStatus = PAYMENT_STATUS.PAID;
+            stagePayload.paidAmount = totalAmount;
         }
+
+        // Create the payment stage
         const stage = await paymentStageModel.create(stagePayload);
-        await walletService.handleWalletTransaction(walletId, totalAmount, TRANSACTION_TYPE.DEBIT, ORDER_TYPE.PAYMENT_STAGE, stage.id)
+
+        // Handle wallet transaction - debit the total amount from wallet
+        await walletService.handleWalletTransaction(walletId, totalAmount, TRANSACTION_TYPE.DEBIT, ORDER_TYPE.PAYMENT_STAGE, stage.id);
+
+        // If fullPayment is true, create a part payment record automatically
+        if (fullPayment) {
+            // Import and use the part payment controller
+            const partPaymentStageController = require('./partPaymentStageController');
+
+            // Create a part payment record
+            const partPaymentPayload = {
+                stageId: stage.id,
+                amount: totalAmount,
+                method: 'Full Payment',
+                referenceId: `PS-${stage.id}-${Date.now()}`,
+                invoiceNo: `INV-${stage.id}-${Date.now()}`
+            };
+
+            await partPaymentStageController.createPartPayment(partPaymentPayload);
+        }
 
         const response = {
             id: stage?.id,
@@ -81,15 +100,13 @@ paymentStageController.createPaymentStage = async (payload) => {
  */
 paymentStageController.updatePaymentStage = async (payload) => {
     try {
-        const { stageId, name, description, totalAmount, paidAmount, dueDate, status, paymentStatus, approved, order, fullPayment } = payload;
+        const { stageId, name, description, totalAmount, dueDate, status, approved, order, fullPayment } = payload;
         let updatePayload = {
             name,
             description,
             totalAmount,
-            paidAmount,
             dueDate,
             status,
-            paymentStatus,
             approved,
             order
         };
@@ -97,7 +114,7 @@ paymentStageController.updatePaymentStage = async (payload) => {
         // Fetch the existing payment stage to get current values
         const existingStage = await paymentStageModel.findOne({
             where: { id: stageId, isDeleted: { [Op.ne]: true } },
-            attributes: ['id', 'walletId', 'totalAmount', 'paidAmount', 'fullPayment']
+            attributes: ['id', 'walletId', 'totalAmount', 'paidAmount', 'fullPayment', 'paymentStatus']
         });
 
         if (!existingStage) {
@@ -107,52 +124,54 @@ paymentStageController.updatePaymentStage = async (payload) => {
             );
         }
 
-        // Handle fullPayment case if provided.
-        if (fullPayment !== undefined) {
-            updatePayload.fullPayment = fullPayment;
-            if (fullPayment) {
-                updatePayload.status = PAYMENT_STAGE_STATUS.COMPLETED;
-                updatePayload.paymentStatus = PAYMENT_STATUS.PAID;
-                updatePayload.paidAmount = totalAmount || existingStage.totalAmount;
+        // Remove undefined values from the update payload
+        Object.keys(updatePayload).forEach(key => {
+            if (updatePayload[key] === undefined) {
+                delete updatePayload[key];
             }
-        }
+        });
 
-        // Calculate the difference in total amount
-        const oldTotalAmount = parseFloat(existingStage.totalAmount);
-        const newTotalAmount = totalAmount ? parseFloat(totalAmount) : oldTotalAmount;
-        const amountDifference = Math.abs(newTotalAmount - oldTotalAmount);
+        // Calculate the difference in total amount if it has changed
+        let oldTotalAmount = parseFloat(existingStage.totalAmount);
+        let newTotalAmount = totalAmount !== undefined ? parseFloat(totalAmount) : oldTotalAmount;
+        let amountDifference = Math.abs(newTotalAmount - oldTotalAmount);
 
-        // Determine payment status based on conditions if not explicitly provided
-        if (paymentStatus === undefined) {
-            const currentPaidAmount = paidAmount !== undefined ? parseFloat(paidAmount) : parseFloat(existingStage.paidAmount);
-            const finalTotalAmount = totalAmount !== undefined ? parseFloat(totalAmount) : parseFloat(existingStage.totalAmount);
-            const currentDueDate = dueDate || existingStage.dueDate;
-            const isPastDue = currentDueDate && new Date(currentDueDate) < new Date();
+        // Handle fullPayment if it's provided and changed from false to true
+        if (fullPayment !== undefined && fullPayment && !existingStage.fullPayment) {
+            updatePayload.fullPayment = true;
+            updatePayload.status = PAYMENT_STAGE_STATUS.COMPLETED;
+            updatePayload.paymentStatus = PAYMENT_STATUS.PAID;
 
-            // Determine payment status based on paid amount and due date
-            if (currentPaidAmount >= finalTotalAmount) {
-                // Fully paid
-                updatePayload.paymentStatus = PAYMENT_STATUS.PAID;
-                // If fully paid, also update status to completed
-                if (status === undefined) {
-                    updatePayload.status = PAYMENT_STAGE_STATUS.COMPLETED;
-                }
-            } else if (isPastDue) {
-                // Past due date and not fully paid
-                updatePayload.paymentStatus = PAYMENT_STATUS.OVERDUE;
-            } else if (currentPaidAmount > 0) {
-                // Partially paid
-                updatePayload.paymentStatus = PAYMENT_STATUS.PARTIALLY_PAID;
-            } else {
-                // Not paid at all
-                updatePayload.paymentStatus = PAYMENT_STATUS.UNPAID;
-            }
+            // Set paidAmount to the total amount
+            const finalTotalAmount = totalAmount || existingStage.totalAmount;
+            updatePayload.paidAmount = finalTotalAmount;
+
+            // After updating, create a part payment for the full amount
+            const partPaymentStageController = require('./partPaymentStageController');
+
+            // Create a part payment record
+            const partPaymentPayload = {
+                stageId: stageId,
+                amount: finalTotalAmount,
+                method: 'Full Payment',
+                referenceId: `PS-${stageId}-${Date.now()}`,
+                invoiceNo: `INV-${stageId}-${Date.now()}`
+            };
+
+            await partPaymentStageController.createPartPayment(partPaymentPayload);
+        } else if (fullPayment === false && existingStage.fullPayment) {
+            // If changing from full payment to not full payment, reset the status
+            updatePayload.fullPayment = false;
+            updatePayload.status = PAYMENT_STAGE_STATUS.PENDING;
+            updatePayload.paymentStatus = PAYMENT_STATUS.UNPAID;
+            updatePayload.paidAmount = 0;
+
+            // We should also delete any part payments associated with this stage
+            // This would require additional logic to handle
         }
 
         // Update the payment stage
-        await paymentStageModel.update(updatePayload, {
-            where: { id: stageId, isDeleted: { [Op.ne]: true } },
-        });
+        await paymentStageModel.update(updatePayload, { where: { id: stageId } });
 
         // Handle wallet transaction if total amount has changed
         if (newTotalAmount !== oldTotalAmount && amountDifference > 0) {
@@ -297,9 +316,48 @@ paymentStageController.deletePaymentStage = async (payload) => {
     try {
         const { stageId } = payload;
 
+        // Get the payment stage details before deleting
+        const paymentStageDetails = await paymentStageModel.findOne({
+            where: { id: stageId, isDeleted: { [Op.ne]: true } },
+            attributes: ['id', 'walletId', 'totalAmount', 'paidAmount'],
+            include: [
+                {
+                    model: partPaymentStage,
+                    attributes: ['id'],
+                    where: { isDeleted: { [Op.ne]: true } },
+                    required: false
+                }
+            ]
+        });
+
+        if (!paymentStageDetails) {
+            return HELPERS.responseHelper.createErrorResponse(
+                MESSAGES.STAGE_NOT_FOUND,
+                ERROR_TYPES.DATA_NOT_FOUND
+            );
+        }
+
+        // Mark all associated part payments as deleted
+        if (paymentStageDetails.partPaymentStages && paymentStageDetails.partPaymentStages.length > 0) {
+            await partPaymentStage.update(
+                { isDeleted: true },
+                { where: { stageId: stageId } }
+            );
+        }
+
+        // Mark the payment stage as deleted
         await paymentStageModel.update(
             { isDeleted: true },
             { where: { id: stageId } }
+        );
+
+        // Credit the total amount back to the wallet
+        await walletService.handleWalletTransaction(
+            paymentStageDetails.walletId,
+            paymentStageDetails.totalAmount,
+            TRANSACTION_TYPE.CREDIT,
+            ORDER_TYPE.PAYMENT_STAGE,
+            stageId
         );
 
         return Object.assign(

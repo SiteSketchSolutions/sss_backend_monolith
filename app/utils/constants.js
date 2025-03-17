@@ -79,6 +79,7 @@ CONSTANTS.PAGINATION = {
 };
 
 CONSTANTS.PAYMENT_STAGE_STATUS = {
+  UPCOMING: "upcoming",
   PENDING: "pending",
   IN_PROGRESS: "in_progress",
   COMPLETED: "completed"

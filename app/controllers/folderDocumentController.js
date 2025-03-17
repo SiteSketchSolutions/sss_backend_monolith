@@ -17,10 +17,13 @@ let folderDocumentController = {};
  */
 folderDocumentController.createFolderDocument = async (payload) => {
   try {
-    const { folderId, url } = payload;
+    const { folderId, url, size, fileName, mimeType } = payload;
     const folderDocumentPayload = {
       folderId: folderId,
       url: url,
+      size: size || null,
+      fileName: fileName || null,
+      mimeType: mimeType || null
     };
     const folderDocument = await folderDocumentModel.create(
       folderDocumentPayload
@@ -46,11 +49,24 @@ folderDocumentController.createFolderDocument = async (payload) => {
  */
 folderDocumentController.updateFolderDocument = async (payload) => {
   try {
-    const { folderDocumentId, url } = payload;
+    const { folderDocumentId, url, size, fileName, mimeType } = payload;
 
-    const folderDocumentPayload = {
-      url: url,
-    };
+    // Create update payload with only the fields that are provided
+    let folderDocumentPayload = {};
+
+    if (url !== undefined) folderDocumentPayload.url = url;
+    if (size !== undefined) folderDocumentPayload.size = size;
+    if (fileName !== undefined) folderDocumentPayload.fileName = fileName;
+    if (mimeType !== undefined) folderDocumentPayload.mimeType = mimeType;
+
+    // Check if any fields were provided for update
+    if (Object.keys(folderDocumentPayload).length === 0) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "No fields provided for update",
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
     const folderDocumentExist = await folderDocumentModel.findOne({
       where: { id: folderDocumentId },
     });
@@ -60,6 +76,7 @@ folderDocumentController.updateFolderDocument = async (payload) => {
         ERROR_TYPES.DATA_NOT_FOUND
       );
     }
+
     await folderDocumentModel.update(folderDocumentPayload, {
       where: { id: folderDocumentId },
     });

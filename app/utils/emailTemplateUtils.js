@@ -28,7 +28,9 @@ emailTemplateUtils.generatePaymentAcknowledgementTemplate = (data) => {
             contactPhone: '+91 94821 50598',
             contactEmail: 'info@sssconstructions.in',
             companyAddress: '#123, Premium Towers, Bengaluru - 560001',
-            paymentStatus: 'Completed'
+            paymentStatus: 'Completed',
+            projectName: 'SSS Project',
+            invoiceNo: `INV-${Date.now()}`
         };
 
         // Merge provided data with defaults

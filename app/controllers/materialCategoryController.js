@@ -62,13 +62,21 @@ materialCategoryController.updateMaterialCategory = async (payload) => {
   try {
     const { materialCategoryId, name, description, url } = payload;
 
-    let updatePayload = {
-      name,
-      description
-    };
-    if (url) {
-      updatePayload.image = url
+    // Create update payload with only the fields that are provided
+    let updatePayload = {};
+
+    if (name !== undefined) updatePayload.name = name;
+    if (description !== undefined) updatePayload.description = description;
+    if (url !== undefined) updatePayload.image = url;
+
+    // Check if any fields were provided for update
+    if (Object.keys(updatePayload).length === 0) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "No fields provided for update",
+        ERROR_TYPES.BAD_REQUEST
+      );
     }
+
     await materialCategoryModel.update(updatePayload, {
       where: { id: materialCategoryId, isDeleted: { [Op.ne]: true } },
     });
@@ -81,7 +89,7 @@ materialCategoryController.updateMaterialCategory = async (payload) => {
     );
   } catch (error) {
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg,
+      error.msg || error.message,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }

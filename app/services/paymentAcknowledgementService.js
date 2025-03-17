@@ -150,9 +150,9 @@ paymentAcknowledgementService.getPartPaymentDetails = async (partPaymentId) => {
  */
 paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) => {
     try {
-        const { paymentStageId, partPaymentId, comment } = options;
+        const { partPaymentId, comment } = options;
 
-        if (!paymentStageId && !partPaymentId) {
+        if (!partPaymentId) {
             throw new Error("Either paymentStageId or partPaymentId must be provided");
         }
 
@@ -163,31 +163,35 @@ paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) 
         let referenceId;
 
         // Get data based on whether we're dealing with a full payment stage or a part payment
-        if (paymentStageId) {
-            data = await paymentAcknowledgementService.getPaymentStageDetails(paymentStageId);
-            paymentAmount = data.paymentStage.paidAmount;
-            paymentMethod = "Full Payment";
-            transactionDate = formatDate(data.paymentStage.updatedAt);
-            referenceId = `STAGE-${data.paymentStage.id}`;
-        } else {
-            data = await paymentAcknowledgementService.getPartPaymentDetails(partPaymentId);
-            paymentAmount = data.partPayment.amount;
-            paymentMethod = `${data.partPayment.method} (${data.partPayment.referenceId})`;
-            transactionDate = formatDate(data.partPayment.createdAt);
-            referenceId = data.partPayment.invoiceNo;
-        }
+        // if (paymentStageId) {
+        //     data = await paymentAcknowledgementService.getPaymentStageDetails(paymentStageId);
+        //     paymentAmount = data.paymentStage.paidAmount;
+        //     paymentMethod = "Full Payment";
+        //     transactionDate = formatDate(data.paymentStage.updatedAt);
+        //     referenceId = `STAGE-${data.paymentStage.id}`;
+        // } else {
+        data = await paymentAcknowledgementService.getPartPaymentDetails(partPaymentId);
+        paymentAmount = data.partPayment.amount;
+        paymentMethod = `${data.partPayment.method} (${data.partPayment.referenceId})`;
+        transactionDate = formatDate(data.partPayment.createdAt);
+        referenceId = data.partPayment.invoiceNo;
+        // }
 
         // Calculate balance amount
         const balanceAmount = data.paymentStage.totalAmount - data.paymentStage.paidAmount;
 
+        // Calculate total amount received for the stage
+        const totalAmountReceived = data.paymentStage.paidAmount;
+
         // Generate project code
-        const projectCode = `${data.project.name.substring(0, 4).toUpperCase()}-${data.project.location.substring(0, 3).toUpperCase()}-${new Date(data.project.createdAt).getFullYear()}`;
+        const projectCode = data.user.uniqueId;
 
         // Prepare template data
         const templateData = {
             userName: data.user.name,
             stageName: data.paymentStage.name,
             paidAmount: paymentAmount.toLocaleString('en-IN'),
+            totalAmountReceived: totalAmountReceived.toLocaleString('en-IN'),
             balanceAmount: balanceAmount.toLocaleString('en-IN'),
             paymentMethod: paymentMethod,
             transactionDate: transactionDate,
@@ -195,7 +199,8 @@ paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) 
             projectName: data.project.name,
             projectLocation: data.project.location || 'N/A',
             paymentStatus: balanceAmount <= 0 ? 'Completed' : 'Partially Paid',
-            comment: comment
+            comment: comment,
+            invoiceNo: referenceId
         };
 
         // Generate email HTML
