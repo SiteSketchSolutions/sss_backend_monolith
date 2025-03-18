@@ -24,11 +24,6 @@ const UserSession = sequelize.define("userSession", {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    sessionStartTime: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,

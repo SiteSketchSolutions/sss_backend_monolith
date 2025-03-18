@@ -21,20 +21,19 @@ let routes = [
     },
     {
         method: "GET",
-        path: "/v1/userSession/analytics",
+        path: "/v1/userSession/list",
         joiSchemaForSwagger: {
             query: {
                 userId: Joi.number().description("User ID (optional)"),
-                startDate: Joi.date().description("Start date for analytics (optional)"),
-                endDate: Joi.date().description("End date for analytics (optional)"),
+                date: Joi.date().description("Date to filter sessions (optional, format: YYYY-MM-DD)"),
             },
             group: "UserSession",
-            description: "Route to get user session analytics",
-            model: "getUserSessionAnalytics",
+            description: "Route to list user sessions with optional filters",
+            model: "getSessions",
         },
         auth: false,
-        handler: userSessionController.getUserSessionAnalytics,
-    },
+        handler: userSessionController.getSessions,
+    }
 ];
 
 module.exports = routes; 

@@ -168,4 +168,5 @@ module.exports = {
   // Session Tracking
   SESSION_TRACKED_SUCCESSFULLY: "User session tracked successfully",
   SESSION_ANALYTICS_FETCHED_SUCCESSFULLY: "User session analytics fetched successfully",
+  SESSION_LIST_FETCHED_SUCCESSFULLY: "User sessions fetched successfully",
 };

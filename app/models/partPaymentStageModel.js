@@ -31,7 +31,7 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
     },
     invoiceNo: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     amount: {
         type: DataTypes.DECIMAL(10, 2),

@@ -4,6 +4,7 @@ const { MESSAGES, ERROR_TYPES, TRANSACTION_TYPE, ORDER_TYPE, PAYMENT_STAGE_STATU
 const partPaymentStageModel = require("../models/partPaymentStageModel");
 const { handleWalletTransaction } = require("../services/walletService");
 const paymentStage = require("../models/paymentStageModel");
+const utils = require("../utils/utils");
 
 /**************************************************
  ***************** Part Payment Stage controller ***************
@@ -50,8 +51,21 @@ partPaymentStageController.createPartPayment = async (payload) => {
             );
         }
 
+        // Create the part payment (without invoice number first to get the ID)
         const partPaymentDetails = await partPaymentStageModel.create(stagePayload);
-        await handleWalletTransaction(stageExist.walletId, amount, TRANSACTION_TYPE.CREDIT, ORDER_TYPE.PART_PAYMENT, partPaymentDetails?.id);
+
+        // Generate the invoice number using the newly created ID
+        const invoiceNo = utils.generateInvoiceNumber(partPaymentDetails.id);
+        // Update the part payment with the generated invoice number
+        await partPaymentStageModel.update(
+            { invoiceNo },
+            { where: { id: partPaymentDetails.id } }
+        );
+
+        // Refresh the part payment details to include the invoice number
+        const updatedPartPayment = await partPaymentStageModel.findByPk(partPaymentDetails.id);
+
+        await handleWalletTransaction(stageExist.walletId, amount, TRANSACTION_TYPE.CREDIT, ORDER_TYPE.PART_PAYMENT, updatedPartPayment.id);
 
         // Increment the paidAmount
         await paymentStage.increment('paidAmount', { by: amount, where: { id: stageId } });
@@ -95,6 +109,7 @@ partPaymentStageController.createPartPayment = async (payload) => {
 
         const response = {
             id: partPaymentDetails?.id,
+            invoiceNo: updatedPartPayment.invoiceNo
         };
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
@@ -117,7 +132,7 @@ partPaymentStageController.createPartPayment = async (payload) => {
  */
 partPaymentStageController.updatePartPayment = async (payload) => {
     try {
-        const { paymentId, amount, method, referenceId } = payload;
+        const { paymentId, amount, method, referenceId, note } = payload;
 
         // Get the existing part payment to calculate the difference in amount
         const existingPartPayment = await partPaymentStageModel.findOne({
@@ -136,11 +151,12 @@ partPaymentStageController.updatePartPayment = async (payload) => {
         const newAmount = amount !== undefined ? parseFloat(amount) : oldAmount;
         const amountDifference = newAmount - oldAmount;
 
-        // Update the part payment
+        // Update the part payment (don't allow updating invoiceNo)
         let updatePayload = {};
         if (amount !== undefined) updatePayload.amount = amount;
         if (method !== undefined) updatePayload.method = method;
         if (referenceId !== undefined) updatePayload.referenceId = referenceId;
+        if (note !== undefined) updatePayload.note = note;
 
         await partPaymentStageModel.update(updatePayload, {
             where: { id: paymentId, isDeleted: { [Op.ne]: true } },

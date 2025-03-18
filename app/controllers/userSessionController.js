@@ -23,7 +23,6 @@ userSessionController.trackUserSession = async (payload) => {
             userId,
             deviceInfo: deviceInfo || null,
             ipAddress: ipAddress || null,
-            sessionStartTime: new Date()
         };
 
         // Create a new session record
@@ -44,61 +43,50 @@ userSessionController.trackUserSession = async (payload) => {
 };
 
 /**
- * Function to get user session analytics
+ * Function to get user sessions
  * @param {*} payload
- * @returns
+ * @returns List of sessions
  */
-userSessionController.getUserSessionAnalytics = async (payload) => {
+userSessionController.getSessions = async (payload) => {
     try {
-        const { userId, startDate, endDate } = payload;
+        const { userId, date } = payload;
 
         // Build query conditions
         let whereConditions = {
             isDeleted: { [Op.ne]: true }
         };
 
+        // Add userId filter if provided
         if (userId) {
             whereConditions.userId = userId;
         }
 
-        if (startDate && endDate) {
-            whereConditions.sessionStartTime = {
-                [Op.between]: [new Date(startDate), new Date(endDate)]
-            };
-        } else if (startDate) {
-            whereConditions.sessionStartTime = {
-                [Op.gte]: new Date(startDate)
-            };
-        } else if (endDate) {
-            whereConditions.sessionStartTime = {
-                [Op.lte]: new Date(endDate)
+        // Add date filter if provided
+        if (date) {
+            const targetDate = new Date(date);
+            const startOfDay = new Date(targetDate);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const endOfDay = new Date(targetDate);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            whereConditions.createdAt = {
+                [Op.between]: [startOfDay, endOfDay]
             };
         }
 
-        // Get session count
-        // const sessionCount = await userSessionModel.count({
-        //     where: whereConditions
-        // });
-
-        // Get sessions grouped by day
+        // Get all sessions matching the conditions
         const sessions = await userSessionModel.findAll({
             where: whereConditions,
-            attributes: [
-                [sequelize.fn('DATE', sequelize.col('sessionStartTime')), 'date'],
-                [sequelize.fn('COUNT', sequelize.col('id')), 'count']
-            ],
-            group: [sequelize.fn('DATE', sequelize.col('sessionStartTime'))],
-            order: [[sequelize.fn('DATE', sequelize.col('sessionStartTime')), 'ASC']]
+            order: [['createdAt', 'DESC']]
         });
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
-                MESSAGES.SESSION_ANALYTICS_FETCHED_SUCCESSFULLY
+                MESSAGES.SESSION_LIST_FETCHED_SUCCESSFULLY
             ),
             {
-                data: {
-                    sessionsByDate: sessions
-                }
+                data: sessions
             }
         );
     } catch (error) {
