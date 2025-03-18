@@ -100,13 +100,14 @@ paymentStageController.createPaymentStage = async (payload) => {
  */
 paymentStageController.updatePaymentStage = async (payload) => {
     try {
-        const { stageId, name, description, totalAmount, dueDate, status, approved, order } = payload;
+        const { stageId, name, description, totalAmount, dueDate, status, paymentStatus, approved, order } = payload;
         let updatePayload = {
             name,
             description,
             totalAmount,
             dueDate,
             status,
+            paymentStatus,
             approved,
             order
         };

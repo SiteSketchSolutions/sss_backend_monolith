@@ -11,7 +11,7 @@ let routes = [
         name: Joi.string().required().description("Enter stage name"),
         description: Joi.string().allow("").optional().description("Enter stage description"),
         url: Joi.string().required().description("Enter category doc url"),
-        status: Joi.string().optional().description("Enter stage status"),
+        status: Joi.string().description("Enter stage status"),
       },
       group: "MaterialCategory",
       description: "Route to create material category",

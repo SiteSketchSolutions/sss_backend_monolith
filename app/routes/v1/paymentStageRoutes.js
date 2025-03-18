@@ -44,6 +44,7 @@ let routes = [
                 totalAmount: Joi.number().description("Enter stage total amount"),
                 dueDate: Joi.date().description("Enter payment due date"),
                 status: Joi.string().valid(...Object.values(PAYMENT_STAGE_STATUS)).description("Enter stage status"),
+                paymentStatus: Joi.string().valid(...Object.values(PAYMENT_STATUS)).description("Enter payment status"),
                 approved: Joi.boolean().description("approved true or false"),
                 order: Joi.number().description("order number")
             },

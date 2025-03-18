@@ -76,9 +76,9 @@ userSessionController.getUserSessionAnalytics = async (payload) => {
         }
 
         // Get session count
-        const sessionCount = await userSessionModel.count({
-            where: whereConditions
-        });
+        // const sessionCount = await userSessionModel.count({
+        //     where: whereConditions
+        // });
 
         // Get sessions grouped by day
         const sessions = await userSessionModel.findAll({
@@ -97,7 +97,6 @@ userSessionController.getUserSessionAnalytics = async (payload) => {
             ),
             {
                 data: {
-                    totalSessions: sessionCount,
                     sessionsByDate: sessions
                 }
             }

@@ -16,11 +16,8 @@ let materialSelectedItemController = {};
 materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
   try {
     const { userId, materialItemId } = payload;
-    const materialItemPayload = {
-      userId,
-      materialItemId,
-      selected: true,
-    };
+
+    // Check if the item already exists
     const materialItemExist = await materialSelectedItemModel.findOne({
       where: {
         userId: userId,
@@ -30,18 +27,49 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
     });
 
     if (materialItemExist) {
+      // If it exists but is not selected, update it to selected
+      if (materialItemExist.selected !== true) {
+        await materialSelectedItemModel.update(
+          { selected: true },
+          {
+            where: {
+              id: materialItemExist.id
+            }
+          }
+        );
+
+        return Object.assign(
+          HELPERS.responseHelper.createSuccessResponse(
+            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
+          ),
+          { data: { id: materialItemExist.id } }
+        );
+      }
+
+      // If it already exists and is selected, return error
       return HELPERS.responseHelper.createErrorResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_ALREADY_EXIST,
         ERROR_TYPES.BAD_REQUEST
       );
     }
 
+    // Create new selected item with selected explicitly set to true
+    const materialItemPayload = {
+      userId,
+      materialItemId,
+      selected: true,
+    };
+
     const materialItem = await materialSelectedItemModel.create(
       materialItemPayload
     );
+
+    console.log("Created new material selected item:", materialItem.id, "with selected =", materialItem.selected);
+
     const response = {
       id: materialItem?.id,
     };
+
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_CREATED_SUCCESSFULLY
@@ -49,8 +77,9 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
       { data: response }
     );
   } catch (error) {
+    console.error("Error in createMaterialSelectedItem:", error);
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg,
+      error.message || error.msg,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }
@@ -65,24 +94,47 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
   try {
     const { materialSelectedItemId, selected } = payload;
 
-    // Make sure selected is explicitly set to a boolean value
-    let updatePayload = {
-      selected: selected === true || selected === false ? selected : true,
-    };
-
-    await materialSelectedItemModel.update(updatePayload, {
-      where: { id: materialSelectedItemId },
+    // First check if the item exists
+    const materialItem = await materialSelectedItemModel.findOne({
+      where: {
+        id: materialSelectedItemId,
+        isDeleted: { [Op.ne]: true }
+      }
     });
+
+    if (!materialItem) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Material selected item not found",
+        ERROR_TYPES.DATA_NOT_FOUND
+      );
+    }
+
+    // Make sure selected is explicitly set to a boolean value
+    const selectedValue = selected === true || selected === false ? selected : true;
+
+    // Update the item
+    await materialSelectedItemModel.update(
+      { selected: selectedValue },
+      { where: { id: materialSelectedItemId } }
+    );
+
+    console.log(`Updated material selected item ${materialSelectedItemId} with selected = ${selectedValue}`);
 
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
       ),
-      { data: null }
+      {
+        data: {
+          id: materialSelectedItemId,
+          selected: selectedValue
+        }
+      }
     );
   } catch (error) {
+    console.error("Error in updateMaterialSelectedItem:", error);
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg || error.message,
+      error.message || error.msg,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }
@@ -151,37 +203,48 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
   try {
     const { materialCategoryId, userId } = payload;
 
-    // Fetch all material items and user-selected items
-    const [allMaterialItemList, materialSelectedItems] = await Promise.all([
-      materialItemModel.findAll({
-        where: {
-          isDeleted: { [Op.ne]: true },
-          materialCategoryId: materialCategoryId,
-        },
-        attributes: ['id', 'name', 'image', 'description'],
-        raw: true,
-      }),
-      materialSelectedItemModel.findAll({
-        where: {
-          isDeleted: { [Op.ne]: true },
-          userId: userId,
-        },
-        attributes: ['materialItemId'],
-        raw: true,
-      }),
-    ]);
-    // Extract selected material item IDs for the user
-    const selectedItemIds = new Set(
-      materialSelectedItems.map((item) => item.materialItemId)
-    );
+    // First get all material items for this category
+    const allMaterialItemList = await materialItemModel.findAll({
+      where: {
+        isDeleted: { [Op.ne]: true },
+        materialCategoryId: materialCategoryId,
+      },
+      attributes: ['id', 'name', 'image', 'description'],
+      raw: true,
+    });
+
+    // Extract all material item IDs for this category
+    const materialItemIds = allMaterialItemList.map(item => item.id);
+
+    // Now get only the selected items for this user AND for these material items
+    const materialSelectedItems = await materialSelectedItemModel.findAll({
+      where: {
+        isDeleted: { [Op.ne]: true },
+        userId: userId,
+        materialItemId: { [Op.in]: materialItemIds },
+        selected: true // Only get items that are actually selected
+      },
+      attributes: ['materialItemId', 'selected'],
+      raw: true,
+    });
+
+    // Create a map of selected item IDs for faster lookup
+    const selectedItemMap = {};
+    materialSelectedItems.forEach(item => {
+      selectedItemMap[item.materialItemId] = true;
+    });
+
     // Map all material items with their selection status
     const response = allMaterialItemList.map((item) => ({
       id: item.id,
-      selected: selectedItemIds.has(item.id),
+      selected: selectedItemMap[item.id] === true, // Explicitly check for true
       itemName: item.name,
       itemImage: item.image,
       itemDescription: item.description,
     }));
+
+    console.log("Selected items map:", selectedItemMap);
+    console.log("Response sample:", response.slice(0, 3));
 
     // Return the formatted response
     return Object.assign(
@@ -191,6 +254,7 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
       { data: response }
     );
   } catch (error) {
+    console.error("Error in materialSelectedItemList:", error);
     // Handle errors
     throw HELPERS.responseHelper.createErrorResponse(
       error.message || 'Something went wrong',

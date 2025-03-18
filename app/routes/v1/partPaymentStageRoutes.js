@@ -31,7 +31,6 @@ let routes = [
                 amount: Joi.number().description("Enter part payment amount"),
                 method: Joi.string().description("Enter payment method like upi or card"),
                 referenceId: Joi.string().description("Enter payment reference id"),
-                invoiceNo: Joi.string().description("Enter invoice no"),
                 note: Joi.string().description("Additional notes for the payment")
             },
             group: "PartPaymentStage",
