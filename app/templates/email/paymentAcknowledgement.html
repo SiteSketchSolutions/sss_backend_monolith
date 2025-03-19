@@ -3,21 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
     <title>
       Payment Receipt - {{projectName}} - {{stageName}} - {{invoiceNo}}
     </title>
     <style>
+      /* Base styles */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5 !important;
+      }
+
       @media only screen and (max-width: 600px) {
         .payment-summary-table td {
           display: block;
           width: 100% !important;
           margin-bottom: 10px;
         }
-        .detail-item {
-          flex: 0 0 100% !important;
-          margin-bottom: 15px;
+        .transaction-info td {
+          font-size: 11px !important;
         }
-        /* Footer responsive fixes */
         .footer-table td {
           display: block;
           width: 100% !important;
@@ -47,6 +55,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f5f5;
     "
+    bgcolor="#f5f5f5"
   >
     <!-- Main Container -->
     <table
@@ -61,6 +70,7 @@
         background-color: #ffffff;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       "
+      bgcolor="#ffffff"
     >
       <!-- Header -->
       <tr>
@@ -71,6 +81,7 @@
             border-bottom: 4px solid #d4af37;
             text-align: center;
           "
+          bgcolor="#171717"
           class="logo"
         >
           <!-- Replace text with logo image -->
@@ -91,6 +102,7 @@
             background-color: #171717;
             color: #ffffff;
           "
+          bgcolor="#171717"
         >
           <h2
             class="hero-title"
@@ -130,6 +142,9 @@
           <table
             class="payment-summary-table"
             width="100%"
+            border="0"
+            cellspacing="0"
+            cellpadding="0"
             style="
               margin-bottom: 30px;
               border-collapse: separate;
@@ -145,6 +160,7 @@
                   text-align: center;
                   width: 33%;
                 "
+                bgcolor="#ffffff"
               >
                 <p
                   style="
@@ -168,6 +184,7 @@
                   text-align: center;
                   width: 33%;
                 "
+                bgcolor="#ffffff"
               >
                 <p
                   style="
@@ -191,6 +208,7 @@
                   text-align: center;
                   width: 33%;
                 "
+                bgcolor="#ffffff"
               >
                 <p
                   style="
@@ -219,8 +237,11 @@
             "
           >
             <table width="100%" style="border-collapse: collapse">
-              <tr style="background-color: #171717; color: #ffffff">
-                <td style="padding: 15px 20px; font-weight: bold">
+              <tr
+                style="background-color: #171717; color: #ffffff"
+                bgcolor="#171717"
+              >
+                <td style="padding: 15px 20px; font-weight: bold" width="50%">
                   Transaction Details
                 </td>
                 <td
@@ -229,66 +250,107 @@
                     text-align: right;
                     font-weight: bold;
                   "
+                  width="50%"
+                  align="right"
                 >
                   Status: {{paymentStatus}}
                 </td>
               </tr>
               <tr>
                 <td colspan="2" style="padding: 20px">
-                  <div style="display: flex; flex-wrap: wrap; gap: 20px">
-                    <div class="detail-item" style="flex: 1; min-width: 200px">
-                      <p
+                  <!-- Replace flexbox with table for transaction details -->
+                  <table
+                    width="100%"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    class="transaction-info"
+                  >
+                    <tr>
+                      <td
+                        width="50%"
                         style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-size: 13px;
+                          padding-right: 10px;
+                          padding-bottom: 15px;
+                          vertical-align: top;
                         "
                       >
-                        PAYMENT MODE
-                      </p>
-                      <p style="margin: 0; color: #171717">{{paymentMethod}}</p>
-                    </div>
-                    <div class="detail-item" style="flex: 1; min-width: 200px">
-                      <p
+                        <p
+                          style="
+                            margin: 0 0 8px 0;
+                            color: #d4af37;
+                            font-size: 13px;
+                            font-weight: bold;
+                          "
+                        >
+                          PAYMENT MODE
+                        </p>
+                        <p style="margin: 0; color: #171717; font-size: 13px">
+                          {{paymentMethod}}
+                        </p>
+                      </td>
+                      <td
+                        width="50%"
                         style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-size: 13px;
+                          padding-left: 10px;
+                          padding-bottom: 15px;
+                          vertical-align: top;
                         "
                       >
-                        TRANSACTION DATE
-                      </p>
-                      <p style="margin: 0; color: #171717">
-                        {{transactionDate}}
-                      </p>
-                    </div>
-                    <div class="detail-item" style="flex: 1; min-width: 200px">
-                      <p
-                        style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-size: 13px;
-                        "
+                        <p
+                          style="
+                            margin: 0 0 8px 0;
+                            color: #d4af37;
+                            font-size: 13px;
+                            font-weight: bold;
+                          "
+                        >
+                          TRANSACTION DATE
+                        </p>
+                        <p style="margin: 0; color: #171717; font-size: 13px">
+                          {{transactionDate}}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        width="50%"
+                        style="padding-right: 10px; vertical-align: top"
                       >
-                        BALANCE AMOUNT
-                      </p>
-                      <p style="margin: 0; color: #171717">
-                        ₹{{balanceAmount}}/-
-                      </p>
-                    </div>
-                    <div class="detail-item" style="flex: 1; min-width: 200px">
-                      <p
-                        style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-size: 13px;
-                        "
+                        <p
+                          style="
+                            margin: 0 0 8px 0;
+                            color: #d4af37;
+                            font-size: 13px;
+                            font-weight: bold;
+                          "
+                        >
+                          BALANCE AMOUNT
+                        </p>
+                        <p style="margin: 0; color: #171717; font-size: 13px">
+                          ₹{{balanceAmount}}/-
+                        </p>
+                      </td>
+                      <td
+                        width="50%"
+                        style="padding-left: 10px; vertical-align: top"
                       >
-                        PROJECT CODE
-                      </p>
-                      <p style="margin: 0; color: #171717">{{projectCode}}</p>
-                    </div>
-                  </div>
+                        <p
+                          style="
+                            margin: 0 0 8px 0;
+                            color: #d4af37;
+                            font-size: 13px;
+                            font-weight: bold;
+                          "
+                        >
+                          PROJECT CODE
+                        </p>
+                        <p style="margin: 0; color: #171717; font-size: 13px">
+                          {{projectCode}}
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
                 </td>
               </tr>
             </table>
@@ -308,6 +370,7 @@
       <tr>
         <td
           style="padding: 40px 30px; background-color: #171717; color: #ffffff"
+          bgcolor="#171717"
         >
           <!-- Footer Content - Using table for email compatibility instead of flexbox -->
           <table
