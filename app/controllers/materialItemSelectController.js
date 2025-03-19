@@ -92,15 +92,73 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
  */
 materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
   try {
-    const { materialSelectedItemId, selected } = payload;
+    const { materialSelectedItemId, materialItemId, userId, selected } = payload;
+    let materialItem;
 
-    // First check if the item exists
-    const materialItem = await materialSelectedItemModel.findOne({
-      where: {
-        id: materialSelectedItemId,
-        isDeleted: { [Op.ne]: true }
+    // Check if we're updating by materialSelectedItemId or by materialItemId + userId
+    if (materialSelectedItemId) {
+      // Find by materialSelectedItemId (original method)
+      materialItem = await materialSelectedItemModel.findOne({
+        where: {
+          id: materialSelectedItemId,
+          isDeleted: { [Op.ne]: true }
+        }
+      });
+    } else if (materialItemId && userId) {
+      // Find by materialItemId and userId
+      materialItem = await materialSelectedItemModel.findOne({
+        where: {
+          materialItemId: materialItemId,
+          userId: userId,
+          isDeleted: { [Op.ne]: true }
+        }
+      });
+
+      // If no selection record exists and we want to mark as selected, create one
+      if (!materialItem && selected === true) {
+        // Create a new selection record
+        const newMaterialItem = await materialSelectedItemModel.create({
+          materialItemId,
+          userId,
+          selected: true
+        });
+
+        return Object.assign(
+          HELPERS.responseHelper.createSuccessResponse(
+            MESSAGES.MATERIAL_SELECT_ITEM_CREATED_SUCCESSFULLY
+          ),
+          {
+            data: {
+              id: newMaterialItem.id,
+              materialItemId: newMaterialItem.materialItemId,
+              selected: true
+            }
+          }
+        );
       }
-    });
+
+      // If selection record doesn't exist and we're trying to set to false,
+      // there's nothing to do because it's already not selected
+      if (!materialItem && selected === false) {
+        return Object.assign(
+          HELPERS.responseHelper.createSuccessResponse(
+            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
+          ),
+          {
+            data: {
+              materialItemId: materialItemId,
+              selected: false
+            }
+          }
+        );
+      }
+    } else {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Either materialSelectedItemId or both materialItemId and userId are required",
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
 
     if (!materialItem) {
       return HELPERS.responseHelper.createErrorResponse(
@@ -109,16 +167,11 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       );
     }
 
-    // Make sure selected is explicitly set to a boolean value
-    const selectedValue = selected === true || selected === false ? selected : true;
-
     // Update the item
     await materialSelectedItemModel.update(
-      { selected: selectedValue },
-      { where: { id: materialSelectedItemId } }
+      { selected: selected },
+      { where: { id: materialItem.id } }
     );
-
-    console.log(`Updated material selected item ${materialSelectedItemId} with selected = ${selectedValue}`);
 
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
@@ -126,8 +179,9 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       ),
       {
         data: {
-          id: materialSelectedItemId,
-          selected: selectedValue
+          id: materialItem.id,
+          materialItemId: materialItem.materialItemId,
+          selected: selected
         }
       }
     );
@@ -215,7 +269,6 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
 
     // Extract all material item IDs for this category
     const materialItemIds = allMaterialItemList.map(item => item.id);
-
     // Now get only the selected items for this user AND for these material items
     const materialSelectedItems = await materialSelectedItemModel.findAll({
       where: {
@@ -224,20 +277,24 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
         materialItemId: { [Op.in]: materialItemIds },
         selected: true // Only get items that are actually selected
       },
-      attributes: ['materialItemId', 'selected'],
+      attributes: ['id', 'materialItemId', 'selected'],
       raw: true,
     });
 
     // Create a map of selected item IDs for faster lookup
     const selectedItemMap = {};
     materialSelectedItems.forEach(item => {
-      selectedItemMap[item.materialItemId] = true;
+      selectedItemMap[item.materialItemId] = {
+        selected: true,
+        selectionId: item.id  // Store the selection record ID
+      };
     });
 
-    // Map all material items with their selection status
+    // Map all material items with their selection status.
     const response = allMaterialItemList.map((item) => ({
       id: item.id,
-      selected: selectedItemMap[item.id] === true, // Explicitly check for true
+      selected: selectedItemMap[item.id]?.selected === true, // Explicitly check for true
+      selectionId: selectedItemMap[item.id]?.selectionId || null, // Include the selection ID when available
       itemName: item.name,
       itemImage: item.image,
       itemDescription: item.description,

@@ -361,20 +361,20 @@ commonFunctions.generateUniqueId = (prefix = "SSS") => {
  * @returns {string} - Formatted invoice number (e.g., "INV-20230815-00001")
  */
 commonFunctions.generateInvoiceNumber = (id, date = new Date()) => {
-  // Format: INV-YYYYMMDD-XXXXX where XXXXX is a sequential number
+  // Format: INV-XXXXX where XXXXX is a sequential number
 
   // Get date components
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Add 1 because months are 0-indexed
-  const day = String(date.getDate()).padStart(2, '0');
+  // const year = date.getFullYear();
+  // const month = String(date.getMonth() + 1).padStart(2, '0'); // Add 1 because months are 0-indexed
+  // const day = String(date.getDate()).padStart(2, '0');
 
   // Create the date part
-  const datePart = `${year}${month}${day}`;
+  // const datePart = `${year}${month}${day}`;
 
   // Pad the ID to be 5 digits
   const sequentialPart = String(id).padStart(5, '0');
   // Combine all parts
-  return `INV-${datePart}-${sequentialPart}`;
+  return `INV-${sequentialPart}`;
 };
 
 /**

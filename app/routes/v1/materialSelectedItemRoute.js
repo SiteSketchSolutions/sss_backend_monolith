@@ -26,14 +26,17 @@ let routes = [
     joiSchemaForSwagger: {
       body: {
         materialSelectedItemId: Joi.number()
-          .required()
-          .description("Material Selected Item ID"),
+          .description("Material Selected Item ID (use this if selectionId is not null)"),
+        materialItemId: Joi.number()
+          .description("Material Item ID (use this if selectionId is null, must be used with userId)"),
+        userId: Joi.number()
+          .description("User ID (use this if selectionId is null, must be used with materialItemId)"),
         selected: Joi.boolean()
           .required()
           .description("Enter selected true or false"),
       },
       group: "MaterialSelectedItem",
-      description: "Route to update material item as selected or unselect",
+      description: "Route to update material item as selected or unselect. For items where selectionId is null in the list response, use materialItemId and userId instead of materialSelectedItemId.",
       model: "updateMaterialSelectedItem",
     },
     auth: false,
