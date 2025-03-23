@@ -1,540 +1,717 @@
-<!DOCTYPE html>
-<html
-  lang="en"
-  style="
-    background-color: #171717 !important;
-    min-width: 100%;
-    margin: 0;
-    padding: 0;
-  "
->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light only" />
-    <meta name="supported-color-schemes" content="light" />
     <meta name="x-apple-disable-message-reformatting" />
     <meta
       name="format-detection"
       content="telephone=no, address=no, email=no, date=no"
     />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="color-scheme" content="dark only" />
+    <meta name="supported-color-schemes" content="dark" />
     <!--[if !mso]><!-- -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!--<![endif]-->
     <title>
       Payment Receipt - {{projectName}} - {{stageName}} - {{invoiceNo}}
     </title>
-    <style>
+    <style type="text/css">
       /* Base styles */
       body,
-      html {
-        margin: 0 !important;
-        padding: 0 !important;
-        background-color: #171717 !important;
+      table,
+      td,
+      p,
+      a,
+      li,
+      blockquote {
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust: 100%;
       }
 
-      /* iOS Mail specific */
-      div[style*="margin: 16px 0"] {
-        margin: 0 !important;
-      }
-
-      /* Dark background wrapper - specifically for iOS */
-      .body-wrapper {
-        background-color: #171717 !important;
-        width: 100% !important;
-        min-width: 100% !important;
-        height: 100% !important;
+      body {
         margin: 0 !important;
         padding: 0 !important;
+        background-color: #171717;
       }
 
-      /* Fix for iOS dark mode */
-      @media (prefers-color-scheme: dark) {
-        body,
-        html,
-        .body-wrapper,
-        table.body-wrapper,
-        table.main-container,
-        .hero-section,
-        .footer-section,
-        td[bgcolor="#171717"] {
-          background-color: #171717 !important;
-        }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        border-collapse: collapse !important;
       }
 
-      @media only screen and (max-width: 600px) {
-        .payment-summary-table td {
-          display: block;
-          width: 100% !important;
-          margin-bottom: 10px;
+      img {
+        -ms-interpolation-mode: bicubic;
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+        display: block;
+      }
+
+      /* iOS BLUE LINKS */
+      a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      /* Mobile styles */
+      @media screen and (max-width: 480px) {
+        .mobile-hide {
+          display: none !important;
         }
-        .footer-table td {
-          display: block;
-          width: 100% !important;
+
+        .mobile-center {
           text-align: center !important;
         }
-        .footer-table td:last-child {
-          margin-top: 15px;
-        }
-        .main-container {
+
+        .mobile-full-width {
           width: 100% !important;
-          margin: 0 !important;
+          max-width: 100% !important;
         }
-        .hero-title {
-          font-size: 20px !important;
+
+        .mobile-pad {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
         }
+
+        .mobile-stack {
+          display: block !important;
+          width: 100% !important;
+        }
+
+        .logo-wrap {
+          padding: 20px 0 !important;
+        }
+
         .logo img {
-          max-width: 80% !important;
           height: auto !important;
+          width: 180px !important;
+        }
+
+        .transaction-box td {
+          padding: 8px !important;
+          font-size: 12px !important;
+        }
+
+        h1 {
+          font-size: 20px !important;
+          line-height: 25px !important;
+        }
+
+        .summary-card {
+          margin-bottom: 10px !important;
+        }
+
+        .summary-card td {
+          padding: 10px !important;
+        }
+
+        .detail-table td {
+          padding: 5px 8px !important;
         }
       }
     </style>
   </head>
   <body
-    style="
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #171717 !important;
-      width: 100% !important;
-      min-width: 100% !important;
-      -webkit-text-size-adjust: none;
-    "
     bgcolor="#171717"
+    style="margin: 0; padding: 0; background-color: #171717"
   >
-    <!-- Background Wrapper for iOS -->
+    <!-- Preheader text -->
+    <div style="display: none; max-height: 0px; overflow: hidden">
+      Payment Receipt: {{invoiceNo}} for {{stageName}} - SSS Construction
+      Company
+    </div>
+
+    <!-- Email Container -->
     <table
-      class="body-wrapper"
+      border="0"
       cellpadding="0"
       cellspacing="0"
-      border="0"
       width="100%"
-      style="background-color: #171717 !important; width: 100%; min-width: 100%"
       bgcolor="#171717"
     >
       <tr>
         <td
           align="center"
           valign="top"
-          style="background-color: #171717 !important"
           bgcolor="#171717"
+          style="padding: 10px 0"
         >
-          <!-- Main Container -->
+          <!-- Main Content Width Limiter -->
           <table
-            class="main-container"
-            width="100%"
             border="0"
-            cellspacing="0"
             cellpadding="0"
-            style="
-              max-width: 800px;
-              margin: 40px auto;
-              background-color: #ffffff;
-              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            "
-            bgcolor="#ffffff"
+            cellspacing="0"
+            width="100%"
+            class="mobile-full-width"
+            style="max-width: 600px"
           >
-            <!-- Header -->
+            <!-- Logo Header -->
             <tr>
               <td
-                style="
-                  padding: 30px;
-                  background-color: #171717 !important;
-                  border-bottom: 4px solid #d4af37;
-                  text-align: center;
-                "
-                bgcolor="#171717"
-                class="logo"
+                align="center"
+                class="logo-wrap"
+                style="padding: 25px 0 20px 0"
               >
-                <!-- Replace text with logo image -->
-                <img
-                  src="https://d1b6pcs0bxf31v.cloudfront.net/logo-white.png"
-                  alt="SSS Construction Company Logo"
-                  width="280"
-                  style="max-width: 280px; height: auto"
-                />
+                <div class="logo">
+                  <img
+                    src="https://d1b6pcs0bxf31v.cloudfront.net/sss-logo.png"
+                    width="200"
+                    alt="SSS Construction Company"
+                    style="display: block; width: 200px; max-width: 100%"
+                  />
+                </div>
               </td>
             </tr>
 
-            <!-- Hero Section -->
-            <tr class="hero-section">
-              <td
-                style="
-                  padding: 40px 30px 30px;
-                  background-color: #171717 !important;
-                  color: #ffffff;
-                "
-                bgcolor="#171717"
-              >
-                <h2
-                  class="hero-title"
-                  style="
-                    color: #d4af37;
-                    margin: 0 0 25px 0;
-                    font-size: 24px;
-                    position: relative;
-                    padding-left: 30px;
-                  "
-                >
-                  <div
-                    style="
-                      position: absolute;
-                      left: 0;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      width: 20px;
-                      height: 4px;
-                      background: #d4af37;
-                    "
-                  ></div>
-                  PAYMENT RECEIPT - {{projectName}} - {{stageName}} -
-                  {{invoiceNo}}
-                </h2>
-
-                <div style="margin-bottom: 30px">
-                  <p
-                    style="color: #ffffff; margin: 0 0 10px 0; font-size: 18px"
-                  >
-                    Dear {{userName}},
-                  </p>
-                  <p style="color: #ffffff; margin: 0; line-height: 1.6">
-                    Thank you for your continued partnership. We've successfully
-                    processed your payment for the current project phase.
-                  </p>
-                </div>
-
-                <!-- Payment Summary Cards -->
-                <table
-                  class="payment-summary-table"
-                  width="100%"
-                  border="0"
-                  cellspacing="0"
-                  cellpadding="0"
-                  style="
-                    margin-bottom: 30px;
-                    border-collapse: separate;
-                    border-spacing: 15px;
-                  "
-                >
+            <!-- Title & Intro -->
+            <tr>
+              <td class="mobile-pad" style="padding: 10px 20px 20px 20px">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
                   <tr>
-                    <td
-                      style="
-                        background: #ffffff;
-                        padding: 20px;
-                        border-radius: 8px;
-                        text-align: center;
-                        width: 33%;
-                      "
-                      bgcolor="#ffffff"
-                    >
-                      <p
+                    <td>
+                      <h1
                         style="
-                          margin: 0 0 8px 0;
+                          margin: 0 0 15px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 22px;
+                          line-height: 28px;
                           color: #d4af37;
                           font-weight: bold;
-                          font-size: 12px;
                         "
                       >
-                        STAGE
-                      </p>
-                      <p style="margin: 0; color: #171717; font-size: 16px">
-                        {{stageName}}
-                      </p>
+                        PAYMENT RECEIPT - {{projectName}} - {{stageName}} -
+                        {{invoiceNo}}
+                      </h1>
                     </td>
-                    <td
-                      style="
-                        background: #ffffff;
-                        padding: 20px;
-                        border-radius: 8px;
-                        text-align: center;
-                        width: 33%;
-                      "
-                      bgcolor="#ffffff"
-                    >
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom: 20px">
                       <p
                         style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-weight: bold;
-                          font-size: 12px;
+                          margin: 0 0 15px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 16px;
+                          line-height: 22px;
+                          color: #ffffff;
                         "
                       >
-                        PAID AMOUNT
+                        Dear {{userName}},
                       </p>
-                      <p style="margin: 0; color: #171717; font-size: 16px">
-                        ₹{{paidAmount}}/-
-                      </p>
-                    </td>
-                    <td
-                      style="
-                        background: #ffffff;
-                        padding: 20px;
-                        border-radius: 8px;
-                        text-align: center;
-                        width: 33%;
-                      "
-                      bgcolor="#ffffff"
-                    >
                       <p
                         style="
-                          margin: 0 0 8px 0;
-                          color: #d4af37;
-                          font-weight: bold;
-                          font-size: 12px;
+                          margin: 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 15px;
+                          line-height: 20px;
+                          color: #ffffff;
                         "
                       >
-                        TOTAL AMOUNT RECEIVED
-                      </p>
-                      <p style="margin: 0; color: #171717; font-size: 16px">
-                        ₹{{totalAmountReceived}}/-
+                        Thank you for your continued partnership. We've
+                        successfully processed your payment for the current
+                        project phase.
                       </p>
                     </td>
                   </tr>
                 </table>
+              </td>
+            </tr>
 
-                <!-- Detailed Breakdown -->
-                <div
-                  style="
-                    border: 1px solid #ffffff;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    background-color: #ffffff;
-                  "
+            <!-- Payment Summary Cards - 2x2 Grid for Better Mobile Display -->
+            <tr>
+              <td class="mobile-pad" style="padding: 0 20px 20px 20px">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <!-- Card 1: Stage -->
+                    <td
+                      width="50%"
+                      class="mobile-stack"
+                      style="padding-right: 5px; padding-bottom: 10px"
+                    >
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
+                        class="summary-card"
+                        bgcolor="#242424"
+                        style="border-radius: 6px"
+                      >
+                        <tr>
+                          <td align="center" style="padding: 15px 10px">
+                            <p
+                              style="
+                                margin: 0 0 5px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              STAGE
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 14px;
+                                color: #ffffff;
+                              "
+                            >
+                              {{stageName}}
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+
+                    <!-- Card 2: Paid Amount -->
+                    <td
+                      width="50%"
+                      class="mobile-stack"
+                      style="padding-left: 5px; padding-bottom: 10px"
+                    >
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
+                        class="summary-card"
+                        bgcolor="#242424"
+                        style="border-radius: 6px"
+                      >
+                        <tr>
+                          <td align="center" style="padding: 15px 10px">
+                            <p
+                              style="
+                                margin: 0 0 5px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              PAID AMOUNT
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 14px;
+                                color: #ffffff;
+                              "
+                            >
+                              ₹{{paidAmount}}/-
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <!-- Card 3 (Full width): Total Amount -->
+                    <td colspan="2" style="padding-bottom: 10px">
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
+                        class="summary-card"
+                        bgcolor="#242424"
+                        style="border-radius: 6px"
+                      >
+                        <tr>
+                          <td align="center" style="padding: 15px 10px">
+                            <p
+                              style="
+                                margin: 0 0 5px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              TOTAL AMOUNT RECEIVED
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 14px;
+                                color: #ffffff;
+                              "
+                            >
+                              ₹{{totalAmountReceived}}/-
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Transaction Details Box -->
+            <tr>
+              <td class="mobile-pad" style="padding: 0 20px 25px 20px">
+                <table
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                  style="border-radius: 6px; overflow: hidden"
                 >
-                  <table width="100%" style="border-collapse: collapse">
-                    <tr
+                  <!-- Header Row -->
+                  <tr>
+                    <td
+                      bgcolor="#333333"
                       style="
-                        background-color: #171717 !important;
+                        background-color: #333333;
+                        padding: 12px 15px;
                         color: #ffffff;
                       "
-                      bgcolor="#171717"
                     >
-                      <td
-                        style="padding: 15px 20px; font-weight: bold"
-                        width="50%"
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
                       >
-                        Transaction Details
-                      </td>
-                      <td
-                        style="
-                          padding: 15px 20px;
-                          text-align: right;
-                          font-weight: bold;
-                        "
-                        width="50%"
-                        align="right"
-                      >
-                        Status: {{paymentStatus}}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" style="padding: 20px">
-                        <!-- Replace flexbox with table for transaction details -->
-                        <table
-                          width="100%"
-                          cellspacing="0"
-                          cellpadding="0"
-                          border="0"
-                          class="transaction-info"
-                        >
-                          <tr>
-                            <td
-                              width="50%"
-                              style="
-                                padding-right: 10px;
-                                padding-bottom: 15px;
-                                vertical-align: top;
-                              "
-                            >
-                              <p
-                                style="
-                                  margin: 0 0 8px 0;
-                                  color: #d4af37;
-                                  font-size: 13px;
-                                  font-weight: bold;
-                                "
-                              >
-                                PAYMENT MODE
-                              </p>
-                              <p
-                                style="
-                                  margin: 0;
-                                  color: #171717;
-                                  font-size: 13px;
-                                "
-                              >
-                                {{paymentMethod}}
-                              </p>
-                            </td>
-                            <td
-                              width="50%"
-                              style="
-                                padding-left: 10px;
-                                padding-bottom: 15px;
-                                vertical-align: top;
-                              "
-                            >
-                              <p
-                                style="
-                                  margin: 0 0 8px 0;
-                                  color: #d4af37;
-                                  font-size: 13px;
-                                  font-weight: bold;
-                                "
-                              >
-                                TRANSACTION DATE
-                              </p>
-                              <p
-                                style="
-                                  margin: 0;
-                                  color: #171717;
-                                  font-size: 13px;
-                                "
-                              >
-                                {{transactionDate}}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              width="50%"
-                              style="padding-right: 10px; vertical-align: top"
-                            >
-                              <p
-                                style="
-                                  margin: 0 0 8px 0;
-                                  color: #d4af37;
-                                  font-size: 13px;
-                                  font-weight: bold;
-                                "
-                              >
-                                BALANCE AMOUNT
-                              </p>
-                              <p
-                                style="
-                                  margin: 0;
-                                  color: #171717;
-                                  font-size: 13px;
-                                "
-                              >
-                                ₹{{balanceAmount}}/-
-                              </p>
-                            </td>
-                            <td
-                              width="50%"
-                              style="padding-left: 10px; vertical-align: top"
-                            >
-                              <p
-                                style="
-                                  margin: 0 0 8px 0;
-                                  color: #d4af37;
-                                  font-size: 13px;
-                                  font-weight: bold;
-                                "
-                              >
-                                PROJECT CODE
-                              </p>
-                              <p
-                                style="
-                                  margin: 0;
-                                  color: #171717;
-                                  font-size: 13px;
-                                "
-                              >
-                                {{projectCode}}
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
+                        <tr>
+                          <td
+                            style="
+                              font-family: Arial, sans-serif;
+                              font-size: 15px;
+                              font-weight: bold;
+                              color: #ffffff;
+                            "
+                          >
+                            Transaction Details
+                          </td>
+                          <td
+                            align="right"
+                            style="
+                              font-family: Arial, sans-serif;
+                              font-size: 15px;
+                              font-weight: bold;
+                              color: #ffffff;
+                            "
+                          >
+                            Status: {{paymentStatus}}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
 
-                <!-- Additional Information -->
-                <div style="margin-top: 30px; color: #ffffff; line-height: 1.6">
-                  <p>
-                    If you have any questions or require additional information,
-                    please do not hesitate to contact us.
-                  </p>
-                </div>
+                  <!-- Details Section -->
+                  <tr>
+                    <td
+                      bgcolor="#242424"
+                      style="background-color: #242424; padding: 15px"
+                      class="transaction-box"
+                    >
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
+                        class="detail-table"
+                      >
+                        <tr>
+                          <!-- Payment Mode -->
+                          <td
+                            width="50%"
+                            class="mobile-stack"
+                            style="padding-bottom: 12px; vertical-align: top"
+                          >
+                            <p
+                              style="
+                                margin: 0 0 4px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              PAYMENT MODE
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                color: #ffffff;
+                              "
+                            >
+                              {{paymentMethod}}
+                            </p>
+                          </td>
+
+                          <!-- Transaction Date -->
+                          <td
+                            width="50%"
+                            class="mobile-stack"
+                            style="padding-bottom: 12px; vertical-align: top"
+                          >
+                            <p
+                              style="
+                                margin: 0 0 4px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              TRANSACTION DATE
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                color: #ffffff;
+                              "
+                            >
+                              {{transactionDate}}
+                            </p>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <!-- Balance Amount -->
+                          <td
+                            width="50%"
+                            class="mobile-stack"
+                            style="vertical-align: top"
+                          >
+                            <p
+                              style="
+                                margin: 0 0 4px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              BALANCE AMOUNT
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                color: #ffffff;
+                              "
+                            >
+                              ₹{{balanceAmount}}/-
+                            </p>
+                          </td>
+
+                          <!-- Project Code -->
+                          <td
+                            width="50%"
+                            class="mobile-stack"
+                            style="vertical-align: top"
+                          >
+                            <p
+                              style="
+                                margin: 0 0 4px 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: #d4af37;
+                              "
+                            >
+                              PROJECT CODE
+                            </p>
+                            <p
+                              style="
+                                margin: 0;
+                                font-family: Arial, sans-serif;
+                                font-size: 13px;
+                                color: #ffffff;
+                              "
+                            >
+                              {{projectCode}}
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Note -->
+            <tr>
+              <td class="mobile-pad" style="padding: 0 20px 25px 20px">
+                <p
+                  style="
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    line-height: 20px;
+                    color: #ffffff;
+                  "
+                >
+                  If you have any questions or require additional information,
+                  please do not hesitate to contact us.
+                </p>
               </td>
             </tr>
 
             <!-- Footer -->
-            <tr class="footer-section">
+            <tr>
               <td
-                style="
-                  padding: 40px 30px;
-                  background-color: #171717 !important;
-                  color: #ffffff;
-                "
-                bgcolor="#171717"
+                bgcolor="#333333"
+                style="background-color: #333333; padding: 20px"
+                class="mobile-pad"
               >
-                <!-- Footer Content - Using table for email compatibility instead of flexbox -->
+                <!-- Contact Info -->
                 <table
-                  class="footer-table"
-                  width="100%"
                   border="0"
-                  cellspacing="0"
                   cellpadding="0"
-                  style="
-                    margin-bottom: 20px;
-                    border-bottom: 1px solid #333333;
-                    padding-bottom: 20px;
-                  "
+                  cellspacing="0"
+                  width="100%"
+                  style="margin-bottom: 15px"
                 >
                   <tr>
-                    <td style="width: 50%; vertical-align: top">
+                    <!-- Coordinator -->
+                    <td
+                      width="50%"
+                      class="mobile-stack mobile-center"
+                      style="padding-bottom: 15px; vertical-align: top"
+                    >
                       <p
                         style="
-                          margin: 0 0 5px 0;
-                          color: #d4af37;
+                          margin: 0 0 3px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 15px;
                           font-weight: bold;
+                          color: #d4af37;
                         "
                       >
                         {{contactName}}
                       </p>
-                      <p style="margin: 0; font-size: 14px">{{contactRole}}</p>
+                      <p
+                        style="
+                          margin: 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 13px;
+                          color: #ffffff;
+                        "
+                      >
+                        {{contactRole}}
+                      </p>
                     </td>
-                    <td style="width: 50%; vertical-align: top" align="right">
-                      <p style="margin: 0 0 5px 0">
+
+                    <!-- Contact -->
+                    <td
+                      width="50%"
+                      class="mobile-stack mobile-center"
+                      style="padding-bottom: 15px; vertical-align: top"
+                      align="right"
+                    >
+                      <p
+                        style="
+                          margin: 0 0 8px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 13px;
+                          color: #ffffff;
+                        "
+                      >
                         <a
                           href="tel:+919482150598"
                           style="color: #ffffff; text-decoration: none"
-                          >📞 (+91) 9482150598</a
                         >
+                          📞 (+91) 9482150598
+                        </a>
                       </p>
-                      <p style="margin: 0">
+                      <p
+                        style="
+                          margin: 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 13px;
+                          color: #ffffff;
+                        "
+                      >
                         <a
                           href="mailto:contact@sssconstructioncompany.com"
                           style="color: #ffffff; text-decoration: none"
-                          >📧 contact@sssconstructioncompany.com</a
                         >
+                          📧 contact@sssconstructioncompany.com
+                        </a>
                       </p>
                     </td>
                   </tr>
                 </table>
 
-                <!-- Company Info -->
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <!-- Divider -->
+                <table
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                  style="
+                    border-top: 1px solid #555555;
+                    margin-top: 5px;
+                    margin-bottom: 15px;
+                  "
+                >
                   <tr>
-                    <td align="center" style="font-size: 12px; color: #999999">
-                      <p style="margin: 0">
+                    <td height="1"></td>
+                  </tr>
+                </table>
+
+                <!-- Company Info -->
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="center">
+                      <p
+                        style="
+                          margin: 0 0 8px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 12px;
+                          color: #aaaaaa;
+                        "
+                      >
                         SSS Construction Company | H S Garden, Chikkaballapur,
                         Karnataka 562101
                       </p>
-                      <p style="margin: 10px 0 0 0">
+                      <p
+                        style="
+                          margin: 0 0 8px 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 12px;
+                        "
+                      >
                         <a
                           href="https://www.sssconstructioncompany.com/"
                           style="color: #d4af37; text-decoration: none"
-                          >www.sssconstructioncompany.com</a
                         >
+                          www.sssconstructioncompany.com
+                        </a>
                       </p>
-                      <p style="margin: 10px 0 0 0; color: #777777">
+                      <p
+                        style="
+                          margin: 0;
+                          font-family: Arial, sans-serif;
+                          font-size: 11px;
+                          color: #777777;
+                        "
+                      >
                         © 2025 SSS Construction Company. All rights reserved.
                       </p>
                     </td>
@@ -546,14 +723,5 @@
         </td>
       </tr>
     </table>
-    <!--[if mso]>
-      <style type="text/css">
-        body,
-        table,
-        td {
-          font-family: Arial, Helvetica, sans-serif !important;
-        }
-      </style>
-    <![endif]-->
   </body>
 </html>

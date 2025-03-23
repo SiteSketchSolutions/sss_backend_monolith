@@ -23,7 +23,10 @@ let v1Routes = [
   ...require("./bankAccountRoutes"),
   ...require("./paymentAcknowledgementRoutes"),
   ...require("./brandingFormRoutes"),
-  ...require("./userSessionRoutes")
+  ...require("./userSessionRoutes"),
+  // ...require("./analyticsRoutes"),
+  ...require("./vendorRoutes"),
+  ...require("./vendorExpenseTrackerRoutes")
 ];
 
 module.exports = v1Routes;

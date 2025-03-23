@@ -143,4 +143,8 @@ CONSTANTS.BANK_ACCOUNT_TYPE = {
   OTHER: "Other"
 }
 
+CONSTANTS.VENDOR_STATUS = {
+  ACTIVE: "active",
+  INACTIVE: "inactive"
+}
 module.exports = CONSTANTS;

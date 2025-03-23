@@ -169,4 +169,28 @@ module.exports = {
   SESSION_TRACKED_SUCCESSFULLY: "User session tracked successfully",
   SESSION_ANALYTICS_FETCHED_SUCCESSFULLY: "User session analytics fetched successfully",
   SESSION_LIST_FETCHED_SUCCESSFULLY: "User sessions fetched successfully",
-};
+
+  // Analytics
+  ANALYTICS_FETCHED_SUCCESSFULLY: "Analytics data fetched successfully",
+  PROJECT_ANALYTICS_FETCHED_SUCCESSFULLY: "Project analytics data fetched successfully",
+  CLIENT_ANALYTICS_FETCHED_SUCCESSFULLY: "Client analytics data fetched successfully",
+
+  // Vendor
+  VENDOR_CREATED_SUCCESSFULLY: "Vendor created successfully",
+  VENDOR_UPDATED_SUCCESSFULLY: "Vendor updated successfully",
+  VENDOR_DELETED_SUCCESSFULLY: "Vendor deleted successfully",
+  VENDOR_LIST_SUCCESSFULLY: "Vendor list fetched successfully",
+  VENDOR_DETAILS_FETCHED_SUCCESSFULLY: "Vendor details fetched successfully",
+  VENDOR_NOT_FOUND: "Vendor not found",
+  VENDOR_ALREADY_EXISTS: "Vendor with this name already exists",
+  VENDOR_STATUS_UPDATED_SUCCESSFULLY: "Vendor status updated successfully",
+  VENDOR_EXPENSE_TRACKER_CREATED_SUCCESSFULLY: "Vendor expense tracker created successfully",
+  VENDOR_EXPENSE_TRACKER_UPDATED_SUCCESSFULLY: "Vendor expense tracker updated successfully",
+  VENDOR_EXPENSE_TRACKER_DELETED_SUCCESSFULLY: "Vendor expense tracker deleted successfully",
+  VENDOR_EXPENSE_TRACKER_LIST_SUCCESSFULLY: "Vendor expense tracker list fetched successfully",
+  VENDOR_EXPENSE_TRACKER_DETAILS_FETCHED_SUCCESSFULLY: "Vendor expense tracker details fetched successfully",
+  VENDOR_EXPENSE_TRACKER_NOT_FOUND: "Vendor expense tracker not found",
+  VENDOR_EXPENSE_TRACKER_ALREADY_EXISTS: "Vendor expense tracker with this vendor already exists",
+  VENDOR_EXPENSE_TRACKER_STATUS_UPDATED_SUCCESSFULLY: "Vendor expense tracker status updated successfully",
+  
+};    

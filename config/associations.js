@@ -7,6 +7,10 @@ const associations = (db) => {
   db.folderDocument.belongsTo(db.folder, { foreignKey: 'folderId' })
   db.paymentStage.hasMany(db.partPaymentStage, { foreignKey: 'stageId' })
   db.partPaymentStage.belongsTo(db.paymentStage, { foreignKey: 'stageId' })
+
+  // Vendor Expense Tracker
+  db.vendor.hasMany(db.vendorExpenseTracker, { foreignKey: 'vendorId' })
+  db.vendorExpenseTracker.belongsTo(db.vendor, { foreignKey: 'vendorId' })
   db.sequelize.sync({ alter: true });
 }
 
