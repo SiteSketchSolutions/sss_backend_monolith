@@ -24,9 +24,9 @@ let v1Routes = [
   ...require("./paymentAcknowledgementRoutes"),
   ...require("./brandingFormRoutes"),
   ...require("./userSessionRoutes"),
-  // ...require("./analyticsRoutes"),
   ...require("./vendorRoutes"),
-  ...require("./vendorExpenseTrackerRoutes")
+  ...require("./vendorExpenseTrackerRoutes"),
+  ...require("./projectAnalyticsRoutes")
 ];
 
 module.exports = v1Routes;
