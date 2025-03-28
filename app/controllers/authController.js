@@ -128,7 +128,7 @@ authController.adminLogin = async (payload) => {
   try {
     let userInfo = await adminModel.findOne({
       where: { email: payload.email, isDeleted: { [Op.ne]: true } },
-      attributes: ["id"],
+      attributes: ["id", "firstName", "lastName", "email", "role", "status"],
     });
     if (!userInfo) {
       throw HELPERS.responseHelper.createErrorResponse(
@@ -146,24 +146,19 @@ authController.adminLogin = async (payload) => {
         ERROR_TYPES.BAD_REQUEST
       );
     }
-    const adminPayload = {
-      // firstName: payload.firstName,
-      // lastName: payload.lastName,
-      email: payload.email,
-      password: payload.password,
-      // mobileNumber: payload.mobileNumber,
-      status: "pending",
-    };
-    userInfo = await adminModel.create(adminPayload);
+
+    // No need to create a new admin record here, just use the existing one
     const response = {
       id: userInfo?.id,
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
       email: userInfo?.email,
+      role: userInfo?.role, // Include the role in the response
       token: encryptJwt({
         userId: userInfo.id,
         userType: USER_TYPES.ADMIN,
         email: userInfo.email,
+        role: userInfo.role, // Include role in the JWT token
       }),
     };
     return Object.assign(

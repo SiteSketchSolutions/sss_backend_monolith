@@ -7,7 +7,7 @@ module.exports = {
   UNAUTHORIZED_USER: "Unauthorized user access!",
   LOGGED_IN_SUCCESSFULLY: "Logged in successfully.",
 
-  EMAIL_ALREADY_EXISTS: "Email already exists.",
+  EMAIL_ALREADY_EXISTS: "An admin with this email already exists",
   MOBILE_NUMBER_ALREADY_EXISTS: "Mobile number already exists",
   INVALID_EMAIL: "Invalid email address.",
   INVALID_PASSWORD: "Invalid password.",
@@ -192,5 +192,5 @@ module.exports = {
   VENDOR_EXPENSE_TRACKER_NOT_FOUND: "Vendor expense tracker not found",
   VENDOR_EXPENSE_TRACKER_ALREADY_EXISTS: "Vendor expense tracker with this vendor already exists",
   VENDOR_EXPENSE_TRACKER_STATUS_UPDATED_SUCCESSFULLY: "Vendor expense tracker status updated successfully",
-  
+
 };    

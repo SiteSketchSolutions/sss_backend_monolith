@@ -194,59 +194,108 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
   }
 };
 
-// /**
-//  * Function to list material item
-//  * @param {*} payload
-//  * @returns
-//  */
-// materialSelectedItemController.materialSelectedItemList = async (payload) => {
-//   try {
-//     const { materialCategoryId, userId } = payload;
-//     const materialItemList = await materialItemModel.findAll({
-//       where: { materialCategoryId: materialCategoryId },
-//     });
-//     const materialItemIds = [];
-//     materialItemList.forEach((_item) => {
-//       materialItemIds.push(_item?.id);
-//     });
-//     const [materialSelectedItems, allMaterialItemList] = await Promise.all([
-//       materialSelectedItemModel.findAll({
-//         where: {
-//           isDeleted: { [Op.ne]: true },
-//           userId: userId,
-//           materialItemId: materialItemIds,
-//         },
-//         order: [["id", "ASC"]],
-//         include: [{
-//           model: materialItemModel,
-//           attributes: ['id', 'name', 'image', 'description'],
-//           required: true
-//         }],
-//         raw: true
-//       }),
-//       materialItemModel.findAll({
-//         where: {
-//           isDeleted: { [Op.ne]: true },
-//           materialCategoryId: materialCategoryId,
-//         },
-//         attributes: ['id', 'name', 'image', 'description'],
-//         raq: true
-//       })
-//     ])
-//     console.log(JSON.stringify(allMaterialItemList, null, 2), "allMaterialItemList====>", JSON.stringify(materialSelectedItems, null, 2), "materialSelectedItems===>")
-//     return Object.assign(
-//       HELPERS.responseHelper.createSuccessResponse(
-//         MESSAGES.MATERIAL_SELECT_ITEM_LIST_SUCCESSFULLY
-//       ),
-//       { data: materialSelectedItems }
-//     );
-//   } catch (error) {
-//     throw HELPERS.responseHelper.createErrorResponse(
-//       error.msg,
-//       ERROR_TYPES.SOMETHING_WENT_WRONG
-//     );
-//   }
-// };
+/**
+ * Function to update material item approval
+ * @param {*} payload
+ * @returns
+ */
+materialSelectedItemController.updateMaterialItemApproval = async (payload) => {
+  try {
+    const { materialSelectedItemId, approvalStatus, approvalNote } = payload;
+
+    // Validate approvalStatus is one of the allowed values
+    const allowedStatuses = ['approved', 'rejected'];
+    if (!allowedStatuses.includes(approvalStatus)) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Invalid approval status. Must be 'approved' or 'rejected'",
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
+    // Find the material selected item
+    const materialItem = await materialSelectedItemModel.findOne({
+      where: {
+        id: materialSelectedItemId,
+        isDeleted: { [Op.ne]: true }
+      },
+      include: [
+        {
+          model: materialItemModel,
+          attributes: ['id', 'name'],
+          required: false
+        }
+      ]
+    });
+
+    if (!materialItem) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Material selected item not found",
+        ERROR_TYPES.DATA_NOT_FOUND
+      );
+    }
+
+    // Check if the item is selected
+    if (!materialItem.selected) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Cannot approve/reject an unselected material item",
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
+    // Check if the item has already been approved or rejected
+    if (materialItem.approvalStatus && materialItem.approvalStatus !== 'pending') {
+      return HELPERS.responseHelper.createErrorResponse(
+        `This material item has already been ${materialItem.approvalStatus}. Cannot change approval status.`,
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
+    // Update the item's approval status
+    await materialSelectedItemModel.update(
+      {
+        approvalStatus: approvalStatus,
+        approvalNote: approvalNote,
+        approvedAt: new Date()
+      },
+      { where: { id: materialSelectedItemId } }
+    );
+
+    // Get item details after update for the response
+    const updatedItem = await materialSelectedItemModel.findOne({
+      where: { id: materialSelectedItemId },
+      include: [
+        {
+          model: materialItemModel,
+          attributes: ['id', 'name'],
+          required: false
+        }
+      ]
+    });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        `Material item has been ${approvalStatus} successfully`
+      ),
+      {
+        data: {
+          id: updatedItem.id,
+          materialItemId: updatedItem.materialItemId,
+          materialItemName: updatedItem.materialItem?.name,
+          selected: updatedItem.selected,
+          approvalStatus: updatedItem.approvalStatus,
+          approvalNote: updatedItem.approvalNote,
+          approvedAt: updatedItem.approvedAt
+        }
+      }
+    );
+  } catch (error) {
+    console.error("Error in updateMaterialItemApproval:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.message || error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
 
 /**
  * Function to list material items with user selection status
@@ -277,7 +326,7 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
         materialItemId: { [Op.in]: materialItemIds },
         selected: true // Only get items that are actually selected
       },
-      attributes: ['id', 'materialItemId', 'selected'],
+      attributes: ['id', 'materialItemId', 'selected', 'approvalStatus', 'approvalNote', 'approvedAt'],
       raw: true,
     });
 
@@ -286,7 +335,10 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
     materialSelectedItems.forEach(item => {
       selectedItemMap[item.materialItemId] = {
         selected: true,
-        selectionId: item.id  // Store the selection record ID
+        selectionId: item.id,
+        approvalStatus: item.approvalStatus,
+        approvalNote: item.approvalNote,
+        approvedAt: item.approvedAt
       };
     });
 
@@ -295,6 +347,9 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
       id: item.id,
       selected: selectedItemMap[item.id]?.selected === true, // Explicitly check for true
       selectionId: selectedItemMap[item.id]?.selectionId || null, // Include the selection ID when available
+      approvalStatus: selectedItemMap[item.id]?.approvalStatus || null,
+      approvalNote: selectedItemMap[item.id]?.approvalNote || null,
+      approvedAt: selectedItemMap[item.id]?.approvedAt || null,
       itemName: item.name,
       itemImage: item.image,
       itemDescription: item.description,

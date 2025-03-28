@@ -43,9 +43,7 @@ let routes = [
                 amount: Joi.number()
                     .description("Enter expense amount"),
                 note: Joi.string()
-                    .description("Enter additional notes for expense"),
-                status: Joi.string()
-                    .description("Enter status")
+                    .description("Enter additional notes for expense")
             },
             group: "Vendor Expense Tracker",
             description: "Route to update vendor expense",

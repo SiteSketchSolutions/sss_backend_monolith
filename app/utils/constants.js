@@ -147,4 +147,9 @@ CONSTANTS.VENDOR_STATUS = {
   ACTIVE: "active",
   INACTIVE: "inactive"
 }
+CONSTANTS.ADMIN_ROLES = {
+  SUPER_ADMIN: "super_admin",
+  SITE_ENGINEER: "site_engineer"
+}
+
 module.exports = CONSTANTS;

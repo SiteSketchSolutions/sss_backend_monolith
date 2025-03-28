@@ -35,8 +35,7 @@ vendorExpenseTrackerController.createVendorExpense = async (payload) => {
             projectId,
             stageId,
             amount,
-            note,
-            status: "active"
+            note
         }
 
         const expenseResponse = await vendorExpenseTrackerModel.create(expensePayload);
@@ -58,7 +57,7 @@ vendorExpenseTrackerController.createVendorExpense = async (payload) => {
  */
 vendorExpenseTrackerController.updateVendorExpense = async (payload) => {
     try {
-        const { expenseId, vendorId, projectId, stageId, amount, note, status } = payload;
+        const { expenseId, vendorId, projectId, stageId, amount, note } = payload;
 
         let expenseDetails = await vendorExpenseTrackerModel.findOne({
             where: { id: expenseId, isDeleted: { [Op.ne]: true } },
@@ -86,8 +85,7 @@ vendorExpenseTrackerController.updateVendorExpense = async (payload) => {
             projectId,
             stageId,
             amount,
-            note,
-            status
+            note
         }
 
         // Remove undefined fields
@@ -126,7 +124,7 @@ vendorExpenseTrackerController.vendorExpenseList = async (payload) => {
 
         const expenseList = await vendorExpenseTrackerModel.findAll({
             where: criteria,
-            attributes: ['id', 'vendorId', 'projectId', 'stageId', 'amount', 'note', 'status', 'createdAt'],
+            attributes: ['id', 'vendorId', 'projectId', 'stageId', 'amount', 'note', 'createdAt'],
             include: [
                 {
                     model: vendorModel,

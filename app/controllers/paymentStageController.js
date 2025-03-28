@@ -4,6 +4,7 @@ const { MESSAGES, ERROR_TYPES, PAYMENT_STAGE_STATUS, PAYMENT_STATUS, TRANSACTION
 const paymentStageModel = require("../models/paymentStageModel");
 const walletService = require("../services/walletService");
 const partPaymentStage = require("../models/partPaymentStageModel");
+const walletModel = require("../models/walletModel");
 
 /**************************************************
  ***************** Payment Stage controller ***************
@@ -224,16 +225,47 @@ paymentStageController.updatePaymentStage = async (payload) => {
  */
 paymentStageController.paymentStageList = async (payload) => {
     try {
-        const { walletId } = payload;
+        const { walletId, projectId } = payload;
 
         // First, check and update any overdue stages
         await paymentStageController.updateOverduePaymentStages();
 
+        let whereClause = {
+            isDeleted: { [Op.ne]: true }
+        };
+
+        // If walletId is provided, filter by it
+        if (walletId) {
+            whereClause.walletId = walletId;
+        }
+
+        // If projectId is provided, we need to find the wallet for this project
+        // and filter payment stages by that wallet
+        if (projectId && !walletId) {
+            // Get wallet for this project
+            const wallet = await walletModel.findOne({
+                where: {
+                    projectId: projectId,
+                    isDeleted: { [Op.ne]: true }
+                },
+                attributes: ['id']
+            });
+
+            if (wallet) {
+                whereClause.walletId = wallet.id;
+            } else {
+                // If no wallet found for this project, return empty array
+                return Object.assign(
+                    HELPERS.responseHelper.createSuccessResponse(
+                        MESSAGES.STAGE_LIST_SUCCESSFULLY
+                    ),
+                    { data: [] }
+                );
+            }
+        }
+
         const stages = await paymentStageModel.findAll({
-            where: {
-                walletId: walletId,
-                isDeleted: { [Op.ne]: true },
-            },
+            where: whereClause,
             attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
             order: [["order", "ASC"]],
             include: [

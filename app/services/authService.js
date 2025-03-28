@@ -53,6 +53,12 @@ let validateUser = async (request, auth) => {
             request.user = authenticatedUser;
             request.user.userType = decodedToken.userType
             request.user.token = request.headers.authorization;
+
+            // Add role from token if it exists
+            if (decodedToken.role) {
+                request.user.role = decodedToken.role;
+            }
+
             return true
         }
         return false;

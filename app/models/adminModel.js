@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../startup/dbConfig");
+const { ADMIN_ROLES } = require("../utils/constants");
 
 /**************************************************
  ***************** ADMIN MODEL ***************
@@ -33,6 +34,11 @@ const Admin = sequelize.define("admin", {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: ADMIN_ROLES.SITE_ENGINEER,
   },
   status: {
     type: DataTypes.STRING,

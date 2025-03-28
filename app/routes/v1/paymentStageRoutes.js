@@ -74,10 +74,11 @@ let routes = [
         path: "/v1/paymentStage/list",
         joiSchemaForSwagger: {
             query: {
-                walletId: Joi.number().required().description("Enter wallet id"),
+                walletId: Joi.number().description("Enter wallet id"),
+                projectId: Joi.number().description("Enter project id"),
             },
             group: "PaymentStage",
-            description: "Route to list payment stages",
+            description: "Route to list payment stages by wallet ID or project ID",
             model: "paymentStageList",
         },
         auth: false,

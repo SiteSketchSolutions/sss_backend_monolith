@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../startup/dbConfig");
+const materialItemModel = require("./materialItemModel");
 
 /**************************************************
  ***************** MATERIAL SELECTED ITEM MODEL ***************
@@ -31,12 +32,28 @@ const MaterialSelectedItem = sequelize.define("materialSelectedItem", {
     allowNull: false,
     defaultValue: false,
   },
+  approvalStatus: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: "pending",
+  },
+  approvalNote: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  approvedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   isDeleted: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 });
+
+// Define association
+MaterialSelectedItem.belongsTo(materialItemModel, { foreignKey: 'materialItemId', as: 'materialItem' });
 
 MaterialSelectedItem.sync({ alter: true });
 

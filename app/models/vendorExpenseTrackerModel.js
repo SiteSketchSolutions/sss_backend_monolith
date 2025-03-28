@@ -37,11 +37,6 @@ const VendorExpenseTracker = sequelize.define("vendorExpenseTracker", {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    status: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: "active",
-    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,

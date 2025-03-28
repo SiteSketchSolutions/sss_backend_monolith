@@ -43,6 +43,28 @@ let routes = [
     handler: materialItemSelectController.updateMaterialSelectedItem,
   },
   {
+    method: "PUT",
+    path: "/v1/materialSelectedItem/approval",
+    joiSchemaForSwagger: {
+      body: {
+        materialSelectedItemId: Joi.number()
+          .required()
+          .description("Material Selected Item ID that needs to be approved or rejected"),
+        approvalStatus: Joi.string()
+          .required()
+          .valid("approved", "rejected")
+          .description("Approval status - must be either 'approved' or 'rejected'"),
+        approvalNote: Joi.string()
+          .description("Optional note about the approval or rejection reason"),
+      },
+      group: "MaterialSelectedItem",
+      description: "Route to approve or reject a selected material item by client. Each item can only be approved/rejected once.",
+      model: "materialItemApproval",
+    },
+    auth: false,
+    handler: materialItemSelectController.updateMaterialItemApproval,
+  },
+  {
     method: "GET",
     path: "/v1/materialSelectedItem/list",
     joiSchemaForSwagger: {
