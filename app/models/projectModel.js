@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../startup/dbConfig");
 const { PROJECT_STATUS } = require("../utils/constants");
+const User = require("./userModel");
 
 /**************************************************
  ***************** PROJECT MODEL ***************
@@ -77,6 +78,9 @@ const Project = sequelize.define("project", {
     defaultValue: false,
   },
 });
+
+// Define association
+Project.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 Project.sync({ alter: true });
 

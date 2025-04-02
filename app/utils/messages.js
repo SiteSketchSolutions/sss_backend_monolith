@@ -193,4 +193,12 @@ module.exports = {
   VENDOR_EXPENSE_TRACKER_ALREADY_EXISTS: "Vendor expense tracker with this vendor already exists",
   VENDOR_EXPENSE_TRACKER_STATUS_UPDATED_SUCCESSFULLY: "Vendor expense tracker status updated successfully",
 
+  // Vendor Expense Category
+  VENDOR_EXPENSE_CATEGORY_CREATED_SUCCESSFULLY: "Vendor expense category created successfully",
+  VENDOR_EXPENSE_CATEGORY_UPDATED_SUCCESSFULLY: "Vendor expense category updated successfully",
+  VENDOR_EXPENSE_CATEGORY_DELETED_SUCCESSFULLY: "Vendor expense category deleted successfully",
+  VENDOR_EXPENSE_CATEGORY_LIST_SUCCESSFULLY: "Vendor expense categories fetched successfully",
+  VENDOR_EXPENSE_CATEGORY_NOT_FOUND: "Vendor expense category not found",
+  VENDOR_EXPENSE_CATEGORY_ALREADY_EXISTS: "Vendor expense category with this name already exists",
+
 };    

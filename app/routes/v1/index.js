@@ -26,6 +26,7 @@ let v1Routes = [
   ...require("./userSessionRoutes"),
   ...require("./vendorRoutes"),
   ...require("./vendorExpenseTrackerRoutes"),
+  ...require("./vendorExpenseCategoryRoutes"),
   ...require("./projectAnalyticsRoutes")
 ];
 

@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../startup/dbConfig");
 const Vendor = require("./vendorModel");
+const VendorExpenseCategory = require("./vendorExpenseCategoryModel");
 
 /**************************************************
  *********** VENDOR EXPENSE TRACKER MODEL *********
@@ -25,9 +26,13 @@ const VendorExpenseTracker = sequelize.define("vendorExpenseTracker", {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    stageId: {
+    categoryId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'vendorExpenseCategories',
+            key: 'id'
+        }
     },
     amount: {
         type: DataTypes.DECIMAL(10, 2),
@@ -37,6 +42,11 @@ const VendorExpenseTracker = sequelize.define("vendorExpenseTracker", {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    status: {
+        type: DataTypes.ENUM('paid', 'unpaid'),
+        allowNull: false,
+        defaultValue: 'unpaid'
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
@@ -44,6 +54,9 @@ const VendorExpenseTracker = sequelize.define("vendorExpenseTracker", {
     },
 });
 
+// Define associations
+VendorExpenseTracker.belongsTo(Vendor, { foreignKey: 'vendorId', as: 'vendor' });
+VendorExpenseTracker.belongsTo(VendorExpenseCategory, { foreignKey: 'categoryId', as: 'category' });
 
 VendorExpenseTracker.sync({ alter: true });
 

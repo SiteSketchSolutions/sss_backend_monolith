@@ -13,12 +13,14 @@ let routes = [
                     .description("Enter vendor id"),
                 projectId: Joi.number().required()
                     .description("Enter project id"),
-                stageId: Joi.number().required()
-                    .description("Enter stage id"),
+                categoryId: Joi.number().required()
+                    .description("Enter expense category id"),
                 amount: Joi.number().required()
                     .description("Enter expense amount"),
                 note: Joi.string()
-                    .description("Enter additional notes for expense")
+                    .description("Enter additional notes for expense"),
+                status: Joi.string().valid('paid', 'unpaid')
+                    .description("Enter expense status (paid/unpaid)")
             },
             group: "Vendor Expense Tracker",
             description: "Route to create vendor expense",
@@ -38,12 +40,14 @@ let routes = [
                     .description("Enter vendor id"),
                 projectId: Joi.number()
                     .description("Enter project id"),
-                stageId: Joi.number()
-                    .description("Enter stage id"),
+                categoryId: Joi.number()
+                    .description("Enter expense category id"),
                 amount: Joi.number()
                     .description("Enter expense amount"),
                 note: Joi.string()
-                    .description("Enter additional notes for expense")
+                    .description("Enter additional notes for expense"),
+                status: Joi.string().valid('paid', 'unpaid')
+                    .description("Enter expense status (paid/unpaid)")
             },
             group: "Vendor Expense Tracker",
             description: "Route to update vendor expense",
@@ -63,8 +67,10 @@ let routes = [
                     .description("Enter vendor id"),
                 projectId: Joi.number()
                     .description("Enter project id"),
-                stageId: Joi.number()
-                    .description("Enter stage id")
+                categoryId: Joi.number()
+                    .description("Enter expense category id"),
+                status: Joi.string().valid('paid', 'unpaid')
+                    .description("Enter expense status (paid/unpaid)")
             },
             group: "Vendor Expense Tracker",
             description: "Route to list vendor expenses",

@@ -74,6 +74,7 @@ let routes = [
     joiSchemaForSwagger: {
       query: {
         userId: Joi.number().description("Enter user id"),
+        username: Joi.string().description("Enter username to search projects"),
       },
       group: "Project",
       description: "Route to list project",

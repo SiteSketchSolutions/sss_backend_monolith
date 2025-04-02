@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const { MESSAGES, ERROR_TYPES } = require("../utils/constants");
 
 const projectModel = require("../models/projectModel");
+const userModel = require("../models/userModel");
 
 /**************************************************
  ***************** Project controller ***************
@@ -141,12 +142,80 @@ projectController.updateProject = async (payload) => {
  */
 projectController.projectList = async (payload) => {
   try {
-    const { userId } = payload;
+    const { userId, username } = payload;
+
+    // If username is provided, search users by name
+    if (username) {
+      // Find users matching the username
+      const users = await userModel.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${username}%`
+          },
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['id', 'name', 'email']
+      });
+
+      const userIds = users.map(user => user.id);
+
+      if (userIds.length === 0) {
+        return Object.assign(
+          HELPERS.responseHelper.createSuccessResponse(
+            "No users found with the given username"
+          ),
+          { data: [] }
+        );
+      }
+
+      // Find projects for those users
+      const projectList = await projectModel.findAll({
+        where: {
+          userId: {
+            [Op.in]: userIds
+          },
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: [
+          "id",
+          "userId",
+          "name",
+          "area",
+          "numberOfFloor",
+          "percentageOfCompletion",
+          "status",
+          "price",
+          "package",
+          "image",
+          "location",
+          "description",
+          "startDate",
+          "status",
+        ],
+        include: [
+          {
+            model: userModel,
+            as: 'user',
+            attributes: ['id', 'name', 'email'],
+            required: false
+          }
+        ]
+      });
+
+      return Object.assign(
+        HELPERS.responseHelper.createSuccessResponse(
+          MESSAGES.PROJECT_LIST_SUCCESSFULLY
+        ),
+        { data: projectList }
+      );
+    }
+
+    // Regular search by userId if no username provided
     let criteria = { isDeleted: { [Op.ne]: true } };
     if (userId) {
       criteria.userId = userId;
     }
-    //development stage.
+
     const projectList = await projectModel.findAll({
       where: criteria,
       attributes: [
@@ -165,7 +234,16 @@ projectController.projectList = async (payload) => {
         "startDate",
         "status",
       ],
+      include: [
+        {
+          model: userModel,
+          as: 'user',
+          attributes: ['id', 'name', 'email'],
+          required: false
+        }
+      ]
     });
+
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
         MESSAGES.PROJECT_LIST_SUCCESSFULLY
@@ -173,8 +251,9 @@ projectController.projectList = async (payload) => {
       { data: projectList }
     );
   } catch (error) {
+    console.log(error, "error");
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg,
+      error.msg || "Something went wrong",
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }

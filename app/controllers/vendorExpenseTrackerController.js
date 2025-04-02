@@ -5,6 +5,7 @@ const { MESSAGES, ERROR_TYPES } = require('../utils/constants');
 
 const vendorExpenseTrackerModel = require('../models/vendorExpenseTrackerModel');
 const vendorModel = require('../models/vendorModel');
+const vendorExpenseCategoryModel = require('../models/vendorExpenseCategoryModel');
 
 /**************************************************
  ******** Vendor Expense Tracker controller *******
@@ -18,7 +19,7 @@ let vendorExpenseTrackerController = {};
  */
 vendorExpenseTrackerController.createVendorExpense = async (payload) => {
     try {
-        const { vendorId, projectId, stageId, amount, note } = payload;
+        const { vendorId, projectId, categoryId, amount, note, status } = payload;
 
         // Verify vendor exists
         let vendorDetails = await vendorModel.findOne({
@@ -30,14 +31,26 @@ vendorExpenseTrackerController.createVendorExpense = async (payload) => {
             return HELPERS.responseHelper.createErrorResponse(MESSAGES.VENDOR_NOT_FOUND || "Vendor not found", ERROR_TYPES.DATA_NOT_FOUND);
         }
 
+        // Verify category exists
+        if (categoryId) {
+            let categoryDetails = await vendorExpenseCategoryModel.findOne({
+                where: { id: categoryId, isDeleted: { [Op.ne]: true } },
+                attributes: ['id']
+            });
+
+            if (!categoryDetails) {
+                return HELPERS.responseHelper.createErrorResponse(MESSAGES.VENDOR_EXPENSE_CATEGORY_NOT_FOUND || "Vendor expense category not found", ERROR_TYPES.DATA_NOT_FOUND);
+            }
+        }
+
         const expensePayload = {
             vendorId,
             projectId,
-            stageId,
+            categoryId,
             amount,
-            note
+            note,
+            status: status || 'unpaid'
         }
-
         const expenseResponse = await vendorExpenseTrackerModel.create(expensePayload);
 
         const response = {
@@ -57,7 +70,7 @@ vendorExpenseTrackerController.createVendorExpense = async (payload) => {
  */
 vendorExpenseTrackerController.updateVendorExpense = async (payload) => {
     try {
-        const { expenseId, vendorId, projectId, stageId, amount, note } = payload;
+        const { expenseId, vendorId, projectId, categoryId, amount, note, status } = payload;
 
         let expenseDetails = await vendorExpenseTrackerModel.findOne({
             where: { id: expenseId, isDeleted: { [Op.ne]: true } },
@@ -80,12 +93,25 @@ vendorExpenseTrackerController.updateVendorExpense = async (payload) => {
             }
         }
 
+        // If category ID is being updated, verify the category exists
+        if (categoryId) {
+            let categoryDetails = await vendorExpenseCategoryModel.findOne({
+                where: { id: categoryId, isDeleted: { [Op.ne]: true } },
+                attributes: ['id']
+            });
+
+            if (!categoryDetails) {
+                return HELPERS.responseHelper.createErrorResponse(MESSAGES.VENDOR_EXPENSE_CATEGORY_NOT_FOUND || "Vendor expense category not found", ERROR_TYPES.DATA_NOT_FOUND);
+            }
+        }
+
         const expensePayload = {
             vendorId,
             projectId,
-            stageId,
+            categoryId,
             amount,
-            note
+            note,
+            status
         }
 
         // Remove undefined fields
@@ -114,21 +140,28 @@ vendorExpenseTrackerController.updateVendorExpense = async (payload) => {
  */
 vendorExpenseTrackerController.vendorExpenseList = async (payload) => {
     try {
-        const { expenseId, vendorId, projectId, stageId } = payload;
+        const { expenseId, vendorId, projectId, categoryId, status } = payload;
         let criteria = { isDeleted: { [Op.ne]: true } }
 
         if (expenseId) criteria.id = expenseId;
         if (vendorId) criteria.vendorId = vendorId;
         if (projectId) criteria.projectId = projectId;
-        if (stageId) criteria.stageId = stageId;
+        if (categoryId) criteria.categoryId = categoryId;
+        if (status) criteria.status = status;
 
         const expenseList = await vendorExpenseTrackerModel.findAll({
             where: criteria,
-            attributes: ['id', 'vendorId', 'projectId', 'stageId', 'amount', 'note', 'createdAt'],
+            attributes: ['id', 'vendorId', 'projectId', 'categoryId', 'amount', 'note', 'status', 'createdAt'],
             include: [
                 {
                     model: vendorModel,
                     as: 'vendor',
+                    attributes: ['id', 'name'],
+                    required: false
+                },
+                {
+                    model: vendorExpenseCategoryModel,
+                    as: 'category',
                     attributes: ['id', 'name'],
                     required: false
                 }
@@ -157,6 +190,12 @@ vendorExpenseTrackerController.getVendorExpenseById = async (payload) => {
                 {
                     model: vendorModel,
                     as: 'vendor',
+                    attributes: ['id', 'name'],
+                    required: false
+                },
+                {
+                    model: vendorExpenseCategoryModel,
+                    as: 'category',
                     attributes: ['id', 'name'],
                     required: false
                 }
