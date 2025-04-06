@@ -201,4 +201,10 @@ module.exports = {
   VENDOR_EXPENSE_CATEGORY_NOT_FOUND: "Vendor expense category not found",
   VENDOR_EXPENSE_CATEGORY_ALREADY_EXISTS: "Vendor expense category with this name already exists",
 
+  // PDF Catalog
+  PDF_CATALOG_CREATED_SUCCESSFULLY: "PDF catalog created successfully",
+  PDF_CATALOG_UPDATED_SUCCESSFULLY: "PDF catalog updated successfully",
+  PDF_CATALOG_LIST_SUCCESSFULLY: "PDF catalogs listed successfully",
+  PDF_CATALOG_DELETED_SUCCESSFULLY: "PDF catalog deleted successfully",
+
 };    

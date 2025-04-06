@@ -16,6 +16,7 @@ let v1Routes = [
   ...require("./materialItemRoutes"),
   ...require("./materialSelectedItemRoute"),
   ...require("./siteUpdatesRoutes"),
+  ...require("./pdfCatalogRoutes"),
   ...require("./latestUpdateRoute"),
   ...require("./walletRoutes"),
   ...require("./paymentStageRoutes"),

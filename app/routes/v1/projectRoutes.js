@@ -31,7 +31,7 @@ let routes = [
         description: Joi.string().description("Enter project description"),
         location: Joi.string().description("Enter project location"),
         startDate: Joi.string().description("Enter project startDate"),
-        url: Joi.string().required().description("Enter project image url")
+        urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
       },
       group: "Project",
       description: "Route to create project",
@@ -59,7 +59,7 @@ let routes = [
         location: Joi.string().description("Enter project location"),
         startDate: Joi.string().description("Enter project startDate"),
         status: Joi.string().description("Enter project status"),
-        url: Joi.string().description("Enter project image url"),
+        urls: Joi.array().items(Joi.string()).description("Array of project image URLs"),
       },
       group: "Project",
       description: "Route to update project details",
