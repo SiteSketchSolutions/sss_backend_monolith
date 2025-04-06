@@ -16,10 +16,11 @@ let pdfCatalogController = {};
  */
 pdfCatalogController.createPdfCatalog = async (payload) => {
     try {
-        const { name, description, fileUrl, fileSize } = payload;
+        const { name, description, fileUrl, fileSize, userId } = payload;
         const pdfCatalogPayload = {
             name,
             description,
+            userId,
             fileUrl,
             fileSize
         };
@@ -89,11 +90,12 @@ pdfCatalogController.updatePdfCatalog = async (payload) => {
  */
 pdfCatalogController.getPdfCatalogList = async (payload) => {
     try {
-        const { size, page, startDate, endDate } = payload;
+        const { userId, size, page, startDate, endDate } = payload;
         const pageNo = page || PAGINATION.DEFAULT_PAGE
         const pageLimit = size || PAGINATION.DEFAULT_PAGE_LIMIT
         let criteria = {
             isDeleted: { [Op.ne]: true },
+            userId: userId
         }
         if (startDate && endDate) {
             criteria.createdAt = { [Op.between]: [startDate, endDate] }

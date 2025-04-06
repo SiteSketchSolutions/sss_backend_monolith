@@ -8,6 +8,7 @@ let routes = [
         path: "/v1/pdfCatalog/create",
         joiSchemaForSwagger: {
             body: {
+                userId: Joi.number().required().description("Enter user id"),
                 name: Joi.string().required().description("Enter PDF catalog name"),
                 description: Joi.string().description("Enter PDF catalog description"),
                 fileUrl: Joi.string().required().description("Enter PDF file URL"),
@@ -43,6 +44,7 @@ let routes = [
         path: "/v1/pdfCatalog/list",
         joiSchemaForSwagger: {
             body: {
+                userId: Joi.number().required().description("Enter user id"),
                 startDate: Joi.date().description("Start Date"),
                 endDate: Joi.date().description("End Date"),
                 page: Joi.number().description('page like 1,2'),
