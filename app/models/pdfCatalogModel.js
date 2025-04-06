@@ -12,6 +12,13 @@ const PdfCatalog = sequelize.define("pdfCatalog", {
         allowNull: false,
         autoIncrement: true,
     },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "users",
+        },
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
