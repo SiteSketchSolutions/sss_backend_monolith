@@ -274,8 +274,7 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
     const materialSelectedItems = await materialSelectedItemModel.findAll({
       where: {
         isDeleted: { [Op.ne]: true },
-        userId: userId,
-        selected: true // Only get items that are actually selected
+        userId: userId
       },
       attributes: ['id', 'materialItemId', 'selected', 'approvalStatus', 'approvalNote', 'approvedAt'],
       include: [
