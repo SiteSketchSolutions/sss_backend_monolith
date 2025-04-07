@@ -15,7 +15,7 @@ let materialSelectedItemController = {};
  */
 materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
   try {
-    const { userId, materialItemId } = payload;
+    const { userId, materialItemId, selected } = payload;
 
     // Check if the item already exists
     const materialItemExist = await materialSelectedItemModel.findOne({
@@ -27,25 +27,6 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
     });
 
     if (materialItemExist) {
-      // If it exists but is not selected (should be rare in new approach), update it to selected
-      if (materialItemExist.selected !== true) {
-        await materialSelectedItemModel.update(
-          { selected: true },
-          {
-            where: {
-              id: materialItemExist.id
-            }
-          }
-        );
-
-        return Object.assign(
-          HELPERS.responseHelper.createSuccessResponse(
-            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
-          ),
-          { data: { id: materialItemExist.id } }
-        );
-      }
-
       // If it already exists and is selected, return error
       return HELPERS.responseHelper.createErrorResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_ALREADY_EXIST,
@@ -57,7 +38,7 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
     const materialItemPayload = {
       userId,
       materialItemId,
-      selected: true,  // Always create as selected
+      selected: selected,  // Always create as selected
     };
 
     const materialItem = await materialSelectedItemModel.create(
@@ -114,12 +95,12 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       });
 
       // If no selection record exists and we want to mark as selected, create one
-      if (!materialItem && selected === true) {
+      if (!materialItem) {
         // Create a new selection record
         const newMaterialItem = await materialSelectedItemModel.create({
           materialItemId,
           userId,
-          selected: true
+          selected: selected
         });
 
         return Object.assign(
@@ -130,23 +111,7 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
             data: {
               id: newMaterialItem.id,
               materialItemId: newMaterialItem.materialItemId,
-              selected: true
-            }
-          }
-        );
-      }
-
-      // If selection record doesn't exist and we're trying to set to false,
-      // there's nothing to do because it's already not selected
-      if (!materialItem && selected === false) {
-        return Object.assign(
-          HELPERS.responseHelper.createSuccessResponse(
-            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
-          ),
-          {
-            data: {
-              materialItemId: materialItemId,
-              selected: false
+              selected: selected
             }
           }
         );
@@ -165,18 +130,12 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       );
     }
 
-    // If setting to unselected, delete the record instead of updating
-    if (selected === false) {
-      await materialSelectedItemModel.destroy({
-        where: { id: materialItem.id }
-      });
-    } else {
-      // Otherwise update the item to selected status
-      await materialSelectedItemModel.update(
-        { selected: true },
-        { where: { id: materialItem.id } }
-      );
-    }
+
+    // Otherwise update the item to selected status
+    await materialSelectedItemModel.update(
+      { selected: selected },
+      { where: { id: materialItem.id } }
+    );
 
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
@@ -335,7 +294,7 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
     // Format the response to include only selected items
     const response = materialSelectedItems.map(item => ({
       id: item.materialItem.id,
-      selected: true, // These are all selected items
+      selected: item.selected, // These are all selected items
       selectionId: item.id,
       approvalStatus: item.approvalStatus || null,
       approvalNote: item.approvalNote || null,
@@ -362,5 +321,31 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
     );
   }
 };
+
+/**
+ * Function to delete material selected item
+ * @param {*} payload
+ * @returns
+ */
+materialSelectedItemController.deleteMaterialSelectedItem = async (payload) => {
+  try {
+    const { materialSelectedItemId } = payload;
+
+    await materialSelectedItemModel.update({ isDeleted: true }, { where: { id: materialSelectedItemId } });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_SELECT_ITEM_DELETED_SUCCESSFULLY
+      ),
+      { data: null }
+    );
+  } catch (error) {
+    console.error("Error in deleteMaterialSelectedItem:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.message || error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+}
 
 module.exports = materialSelectedItemController;
