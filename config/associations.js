@@ -48,6 +48,15 @@ const associations = (db) => {
   db.projectSubTask.hasMany(db.projectSubTaskDelayReason, { foreignKey: 'projectSubTaskId' })
   db.projectSubTaskDelayReason.belongsTo(db.projectSubTask, { foreignKey: 'projectSubTaskId' })
 
+  // Budget Allocation
+  db.project.hasMany(db.budgetAllocation, { foreignKey: 'projectId' })
+  db.budgetAllocation.belongsTo(db.project, { foreignKey: 'projectId' })
+
+  db.vendor.hasMany(db.budgetAllocation, { foreignKey: 'vendorId' })
+  db.budgetAllocation.belongsTo(db.vendor, { foreignKey: 'vendorId' })
+
+  db.admin.hasMany(db.budgetAllocation, { foreignKey: 'allocatedBy' })
+  db.budgetAllocation.belongsTo(db.admin, { foreignKey: 'allocatedBy' })
 
   db.sequelize.sync({ alter: true });
 }

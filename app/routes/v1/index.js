@@ -31,7 +31,8 @@ let v1Routes = [
   ...require("./vendorRoutes"),
   ...require("./vendorExpenseTrackerRoutes"),
   ...require("./vendorExpenseCategoryRoutes"),
-  ...require("./projectAnalyticsRoutes")
+  ...require("./projectAnalyticsRoutes"),
+  ...require("./budgetAllocationRoutes")
 ];
 
 module.exports = v1Routes;
