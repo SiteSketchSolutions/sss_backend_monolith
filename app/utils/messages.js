@@ -207,4 +207,47 @@ module.exports = {
   PDF_CATALOG_LIST_SUCCESSFULLY: "PDF catalogs listed successfully",
   PDF_CATALOG_DELETED_SUCCESSFULLY: "PDF catalog deleted successfully",
 
+  // Project Stage
+  PROJECT_STAGE_CREATED_SUCCESSFULLY: "Project stage created successfully",
+  PROJECT_STAGE_UPDATED_SUCCESSFULLY: "Project stage updated successfully",
+  PROJECT_STAGE_LIST_SUCCESSFULLY: "Project stages listed successfully",
+  PROJECT_STAGE_DELETED_SUCCESSFULLY: "Project stage deleted successfully",
+  PROJECT_STAGE_DETAILS_FETCHED_SUCCESSFULLY: "Project stage details fetched successfully",
+  PROJECT_STAGE_ALREADY_EXISTS: "Project stage with this name already exists for this project",
+  PROJECT_STAGE_NOT_FOUND: "Project stage not found",
+
+  // Project Stage Delay Reason
+  PROJECT_STAGE_DELAY_REASON_CREATED_SUCCESSFULLY: "Project stage delay reason added successfully",
+  PROJECT_STAGE_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project stage delay reason updated successfully",
+  PROJECT_STAGE_DELAY_REASON_DELETED_SUCCESSFULLY: "Project stage delay reason deleted successfully",
+  PROJECT_STAGE_DELAY_REASON_NOT_FOUND: "Project stage delay reason not found",
+
+  // Project Stage Task
+  PROJECT_STAGE_TASK_CREATED_SUCCESSFULLY: "Project stage task created successfully",
+  PROJECT_STAGE_TASK_UPDATED_SUCCESSFULLY: "Project stage task updated successfully",
+  PROJECT_STAGE_TASK_LIST_SUCCESSFULLY: "Project stage tasks listed successfully",
+  PROJECT_STAGE_TASK_DELETED_SUCCESSFULLY: "Project stage task deleted successfully",
+  PROJECT_STAGE_TASK_DETAILS_FETCHED_SUCCESSFULLY: "Project stage task details fetched successfully",
+  PROJECT_STAGE_TASK_NOT_FOUND: "Project stage task not found",
+
+  // Project Stage Task Delay Reason
+  PROJECT_STAGE_TASK_DELAY_REASON_CREATED_SUCCESSFULLY: "Project stage task delay reason added successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project stage task delay reason updated successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_DELETED_SUCCESSFULLY: "Project stage task delay reason deleted successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_NOT_FOUND: "Project stage task delay reason not found",
+
+  // Project Sub Task
+  PROJECT_SUB_TASK_CREATED_SUCCESSFULLY: "Project sub task created successfully",
+  PROJECT_SUB_TASK_UPDATED_SUCCESSFULLY: "Project sub task updated successfully",
+  PROJECT_SUB_TASK_LIST_SUCCESSFULLY: "Project sub tasks listed successfully",
+  PROJECT_SUB_TASK_DELETED_SUCCESSFULLY: "Project sub task deleted successfully",
+  PROJECT_SUB_TASK_DETAILS_FETCHED_SUCCESSFULLY: "Project sub task details fetched successfully",
+  PROJECT_SUB_TASK_NOT_FOUND: "Project sub task not found",
+
+  // Project Sub Task Delay Reason
+  PROJECT_SUB_TASK_DELAY_REASON_CREATED_SUCCESSFULLY: "Project sub task delay reason added successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project sub task delay reason updated successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_DELETED_SUCCESSFULLY: "Project sub task delay reason deleted successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_NOT_FOUND: "Project sub task delay reason not found",
+
 };    
