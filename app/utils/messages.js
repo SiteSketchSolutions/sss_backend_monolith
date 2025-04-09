@@ -250,4 +250,14 @@ module.exports = {
   PROJECT_SUB_TASK_DELAY_REASON_DELETED_SUCCESSFULLY: "Project sub task delay reason deleted successfully",
   PROJECT_SUB_TASK_DELAY_REASON_NOT_FOUND: "Project sub task delay reason not found",
 
+  // Budget Allocation
+  BUDGET_ALLOCATION_CREATED_SUCCESSFULLY: "Budget allocated successfully",
+  BUDGET_ALLOCATION_UPDATED_SUCCESSFULLY: "Budget allocation updated successfully",
+  BUDGET_ALLOCATION_DELETED_SUCCESSFULLY: "Budget allocation deleted successfully",
+  BUDGET_ALLOCATION_FETCHED_SUCCESSFULLY: "Budget allocation details fetched successfully",
+  BUDGET_ALLOCATION_LIST_FETCHED_SUCCESSFULLY: "Budget allocations fetched successfully",
+  BUDGET_ALLOCATION_NOT_FOUND: "Budget allocation not found",
+  PROJECT_BUDGET_SUMMARY_FETCHED_SUCCESSFULLY: "Project budget summary fetched successfully",
+  BUDGET_ALLOCATION_EXCEEDS_PROJECT_BUDGET: "Budget allocation exceeds the total project budget"
+
 };    

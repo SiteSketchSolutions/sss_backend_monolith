@@ -5,6 +5,7 @@ const projectSubTaskModel = require("../models/projectSubTaskModel");
 const projectStageTaskModel = require("../models/projectStageTaskModel");
 const projectSubTaskDelayReasonModel = require("../models/projectSubTaskDelayReasonModel");
 const { getPaginationResponse } = require("../utils/utils");
+const projectStageModel = require("../models/projectStageModel");
 
 /**************************************************
  ************* Project Sub Task Controller *************
@@ -362,6 +363,157 @@ projectSubTaskController.addProjectSubTaskDelayReason = async (payload) => {
         );
     } catch (error) {
         console.error("Error in addProjectSubTaskDelayReason:", error);
+        throw HELPERS.responseHelper.createErrorResponse(
+            error.message || error.msg || "Something went wrong",
+            ERROR_TYPES.SOMETHING_WENT_WRONG
+        );
+    }
+};
+
+/**
+ * Function to get both tasks and subtasks for an admin with date filtering
+ * @param {*} payload
+ * @returns
+ */
+projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
+    try {
+        const { adminId, startDate, endDate, page, size } = payload;
+
+        // Set up pagination
+        const pageNo = page || PAGINATION.DEFAULT_PAGE;
+        const pageLimit = size || PAGINATION.DEFAULT_PAGE_LIMIT;
+
+        // Build where clause for tasks and subtasks
+        let whereClause = {
+            adminId,
+            isDeleted: { [Op.ne]: true }
+        };
+
+        // Add date filters if provided
+        if (startDate) {
+            whereClause.endDate = {
+                ...whereClause.endDate,
+                [Op.gte]: new Date(startDate)
+            };
+        }
+
+        if (endDate) {
+            whereClause.startDate = {
+                ...whereClause.startDate,
+                [Op.lte]: new Date(endDate)
+            };
+        }
+
+        // Get tasks first
+        const taskResults = await projectStageTaskModel.findAndCountAll({
+            where: whereClause,
+            order: [
+                ['endDate', 'ASC'],
+                ['order', 'ASC']
+            ],
+            include: [
+                {
+                    model: projectStageModel,
+                    attributes: ['id', 'name', 'projectId'],
+                    where: {
+                        isDeleted: { [Op.ne]: true }
+                    }
+                }
+            ]
+        });
+
+        // Get subtasks
+        const subtaskResults = await projectSubTaskModel.findAndCountAll({
+            where: whereClause,
+            order: [
+                ['endDate', 'ASC'],
+                ['order', 'ASC']
+            ],
+            include: [
+                {
+                    model: projectStageTaskModel,
+                    attributes: ['id', 'name', 'projectStageId'],
+                    where: {
+                        isDeleted: { [Op.ne]: true }
+                    },
+                    include: [
+                        {
+                            model: projectStageModel,
+                            attributes: ['id', 'name', 'projectId'],
+                            where: {
+                                isDeleted: { [Op.ne]: true }
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Combine the results
+        const totalCount = taskResults.count + subtaskResults.count;
+
+        // Apply pagination to the combined results
+        const combinedResults = [
+            ...taskResults.rows.map(task => ({
+                id: task.id,
+                name: task.name,
+                description: task.description,
+                startDate: task.startDate,
+                endDate: task.endDate,
+                status: task.status,
+                type: 'task',
+                projectStage: task.projectStage ? {
+                    id: task.projectStage.id,
+                    name: task.projectStage.name,
+                    projectId: task.projectStage.projectId
+                } : null,
+                parentTask: null
+            })),
+            ...subtaskResults.rows.map(subtask => ({
+                id: subtask.id,
+                name: subtask.name,
+                description: subtask.description,
+                startDate: subtask.startDate,
+                endDate: subtask.endDate,
+                status: subtask.status,
+                type: 'subtask',
+                projectStage: subtask.projectStageTask?.projectStage ? {
+                    id: subtask.projectStageTask.projectStage.id,
+                    name: subtask.projectStageTask.projectStage.name,
+                    projectId: subtask.projectStageTask.projectStage.projectId
+                } : null,
+                parentTask: subtask.projectStageTask ? {
+                    id: subtask.projectStageTask.id,
+                    name: subtask.projectStageTask.name
+                } : null
+            }))
+        ];
+
+        // Sort the combined results by endDate
+        const sortedResults = combinedResults.sort((a, b) => {
+            return new Date(a.endDate) - new Date(b.endDate);
+        });
+
+        // Apply pagination after combining
+        const startIndex = (pageNo - 1) * pageLimit;
+        const paginatedResults = sortedResults.slice(startIndex, startIndex + pageLimit);
+
+        const paginationData = {
+            count: totalCount,
+            pageNo,
+            pageLimit,
+            rows: paginatedResults
+        };
+        const formattedResponse = getPaginationResponse(paginationData);
+
+        return Object.assign(
+            HELPERS.responseHelper.createSuccessResponse(
+                "Admin tasks and subtasks fetched successfully"
+            ),
+            formattedResponse
+        );
+    } catch (error) {
+        console.error("Error in getAdminTasksAndSubTasks:", error);
         throw HELPERS.responseHelper.createErrorResponse(
             error.message || error.msg || "Something went wrong",
             ERROR_TYPES.SOMETHING_WENT_WRONG

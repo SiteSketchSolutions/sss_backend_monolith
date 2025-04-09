@@ -110,6 +110,24 @@ let routes = [
         },
         auth: false,
         handler: projectSubTaskController.addProjectSubTaskDelayReason,
+    },
+    {
+        method: "GET",
+        path: "/v1/admin/tasks",
+        joiSchemaForSwagger: {
+            query: {
+                adminId: Joi.number().required().description("ID of the admin to fetch tasks for"),
+                startDate: Joi.date().description("Filter tasks with endDate >= startDate (optional)"),
+                endDate: Joi.date().description("Filter tasks with startDate <= endDate (optional)"),
+                page: Joi.number().description("Page number for pagination"),
+                size: Joi.number().description("Number of items per page")
+            },
+            group: "Admin",
+            description: "Route to get both tasks and subtasks assigned to an admin with date filtering",
+            model: "getAdminTasksAndSubTasks",
+        },
+        auth: false,
+        handler: projectSubTaskController.getAdminTasksAndSubTasks,
     }
 ];
 
