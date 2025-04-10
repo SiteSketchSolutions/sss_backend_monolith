@@ -58,6 +58,8 @@ const associations = (db) => {
   db.admin.hasMany(db.budgetAllocation, { foreignKey: 'allocatedBy' })
   db.budgetAllocation.belongsTo(db.admin, { foreignKey: 'allocatedBy' })
 
+  db.user.hasMany(db.additionalExpense, { foreignKey: 'userId' })
+  db.additionalExpense.belongsTo(db.user, { foreignKey: 'userId' })
   db.sequelize.sync({ alter: true });
 }
 

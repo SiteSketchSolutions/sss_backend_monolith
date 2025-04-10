@@ -258,6 +258,15 @@ module.exports = {
   BUDGET_ALLOCATION_LIST_FETCHED_SUCCESSFULLY: "Budget allocations fetched successfully",
   BUDGET_ALLOCATION_NOT_FOUND: "Budget allocation not found",
   PROJECT_BUDGET_SUMMARY_FETCHED_SUCCESSFULLY: "Project budget summary fetched successfully",
-  BUDGET_ALLOCATION_EXCEEDS_PROJECT_BUDGET: "Budget allocation exceeds the total project budget"
+  BUDGET_ALLOCATION_EXCEEDS_PROJECT_BUDGET: "Budget allocation exceeds the total project budget",
+
+  // Additional Expense
+  ADDITIONAL_EXPENSE_CREATED_SUCCESSFULLY: "Additional expense added successfully",
+  ADDITIONAL_EXPENSE_UPDATED_SUCCESSFULLY: "Additional expense updated successfully",
+  ADDITIONAL_EXPENSE_DELETED_SUCCESSFULLY: "Additional expense deleted successfully",
+  ADDITIONAL_EXPENSE_FETCHED_SUCCESSFULLY: "Additional expense details fetched successfully",
+  ADDITIONAL_EXPENSE_LIST_FETCHED_SUCCESSFULLY: "Additional expenses fetched successfully",
+  ADDITIONAL_EXPENSE_NOT_FOUND: "Additional expense not found",
+  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully"
 
 };    
