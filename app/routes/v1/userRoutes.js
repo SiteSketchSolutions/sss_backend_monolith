@@ -80,6 +80,21 @@ let routes = [
         auth: false,
         handler: userController.getUserById,
     },
+    {
+        method: "DELETE",
+        path: "/v1/user",
+        joiSchemaForSwagger: {
+            body: {
+                userId: Joi.number().required()
+                    .description("Enter user id to delete")
+            },
+            group: "User",
+            description: "Route to delete user",
+            model: "deleteUser",
+        },
+        auth: false,
+        handler: userController.deleteUser,
+    },
 ];
 
 module.exports = routes;

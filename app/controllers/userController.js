@@ -118,5 +118,38 @@ userController.getUserById = async (payload) => {
         throw HELPERS.responseHelper.createErrorResponse(error.msg, ERROR_TYPES.SOMETHING_WENT_WRONG);
     }
 }
+
+/**
+ * Function to delete a user
+ * @param {*} payload 
+ * @returns 
+ */
+userController.deleteUser = async (payload) => {
+    try {
+        const { userId } = payload;
+
+        // Check if the user exists
+        let userDetails = await userModel.findOne({
+            where: { id: userId, isDeleted: { [Op.ne]: true } },
+            attributes: ['id']
+        });
+
+        if (!userDetails) {
+            return HELPERS.responseHelper.createErrorResponse(MESSAGES.USER_NOT_FOUND, ERROR_TYPES.DATA_NOT_FOUND);
+        }
+
+        // Soft delete the user
+        await userModel.update(
+            { isDeleted: true },
+            { where: { id: userId } }
+        );
+
+        return HELPERS.responseHelper.createSuccessResponse(MESSAGES.USER_DELETED_SUCCESSFULLY);
+    } catch (error) {
+        console.log(error, "error");
+        throw HELPERS.responseHelper.createErrorResponse(error.msg || "Something went wrong", ERROR_TYPES.SOMETHING_WENT_WRONG);
+    }
+};
+
 /* export userController */
 module.exports = userController;
