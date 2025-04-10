@@ -96,13 +96,28 @@ materialItemController.updateMaterialItem = async (payload) => {
  */
 materialItemController.materialItemList = async (payload) => {
   try {
-    const { materialCategoryId } = payload;
+    const { materialCategoryId, search } = payload;
+
+    // Build the where criteria based on input parameters
+    let criteria = {
+      isDeleted: { [Op.ne]: true }
+    };
+
+    // Add materialCategoryId filter if provided
+    if (materialCategoryId) {
+      criteria.materialCategoryId = materialCategoryId;
+    }
+
+    // Add search by name if provided
+    if (search) {
+      criteria.name = {
+        [Op.like]: `%${search}%`
+      };
+    }
+
     const materialItems = await materialItemModel.findAll({
-      where: {
-        isDeleted: { [Op.ne]: true },
-        materialCategoryId: materialCategoryId,
-      },
-      attributes: ["id", "name", "description", "image"],
+      where: criteria,
+      attributes: ["id", "name", "description", "image", "materialCategoryId"],
       order: [["id", "ASC"]],
     });
 
@@ -114,7 +129,7 @@ materialItemController.materialItemList = async (payload) => {
     );
   } catch (error) {
     throw HELPERS.responseHelper.createErrorResponse(
-      error.msg,
+      error.msg || error.message,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }
@@ -138,6 +153,63 @@ materialItemController.deleteMaterialItem = async (payload) => {
   } catch (error) {
     throw HELPERS.responseHelper.createErrorResponse(
       error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
+/**
+ * Function to search material items across all categories
+ * @param {*} payload
+ * @returns
+ */
+materialItemController.searchMaterialItems = async (payload) => {
+  try {
+    const { search, page = 1, limit = 10 } = payload;
+
+    // Build the where criteria based on input parameters
+    let criteria = {
+      isDeleted: { [Op.ne]: true }
+    };
+
+    // Add search by name if provided
+    if (search) {
+      criteria.name = {
+        [Op.like]: `%${search}%`
+      };
+    }
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+
+    // Get total count and paginated results
+    const { count, rows: materialItems } = await materialItemModel.findAndCountAll({
+      where: criteria,
+      attributes: ["id", "name", "description", "image", "materialCategoryId"],
+      order: [["name", "ASC"]],
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+
+    // Format the response with pagination information
+    const response = {
+      totalItems: count,
+      items: materialItems,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page),
+      itemsPerPage: parseInt(limit)
+    };
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        "Material items searched successfully"
+      ),
+      { data: response }
+    );
+  } catch (error) {
+    console.error("Error in searchMaterialItems:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg || error.message,
       ERROR_TYPES.SOMETHING_WENT_WRONG
     );
   }

@@ -69,7 +69,7 @@ authController.userLogin = async (payload) => {
           "numberOfFloor",
           "percentageOfCompletion",
           "package",
-          "image",
+          "images",
           "location",
           "startDate",
           "status",

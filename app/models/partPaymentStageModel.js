@@ -23,7 +23,7 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
     },
     referenceId: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     method: {
         type: DataTypes.STRING,

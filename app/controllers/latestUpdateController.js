@@ -33,7 +33,7 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                 attributes: [
                     "id",
                     "name",
-                    "image",
+                    "images",
                     "description",
                     "author",
                     "createdAt",

@@ -47,15 +47,32 @@ let routes = [
     joiSchemaForSwagger: {
       query: {
         materialCategoryId: Joi.number()
-          .required()
-          .description("Enter material category id"),
+          .description("Enter material category id (optional for cross-category search)"),
+        search: Joi.string()
+          .description("Search materials by name (optional)"),
       },
       group: "MaterialItem",
-      description: "Route to list material items",
+      description: "Route to list material items. Can filter by category ID and/or search by name.",
       model: "materialItemList",
     },
     auth: false,
     handler: materialItemController.materialItemList,
+  },
+  {
+    method: "POST",
+    path: "/v1/materialItem/search",
+    joiSchemaForSwagger: {
+      body: {
+        search: Joi.string().description("Search term for material item name"),
+        page: Joi.number().description("Page number for pagination (default: 1)"),
+        limit: Joi.number().description("Number of items per page (default: 10)"),
+      },
+      group: "MaterialItem",
+      description: "Advanced search route for material items with pagination. Searches across all categories.",
+      model: "searchMaterialItems",
+    },
+    auth: false,
+    handler: materialItemController.searchMaterialItems,
   },
   {
     method: "DELETE",

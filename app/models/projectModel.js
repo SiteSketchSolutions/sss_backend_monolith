@@ -51,9 +51,10 @@ const Project = sequelize.define("project", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  image: {
-    type: DataTypes.STRING,
+  images: {
+    type: DataTypes.JSON,
     allowNull: true,
+    defaultValue: [],
   },
   location: {
     type: DataTypes.STRING,
