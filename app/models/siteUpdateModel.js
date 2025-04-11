@@ -23,6 +23,10 @@ const SiteUpdate = sequelize.define("siteUpdate", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  image: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   images: {
     type: DataTypes.JSON,
     allowNull: false,

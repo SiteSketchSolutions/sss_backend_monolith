@@ -267,6 +267,11 @@ module.exports = {
   ADDITIONAL_EXPENSE_FETCHED_SUCCESSFULLY: "Additional expense details fetched successfully",
   ADDITIONAL_EXPENSE_LIST_FETCHED_SUCCESSFULLY: "Additional expenses fetched successfully",
   ADDITIONAL_EXPENSE_NOT_FOUND: "Additional expense not found",
-  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully"
+  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully",
+
+  // Migration
+  MIGRATION_COMPLETED_SUCCESSFULLY: "Migration completed successfully",
+  MIGRATION_FAILED: "Migration failed",
+  MIGRATION_UNAUTHORIZED: "Unauthorized migration attempt"
 
 };    
