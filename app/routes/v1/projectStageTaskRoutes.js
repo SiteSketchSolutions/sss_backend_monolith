@@ -11,7 +11,7 @@ let routes = [
             body: {
                 projectStageId: Joi.number().required().description("ID of the project stage"),
                 name: Joi.string().required().description("Name of the task"),
-                description: Joi.string().description("Description of the task"),
+                description: Joi.string().allow('').description("Description of the task"),
                 startDate: Joi.date().required().description("Start date of the task"),
                 endDate: Joi.date().required().description("End date of the task"),
                 adminId: Joi.number().description("ID of the admin assigned to this task"),
@@ -33,7 +33,7 @@ let routes = [
             body: {
                 projectStageTaskId: Joi.number().required().description("ID of the project stage task"),
                 name: Joi.string().description("Name of the task"),
-                description: Joi.string().description("Description of the task"),
+                description: Joi.string().allow('').description("Description of the task"),
                 startDate: Joi.date().description("Start date of the task"),
                 endDate: Joi.date().description("End date of the task"),
                 adminId: Joi.number().description("ID of the admin assigned to this task"),

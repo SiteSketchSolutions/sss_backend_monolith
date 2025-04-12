@@ -49,11 +49,14 @@ projectController.createProject = async (payload) => {
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
+      projectPayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
+      projectPayload.image = urls;
     } else {
       projectPayload.images = [];
+      projectPayload.image = "";
     }
 
     let projectDetails = await projectModel.findOne({
@@ -123,9 +126,14 @@ projectController.updateProject = async (payload) => {
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
+      projectPayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
+      projectPayload.image = urls;
+    } else {
+      projectPayload.images = [];
+      projectPayload.image = "";
     }
 
     const projectResponse = await projectModel.update(projectPayload, {
@@ -200,6 +208,7 @@ projectController.projectList = async (payload) => {
           "status",
           "price",
           "package",
+          "image",
           "images",
           "location",
           "description",
@@ -242,6 +251,7 @@ projectController.projectList = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",
@@ -297,6 +307,7 @@ projectController.projectById = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",

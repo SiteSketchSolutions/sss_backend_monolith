@@ -59,10 +59,7 @@ const ProjectStage = sequelize.define("projectStage", {
     },
 });
 
-// Define association
-// ProjectStage.belongsTo(Project, { foreignKey: 'projectId', as: 'project' });
-// Project.hasMany(ProjectStage, { foreignKey: 'projectId', as: 'stages' });
-
+// Note: Associations are defined in config/associations.js
 ProjectStage.sync({ alter: true });
 
 module.exports = ProjectStage; 

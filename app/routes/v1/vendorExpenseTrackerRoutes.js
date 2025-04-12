@@ -17,7 +17,7 @@ let routes = [
                     .description("Enter expense category id"),
                 amount: Joi.number().required()
                     .description("Enter expense amount"),
-                note: Joi.string()
+                note: Joi.string().allow('')
                     .description("Enter additional notes for expense"),
                 status: Joi.string().valid('paid', 'unpaid')
                     .description("Enter expense status (paid/unpaid)")
@@ -44,7 +44,7 @@ let routes = [
                     .description("Enter expense category id"),
                 amount: Joi.number()
                     .description("Enter expense amount"),
-                note: Joi.string()
+                note: Joi.string().allow('')
                     .description("Enter additional notes for expense"),
                 status: Joi.string().valid('paid', 'unpaid')
                     .description("Enter expense status (paid/unpaid)")

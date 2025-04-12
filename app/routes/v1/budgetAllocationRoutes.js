@@ -11,7 +11,7 @@ let routes = [
                 projectId: Joi.number().required().description("ID of the project"),
                 vendorId: Joi.number().required().description("ID of the vendor"),
                 amount: Joi.number().required().description("Allocation amount"),
-                note: Joi.string().description("Optional note about the allocation"),
+                note: Joi.string().allow('').description("Optional note about the allocation"),
                 allocatedBy: Joi.number().required().description("ID of the admin making the allocation")
             },
             group: "BudgetAllocation",
@@ -29,7 +29,7 @@ let routes = [
                 budgetAllocationId: Joi.number().required().description("ID of the budget allocation"),
                 vendorId: Joi.number().description("ID of the vendor"),
                 amount: Joi.number().description("Allocation amount"),
-                note: Joi.string().description("Note about the allocation")
+                note: Joi.string().allow('').description("Note about the allocation")
             },
             group: "BudgetAllocation",
             description: "Route to update a budget allocation",

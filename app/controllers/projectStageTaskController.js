@@ -12,6 +12,51 @@ const { getPaginationResponse } = require("../utils/utils");
 let projectStageTaskController = {};
 
 /**
+ * Helper function to update project stage status and percentage based on tasks
+ * @param {Number} projectStageId 
+ */
+projectStageTaskController.updateProjectStageStatusAndPercentage = async (projectStageId) => {
+    try {
+        const tasks = await projectStageTaskModel.findAll({
+            where: {
+                projectStageId,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (tasks.length === 0) return;
+
+        // Calculate percentage of completed tasks
+        const completedTasks = tasks.filter(task => task.status === 'completed');
+        const percentage = (completedTasks.length / tasks.length) * 100;
+        // Determine stage status based on task statuses
+        let stageStatus = 'pending';
+        if (completedTasks.length === tasks.length) {
+            stageStatus = 'completed';
+        } else if (tasks.some(task => task.status === 'in_progress' || task.status === 'delayed')) {
+            stageStatus = 'in_progress';
+        } else if (tasks.some(task => task.status === 'cancelled')) {
+            // Only set to cancelled if all tasks are cancelled
+            const cancelledCount = tasks.filter(task => task.status === 'cancelled').length;
+            if (cancelledCount === tasks.length) {
+                stageStatus = 'cancelled';
+            }
+        }
+
+        // Update the project stage
+        await projectStageModel.update(
+            {
+                percentage: percentage,
+                status: stageStatus
+            },
+            { where: { id: projectStageId } }
+        );
+    } catch (error) {
+        console.error("Error in updateProjectStageStatusAndPercentage:", error);
+    }
+};
+
+/**
  * Function to create a project stage task
  * @param {*} payload
  * @returns
@@ -57,6 +102,9 @@ projectStageTaskController.createProjectStageTask = async (payload) => {
         };
 
         const task = await projectStageTaskModel.create(taskPayload);
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(projectStageId);
 
         const response = {
             id: task?.id,
@@ -124,6 +172,9 @@ projectStageTaskController.updateProjectStageTask = async (payload) => {
         await projectStageTaskModel.update(updatePayload, {
             where: { id: projectStageTaskId }
         });
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(task.projectStageId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
@@ -301,6 +352,9 @@ projectStageTaskController.deleteProjectStageTask = async (payload) => {
             { isDeleted: true },
             { where: { id: projectStageTaskId } }
         );
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(task.projectStageId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(

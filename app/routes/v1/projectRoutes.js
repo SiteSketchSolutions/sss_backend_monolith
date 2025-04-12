@@ -19,7 +19,7 @@ let routes = [
         percentageOfCompletion: Joi.string()
           .required()
           .description("Enter percentage of project completion"),
-        status: Joi.string()
+        status: Joi.string().valid('pending', 'in_progress', 'completed', 'cancelled')
           .required()
           .description("Enter status of the project"),
         price: Joi.number()
@@ -28,7 +28,7 @@ let routes = [
         package: Joi.string()
           .required()
           .description("Enter project package selected"),
-        description: Joi.string().description("Enter project description"),
+        description: Joi.string().allow('').description("Enter project description"),
         location: Joi.string().description("Enter project location"),
         startDate: Joi.string().description("Enter project startDate"),
         urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
@@ -52,10 +52,10 @@ let routes = [
         percentageOfCompletion: Joi.string().description(
           "Enter percentage of project completion"
         ),
-        status: Joi.string().description("Enter status of the project"),
+        status: Joi.string().valid('pending', 'in_progress', 'completed', 'cancelled').description("Enter status of the project"),
         price: Joi.number().description("Enter project estimated price"),
         package: Joi.string().description("Enter project package selected"),
-        description: Joi.string().description("Enter project description"),
+        description: Joi.string().allow('').description("Enter project description"),
         location: Joi.string().description("Enter project location"),
         startDate: Joi.string().description("Enter project startDate"),
         status: Joi.string().description("Enter project status"),
