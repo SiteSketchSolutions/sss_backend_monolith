@@ -12,7 +12,7 @@ let routes = [
             body: {
                 name: Joi.string().required()
                     .description("Enter vendor name"),
-                note: Joi.string()
+                note: Joi.string().allow('')
                     .description("Enter additional notes for vendor")
             },
             group: "Vendor",
@@ -31,7 +31,7 @@ let routes = [
                     .description("Enter vendor id"),
                 name: Joi.string()
                     .description("Enter vendor name"),
-                note: Joi.string()
+                note: Joi.string().allow('')
                     .description("Enter additional notes for vendor"),
                 status: Joi.string()
                     .description("Enter status")

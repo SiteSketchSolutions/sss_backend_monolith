@@ -12,8 +12,8 @@ let routes = [
                 stageId: Joi.number().required().description("Enter stage id"),
                 amount: Joi.number().required().description("Enter part payment amount"),
                 method: Joi.string().required().description("Enter payment method like upi or card"),
-                referenceId: Joi.string().description("Enter payment reference id"),
-                note: Joi.string().description("Additional notes for the payment")
+                referenceId: Joi.string().allow('').description("Enter payment reference id"),
+                note: Joi.string().allow('').description("Additional notes for the payment")
             },
             group: "PartPaymentStage",
             description: "Route to create part payment",
@@ -31,7 +31,7 @@ let routes = [
                 amount: Joi.number().description("Enter part payment amount"),
                 method: Joi.string().description("Enter payment method like upi or card"),
                 referenceId: Joi.string().allow("").description("Enter payment reference id"),
-                note: Joi.string().description("Additional notes for the payment")
+                note: Joi.string().allow('').description("Additional notes for the payment")
             },
             group: "PartPaymentStage",
             description: "Route to update  part payment",

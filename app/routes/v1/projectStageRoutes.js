@@ -33,7 +33,7 @@ let routes = [
             body: {
                 projectStageId: Joi.number().required().description("ID of the project stage"),
                 name: Joi.string().description("Name of the stage"),
-                description: Joi.string().description("Description of the stage"),
+                description: Joi.string().allow('').description("Description of the stage"),
                 startDate: Joi.date().description("Start date of the stage"),
                 endDate: Joi.date().description("End date of the stage"),
                 order: Joi.number().description("Order/sequence of the stage"),

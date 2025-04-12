@@ -10,7 +10,7 @@ let routes = [
       body: {
         userId: Joi.number().required().description("Enter user id"),
         name: Joi.string().required().description("Enter update name"),
-        description: Joi.string().description("Enter update description"),
+        description: Joi.string().allow('').description("Enter update description"),
         author: Joi.string().description("Enter author name"),
         urls: Joi.array().items(Joi.string()).required().description("Array of image URLs"),
       },
@@ -28,7 +28,7 @@ let routes = [
       body: {
         siteUpdateId: Joi.number().required().description("Site Update ID"),
         name: Joi.string().description("Enter update name"),
-        description: Joi.string().description("Enter update description"),
+        description: Joi.string().allow('').description("Enter update description"),
         author: Joi.string().description("Enter author name"),
         urls: Joi.array().items(Joi.string()).description("Array of image URLs"),
       },

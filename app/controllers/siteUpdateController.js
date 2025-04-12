@@ -24,11 +24,14 @@ siteUpdateController.createSiteUpdate = async (payload) => {
     };
     if (urls && Array.isArray(urls)) {
       siteUpdatePayload.images = urls;
+      siteUpdatePayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       siteUpdatePayload.images = [urls];
+      siteUpdatePayload.image = urls;
     } else {
       siteUpdatePayload.images = [];
+      siteUpdatePayload.image = "";
     }
     const siteUpdate = await siteUpdateModel.create(siteUpdatePayload);
     const response = {
@@ -64,9 +67,14 @@ siteUpdateController.updateSiteUpdate = async (payload) => {
     };
     if (urls && Array.isArray(urls)) {
       updatePayload.images = urls;
+      updatePayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       updatePayload.images = [urls];
+      updatePayload.image = urls;
+    } else {
+      updatePayload.images = [];
+      updatePayload.image = "";
     }
     await siteUpdateModel.update(updatePayload, {
       where: { id: siteUpdateId, isDeleted: { [Op.ne]: true } },
@@ -116,6 +124,7 @@ siteUpdateController.getSiteUpdateList = async (payload) => {
         "author",
         "createdAt",
         "updatedAt",
+        "image"
       ],
     });
 
