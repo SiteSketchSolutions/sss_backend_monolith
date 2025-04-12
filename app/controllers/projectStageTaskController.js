@@ -29,19 +29,30 @@ projectStageTaskController.updateProjectStageStatusAndPercentage = async (projec
         // Calculate percentage of completed tasks
         const completedTasks = tasks.filter(task => task.status === 'completed');
         const percentage = (completedTasks.length / tasks.length) * 100;
+
         // Determine stage status based on task statuses
         let stageStatus = 'pending';
+
+        // Count different statuses
+        const hasCompleted = tasks.some(task => task.status === 'completed');
+        const hasInProgress = tasks.some(task => task.status === 'in_progress');
+        const hasDelayed = tasks.some(task => task.status === 'delayed');
+        const hasPending = tasks.some(task => task.status === 'pending');
+        const hasCancelled = tasks.some(task => task.status === 'cancelled');
+
+        // If all tasks are completed, mark as completed
         if (completedTasks.length === tasks.length) {
             stageStatus = 'completed';
-        } else if (tasks.some(task => task.status === 'in_progress' || task.status === 'delayed')) {
-            stageStatus = 'in_progress';
-        } else if (tasks.some(task => task.status === 'cancelled')) {
-            // Only set to cancelled if all tasks are cancelled
-            const cancelledCount = tasks.filter(task => task.status === 'cancelled').length;
-            if (cancelledCount === tasks.length) {
-                stageStatus = 'cancelled';
-            }
         }
+        // If any task is in progress or delayed, or if we have a mix of pending and completed tasks
+        else if (hasInProgress || hasDelayed || (hasCompleted && hasPending)) {
+            stageStatus = 'in_progress';
+        }
+        // If all tasks are cancelled, mark as cancelled
+        else if (hasCancelled && tasks.length === tasks.filter(task => task.status === 'cancelled').length) {
+            stageStatus = 'cancelled';
+        }
+        // Otherwise, it remains pending (all tasks are pending)
 
         // Update the project stage
         await projectStageModel.update(
