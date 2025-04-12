@@ -29,19 +29,28 @@ const updateTaskStatusBasedOnSubtasks = async (projectStageTaskId) => {
 
         // Determine parent task status based on subtask statuses
         let taskStatus = 'pending';
-        const completedSubTasks = subTasks.filter(subTask => subTask.status === 'completed');
 
+        // Count different statuses
+        const completedSubTasks = subTasks.filter(subTask => subTask.status === 'completed');
+        const hasCompleted = subTasks.some(subTask => subTask.status === 'completed');
+        const hasInProgress = subTasks.some(subTask => subTask.status === 'in_progress');
+        const hasDelayed = subTasks.some(subTask => subTask.status === 'delayed');
+        const hasPending = subTasks.some(subTask => subTask.status === 'pending');
+        const hasCancelled = subTasks.some(subTask => subTask.status === 'cancelled');
+
+        // If all subtasks are completed, mark as completed
         if (completedSubTasks.length === subTasks.length) {
             taskStatus = 'completed';
-        } else if (subTasks.some(subTask => subTask.status === 'in_progress' || subTask.status === 'delayed')) {
-            taskStatus = 'in_progress';
-        } else if (subTasks.some(subTask => subTask.status === 'cancelled')) {
-            // Only set to cancelled if all subtasks are cancelled
-            const cancelledCount = subTasks.filter(subTask => subTask.status === 'cancelled').length;
-            if (cancelledCount === subTasks.length) {
-                taskStatus = 'cancelled';
-            }
         }
+        // If any subtask is in progress or delayed, or if we have a mix of pending and completed subtasks
+        else if (hasInProgress || hasDelayed || (hasCompleted && hasPending)) {
+            taskStatus = 'in_progress';
+        }
+        // If all subtasks are cancelled, mark as cancelled
+        else if (hasCancelled && subTasks.length === subTasks.filter(subTask => subTask.status === 'cancelled').length) {
+            taskStatus = 'cancelled';
+        }
+        // Otherwise, it remains pending (all subtasks are pending)
 
         // Update the parent task
         await projectStageTaskModel.update(

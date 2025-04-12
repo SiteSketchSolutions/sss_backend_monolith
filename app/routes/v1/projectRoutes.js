@@ -30,7 +30,7 @@ let routes = [
           .description("Enter project package selected"),
         description: Joi.string().allow('').description("Enter project description"),
         location: Joi.string().description("Enter project location"),
-        startDate: Joi.string().description("Enter project startDate"),
+        startDate: Joi.date().description("Enter project startDate"),
         urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
       },
       group: "Project",
