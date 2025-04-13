@@ -45,6 +45,11 @@ const SiteUpdate = sequelize.define("siteUpdate", {
     allowNull: true,
     defaultValue: false,
   },
+  liked: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 });
 
 SiteUpdate.sync({ alter: true });

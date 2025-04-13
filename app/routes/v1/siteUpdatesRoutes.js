@@ -71,6 +71,95 @@ let routes = [
     auth: false,
     handler: siteUpdateController.deleteSiteUpdate,
   },
+
+  // Like toggle route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/toggleLike",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update")
+      },
+      group: "SiteUpdate",
+      description: "Route to toggle like status for a site update",
+      model: "toggleLike",
+    },
+    auth: false,
+    handler: siteUpdateController.toggleLike,
+  },
+
+  // User comment route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/userComment",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        userId: Joi.number().required().description("User ID"),
+        message: Joi.string().required().description("Comment message")
+      },
+      group: "SiteUpdate",
+      description: "Route for a user to add a comment",
+      model: "addUserComment",
+    },
+    auth: false,
+    handler: siteUpdateController.addUserComment,
+  },
+
+  // Admin reply route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/adminReply",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        adminId: Joi.number().required().description("Admin ID"),
+        message: Joi.string().required().description("Reply message")
+      },
+      group: "SiteUpdate",
+      description: "Route for an admin to reply to comments",
+      model: "addAdminReply",
+    },
+    auth: false,
+    handler: siteUpdateController.addAdminReply,
+  },
+
+  // Get comments route for users
+  {
+    method: "GET",
+    path: "/v1/siteUpdate/comments",
+    joiSchemaForSwagger: {
+      query: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        userId: Joi.number().required().description("User ID"),
+        page: Joi.number().description("Page number"),
+        size: Joi.number().description("Page size")
+      },
+      group: "SiteUpdate",
+      description: "Route to get comments for a site update (user view)",
+      model: "getComments",
+    },
+    auth: false,
+    handler: siteUpdateController.getComments,
+  },
+
+  // Get all comments route for admin
+  {
+    method: "GET",
+    path: "/v1/siteUpdate/allComments",
+    joiSchemaForSwagger: {
+      query: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        page: Joi.number().description("Page number"),
+        size: Joi.number().description("Page size")
+      },
+      group: "SiteUpdate",
+      description: "Route to get all comments for a site update (admin view)",
+      model: "getAllCommentsForAdmin",
+    },
+    auth: false,
+    handler: siteUpdateController.getAllCommentsForAdmin,
+  }
 ];
 
 module.exports = routes;
