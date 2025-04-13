@@ -8,7 +8,7 @@ const materialSelectedItemModel = require("../models/materialSelectedItemModel")
 const materialItemModel = require("../models/materialItemModel");
 const folderModel = require("../models/folderModel");
 const folderDocumentModel = require("../models/folderDocumentModel");
-
+const siteUpdateCommentModel = require("../models/siteUpdateCommentModel");
 /**************************************************
  ***************** Latest Update controller ***************
  **************************************************/
@@ -38,6 +38,8 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                     "author",
                     "createdAt",
                     "updatedAt",
+                    "image",
+                    "liked"
                 ],
             }),
             materialSelectedItemModel.findOne({
@@ -64,13 +66,29 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                 }],
             })
         ]);
+        // Fetch comments for each site update
+        const siteUpdatesWithComments = await siteUpdateCommentModel.findAll({
+            where: {
+                siteUpdateId: recentSiteUpdateResult.id,
+                [Op.or]: [
+                    { userId: userId },
+                    { isAdminReply: true }
+                ]
+            },
+            order: [["createdAt", "ASC"]]
+        });
+
+        const recentSiteUpdateResultWithComments = {
+            ...recentSiteUpdateResult.toJSON(),
+            commentList: siteUpdatesWithComments
+        };
         const documentUpdateResponse = {
             id: folderDocumentResult?.id || null,
             folderName: folderDocumentResult?.name || null,
             documentUrl: folderDocumentResult?.folderDocuments[0]?.url || null
         }
         const response = {
-            siteUpdate: recentSiteUpdateResult,
+            siteUpdate: recentSiteUpdateResultWithComments,
             materialUpdate: materialUpdateResult,
             documentUpdate: documentUpdateResponse
         };
