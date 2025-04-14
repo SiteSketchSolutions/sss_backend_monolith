@@ -82,6 +82,11 @@ const Project = sequelize.define("project", {
     allowNull: true,
     defaultValue: false,
   },
+  isFlagship: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 // Define association
