@@ -30,7 +30,8 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
-      urls
+      urls,
+      isFlagship
     } = payload;
     const projectPayload = {
       userId,
@@ -44,6 +45,7 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
     // Handle multiple images or backward compatibility with single image
@@ -109,6 +111,7 @@ projectController.updateProject = async (payload) => {
       description,
       startDate,
       urls,
+      isFlagship
     } = payload;
     let projectPayload = {
       name,
@@ -121,6 +124,7 @@ projectController.updateProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
     // Handle multiple images or backward compatibility with single image
@@ -164,7 +168,7 @@ projectController.updateProject = async (payload) => {
  */
 projectController.projectList = async (payload) => {
   try {
-    const { userId, username } = payload;
+    const { userId, username, isFlagship } = payload;
 
     // If username is provided, search users by name
     if (username) {
@@ -214,6 +218,7 @@ projectController.projectList = async (payload) => {
           "description",
           "startDate",
           "status",
+          "isFlagship"
         ],
         include: [
           {
@@ -239,6 +244,11 @@ projectController.projectList = async (payload) => {
       criteria.userId = userId;
     }
 
+    // Add flagship filter if provided
+    if (isFlagship !== undefined) {
+      criteria.isFlagship = isFlagship;
+    }
+
     const projectList = await projectModel.findAll({
       where: criteria,
       attributes: [
@@ -256,6 +266,7 @@ projectController.projectList = async (payload) => {
         "location",
         "description",
         "startDate",
+        "isFlagship",
         "status",
       ],
       include: [
@@ -313,6 +324,7 @@ projectController.projectById = async (payload) => {
         "description",
         "startDate",
         "status",
+        "isFlagship"
       ],
     });
     return Object.assign(

@@ -28,7 +28,10 @@ projectStageTaskController.updateProjectStageStatusAndPercentage = async (projec
 
         // Calculate percentage of completed tasks
         const completedTasks = tasks.filter(task => task.status === 'completed');
-        const percentage = (completedTasks.length / tasks.length) * 100;
+        // Calculate percentage as a number (0-100)
+        const percentageValue = (completedTasks.length / tasks.length) * 100;
+        // Format to two decimal places for storage in database
+        const percentage = parseFloat(percentageValue.toFixed(2));
 
         // Determine stage status based on task statuses
         let stageStatus = 'pending';
@@ -54,7 +57,7 @@ projectStageTaskController.updateProjectStageStatusAndPercentage = async (projec
         }
         // Otherwise, it remains pending (all tasks are pending)
 
-        // Update the project stage
+        // Update the project stage - pass percentage as a number
         await projectStageModel.update(
             {
                 percentage: percentage,
@@ -62,6 +65,15 @@ projectStageTaskController.updateProjectStageStatusAndPercentage = async (projec
             },
             { where: { id: projectStageId } }
         );
+
+        // After updating the stage, also update the project
+        // First, get the updated stage with project ID
+        const updatedStage = await projectStageModel.findByPk(projectStageId);
+        if (updatedStage) {
+            // Import and call the projectStageController's update function
+            const projectStageController = require('./projectStageController');
+            await projectStageController.updateProjectPercentage(updatedStage.projectId);
+        }
     } catch (error) {
         console.error("Error in updateProjectStageStatusAndPercentage:", error);
     }

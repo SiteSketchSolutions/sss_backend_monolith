@@ -159,6 +159,20 @@ let routes = [
     },
     auth: false,
     handler: siteUpdateController.getAllCommentsForAdmin,
+  },
+  {
+    method: "DELETE",
+    path: "/v1/siteUpdate/comment",
+    joiSchemaForSwagger: {
+      body: {
+        commentId: Joi.number().required().description("ID of the comment to delete")
+      },
+      group: "SiteUpdate",
+      description: "Route to delete a comment",
+      model: "deleteComment",
+    },
+    auth: false,
+    handler: siteUpdateController.deleteComment,
   }
 ];
 

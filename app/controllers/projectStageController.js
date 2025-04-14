@@ -78,6 +78,8 @@ projectStageController.createProjectStage = async (payload) => {
             id: projectStage?.id,
         };
 
+        await projectStageController.updateProjectPercentage(projectStage.projectId);
+
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
                 MESSAGES.PROJECT_STAGE_CREATED_SUCCESSFULLY
@@ -159,6 +161,8 @@ projectStageController.updateProjectStage = async (payload) => {
         await projectStageModel.update(updatePayload, {
             where: { id: projectStageId }
         });
+
+        await projectStageController.updateProjectPercentage(projectStage.projectId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
@@ -314,6 +318,8 @@ projectStageController.deleteProjectStage = async (payload) => {
             { where: { id: projectStageId } }
         );
 
+        await projectStageController.updateProjectPercentage(projectStage.projectId);
+
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
                 MESSAGES.PROJECT_STAGE_DELETED_SUCCESSFULLY
@@ -366,6 +372,8 @@ projectStageController.addProjectStageDelayReason = async (payload) => {
             { where: { id: projectStageId } }
         );
 
+        await projectStageController.updateProjectPercentage(projectStage.projectId);
+
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
                 MESSAGES.PROJECT_STAGE_DELAY_REASON_CREATED_SUCCESSFULLY
@@ -378,6 +386,67 @@ projectStageController.addProjectStageDelayReason = async (payload) => {
             error.message || error.msg || "Something went wrong",
             ERROR_TYPES.SOMETHING_WENT_WRONG
         );
+    }
+};
+
+/**
+ * Helper function to update project percentage of completion based on stages
+ * @param {Number} projectId 
+ */
+projectStageController.updateProjectPercentage = async (projectId) => {
+    try {
+        const stages = await projectStageModel.findAll({
+            where: {
+                projectId,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (stages.length === 0) return;
+
+        // Calculate percentage based on stage completion percentages
+        const totalPercentage = stages.reduce((sum, stage) => {
+            // Convert percentage to number before adding
+            const percentageValue = parseFloat(stage.percentage || 0);
+            return sum + percentageValue;
+        }, 0);
+
+        const averagePercentage = (totalPercentage / stages.length).toFixed(2);
+
+        // Determine project status based on stage statuses
+        let projectStatus = 'pending';
+
+        // Count different statuses
+        const hasCompleted = stages.some(stage => stage.status === 'completed');
+        const hasInProgress = stages.some(stage => stage.status === 'in_progress');
+        const hasDelayed = stages.some(stage => stage.status === 'delayed');
+        const hasPending = stages.some(stage => stage.status === 'pending');
+        const hasCancelled = stages.some(stage => stage.status === 'cancelled');
+
+        // If all stages are completed, mark as completed
+        if (stages.length === stages.filter(stage => stage.status === 'completed').length) {
+            projectStatus = 'completed';
+        }
+        // If any stage is in progress or delayed, or if we have a mix of pending and completed stages
+        else if (hasInProgress || hasDelayed || (hasCompleted && hasPending)) {
+            projectStatus = 'in_progress';
+        }
+        // If all stages are cancelled, mark as cancelled
+        else if (hasCancelled && stages.length === stages.filter(stage => stage.status === 'cancelled').length) {
+            projectStatus = 'cancelled';
+        }
+        // Otherwise, it remains pending (all stages are pending)
+
+        // Update the project
+        await projectModel.update(
+            {
+                percentageOfCompletion: averagePercentage.toString(),
+                status: projectStatus
+            },
+            { where: { id: projectId } }
+        );
+    } catch (error) {
+        console.error("Error in updateProjectPercentage:", error);
     }
 };
 

@@ -31,7 +31,8 @@ let routes = [
         description: Joi.string().allow('').description("Enter project description"),
         location: Joi.string().description("Enter project location"),
         startDate: Joi.date().description("Enter project startDate"),
-        urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
+        urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs"),
+        isFlagship: Joi.boolean().description("Flag to mark this project as flagship")
       },
       group: "Project",
       description: "Route to create project",
@@ -60,6 +61,7 @@ let routes = [
         startDate: Joi.string().description("Enter project startDate"),
         status: Joi.string().description("Enter project status"),
         urls: Joi.array().items(Joi.string()).description("Array of project image URLs"),
+        isFlagship: Joi.boolean().description("Flag to mark this project as flagship")
       },
       group: "Project",
       description: "Route to update project details",
@@ -75,6 +77,7 @@ let routes = [
       query: {
         userId: Joi.number().description("Enter user id"),
         username: Joi.string().description("Enter username to search projects"),
+        isFlagship: Joi.boolean().description("Filter projects by flagship status"),
       },
       group: "Project",
       description: "Route to list project",

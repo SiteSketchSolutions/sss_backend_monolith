@@ -448,4 +448,46 @@ siteUpdateController.deleteSiteUpdate = async (payload) => {
   }
 };
 
+/**
+ * Function to delete a comment
+ * @param {*} payload
+ * @returns
+ */
+siteUpdateController.deleteComment = async (payload) => {
+  try {
+    const { commentId } = payload;
+
+    // Check if comment exists
+    const comment = await siteUpdateCommentModel.findOne({
+      where: { id: commentId, isDeleted: { [Op.ne]: true } }
+    });
+
+    if (!comment) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "Comment not found",
+        ERROR_TYPES.DATA_NOT_FOUND
+      );
+    }
+
+    // Delete the comment
+    await siteUpdateCommentModel.update({
+      isDeleted: true
+    }, {
+      where: { id: commentId }
+    });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        "Comment deleted successfully"
+      ),
+      { data: null }
+    );
+  } catch (error) {
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg || "Something went wrong",
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
+
 module.exports = siteUpdateController;
