@@ -26,7 +26,8 @@ projectStageController.createProjectStage = async (payload) => {
             endDate,
             order,
             percentage,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the project exists
@@ -69,8 +70,17 @@ projectStageController.createProjectStage = async (payload) => {
             endDate,
             order: order || 0,
             percentage: percentage || 0,
-            status: status || 'pending'
+            status: status || 'pending',
+
         };
+        if (urls && Array.isArray(urls)) {
+            projectStagePayload.images = urls;
+        } else if (urls) {
+            // Handle backward compatibility if a single URL is sent
+            projectStagePayload.images = [urls];
+        } else {
+            projectStagePayload.images = [];
+        }
 
         const projectStage = await projectStageModel.create(projectStagePayload);
 
@@ -110,7 +120,8 @@ projectStageController.updateProjectStage = async (payload) => {
             endDate,
             order,
             percentage,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the stage exists
@@ -157,6 +168,12 @@ projectStageController.updateProjectStage = async (payload) => {
         if (percentage !== undefined) updatePayload.percentage = percentage;
         if (status) updatePayload.status = status;
 
+        if (urls && Array.isArray(urls)) {
+            updatePayload.images = urls;
+        } else if (urls) {
+            // Handle backward compatibility if a single URL is sent
+            updatePayload.images = [urls];
+        }
         // Update the project stage
         await projectStageModel.update(updatePayload, {
             where: { id: projectStageId }

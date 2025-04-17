@@ -52,6 +52,11 @@ const ProjectStage = sequelize.define("projectStage", {
         allowNull: false,
         defaultValue: 'pending',
     },
+    images: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,

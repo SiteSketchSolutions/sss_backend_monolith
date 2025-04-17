@@ -174,6 +174,7 @@ module.exports = {
   ANALYTICS_FETCHED_SUCCESSFULLY: "Analytics data fetched successfully",
   PROJECT_ANALYTICS_FETCHED_SUCCESSFULLY: "Project analytics data fetched successfully",
   CLIENT_ANALYTICS_FETCHED_SUCCESSFULLY: "Client analytics data fetched successfully",
+  VENDOR_ANALYTICS_FETCHED_SUCCESSFULLY: "Vendor analytics data fetched successfully",
 
   // Vendor
   VENDOR_CREATED_SUCCESSFULLY: "Vendor created successfully",
