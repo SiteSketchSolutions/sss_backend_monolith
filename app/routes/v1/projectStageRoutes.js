@@ -17,7 +17,8 @@ let routes = [
                 order: Joi.number().description("Order/sequence of the stage (default: 0)"),
                 percentage: Joi.number().description("Percentage of completion (default: 0)"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_STATUS_LIST)).default(PROJECT_STAGE_STATUS_LIST.PENDING)
-                    .description("Status of the stage (default: pending)")
+                    .description("Status of the stage (default: pending)"),
+                urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
             },
             group: "ProjectStage",
             description: "Route to create a project stage",
@@ -39,7 +40,8 @@ let routes = [
                 order: Joi.number().description("Order/sequence of the stage"),
                 percentage: Joi.number().description("Percentage of completion"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_STATUS_LIST)).default(PROJECT_STAGE_STATUS_LIST.PENDING)
-                    .description("Status of the stage (default: pending)")
+                    .description("Status of the stage (default: pending)"),
+                urls: Joi.array().items(Joi.string()).required().description("Array of project image URLs")
             },
             group: "ProjectStage",
             description: "Route to update a project stage",
