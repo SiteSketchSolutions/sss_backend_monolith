@@ -267,7 +267,8 @@ siteUpdateController.getComments = async (payload) => {
         [Op.or]: [
           { userId: userId },
           { isAdminReply: true }
-        ]
+        ],
+        isDeleted: { [Op.ne]: true }
       },
       order: [["createdAt", "ASC"]],
       limit: pageLimit,
@@ -319,7 +320,9 @@ siteUpdateController.getAllCommentsForAdmin = async (payload) => {
 
     // Get all comments for this update
     const { count, rows } = await siteUpdateCommentModel.findAndCountAll({
-      where: { siteUpdateId },
+      where: {
+        siteUpdateId, isDeleted: { [Op.ne]: true }
+      },
       order: [["createdAt", "ASC"]],
       limit: pageLimit,
       offset: (pageNo - 1) * pageLimit
@@ -389,7 +392,8 @@ siteUpdateController.getSiteUpdateList = async (payload) => {
             [Op.or]: [
               { userId: userId },
               { isAdminReply: true }
-            ]
+            ],
+            isDeleted: { [Op.ne]: true }
           },
           order: [["createdAt", "ASC"]]
         });
@@ -483,6 +487,7 @@ siteUpdateController.deleteComment = async (payload) => {
       { data: null }
     );
   } catch (error) {
+    console.log(error, "error===>")
     throw HELPERS.responseHelper.createErrorResponse(
       error.msg || "Something went wrong",
       ERROR_TYPES.SOMETHING_WENT_WRONG

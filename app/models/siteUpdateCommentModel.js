@@ -36,6 +36,11 @@ const SiteUpdateComment = sequelize.define("siteUpdateComment", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
   }
 });
 
