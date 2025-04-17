@@ -73,7 +73,8 @@ latestUpdateController.getLatestUpdate = async (payload) => {
                 [Op.or]: [
                     { userId: userId },
                     { isAdminReply: true }
-                ]
+                ],
+                isDeleted: { [Op.ne]: true }
             },
             order: [["createdAt", "ASC"]]
         });
