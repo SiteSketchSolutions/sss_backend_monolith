@@ -18,7 +18,7 @@ let routes = [
                     .default(BANK_ACCOUNT_TYPE.SAVINGS)
                     .description("Type of account (Savings, Current, Other)"),
                 branchName: Joi.string().description("Name of the bank branch"),
-                description: Joi.string().description("Additional details about the account"),
+                description: Joi.string().allow('').description("Additional details about the account"),
                 isActive: Joi.boolean().default(true).description("Whether the account is active")
             },
             group: "BankAccount",
@@ -42,7 +42,7 @@ let routes = [
                     .valid(BANK_ACCOUNT_TYPE.SAVINGS, BANK_ACCOUNT_TYPE.CURRENT, BANK_ACCOUNT_TYPE.OTHER)
                     .description("Type of account (Savings, Current, Other)"),
                 branchName: Joi.string().description("Name of the bank branch"),
-                description: Joi.string().description("Additional details about the account"),
+                description: Joi.string().allow('').description("Additional details about the account"),
                 isActive: Joi.boolean().description("Whether the account is active")
             },
             group: "BankAccount",

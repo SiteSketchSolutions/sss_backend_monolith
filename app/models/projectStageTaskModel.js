@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../startup/dbConfig");
-const ProjectStage = require("./projectStageModel");
 
 /**************************************************
  ************ PROJECT STAGE TASK MODEL *************
@@ -62,9 +61,7 @@ const ProjectStageTask = sequelize.define("projectStageTask", {
     },
 });
 
-// Define association
-// ProjectStageTask.belongsTo(ProjectStage, { foreignKey: 'projectStageId', as: 'projectStage' });
-// ProjectStage.hasMany(ProjectStageTask, { foreignKey: 'projectStageId', as: 'tasks' });
+// Note: Associations are defined in config/associations.js
 
 ProjectStageTask.sync({ alter: true });
 

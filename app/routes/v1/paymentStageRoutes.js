@@ -40,7 +40,7 @@ let routes = [
             body: {
                 stageId: Joi.number().required().description("Enter stage id"),
                 name: Joi.string().description("Enter stage name"),
-                description: Joi.string().description("Enter stage description"),
+                description: Joi.string().allow('').description("Enter stage description"),
                 totalAmount: Joi.number().description("Enter stage total amount"),
                 dueDate: Joi.date().description("Enter payment due date"),
                 status: Joi.string().valid(...Object.values(PAYMENT_STAGE_STATUS)).description("Enter stage status"),

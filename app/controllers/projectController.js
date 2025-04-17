@@ -30,7 +30,8 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
-      urls
+      urls,
+      isFlagship
     } = payload;
     const projectPayload = {
       userId,
@@ -44,16 +45,20 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
+      projectPayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
+      projectPayload.image = urls;
     } else {
       projectPayload.images = [];
+      projectPayload.image = "";
     }
 
     let projectDetails = await projectModel.findOne({
@@ -106,6 +111,7 @@ projectController.updateProject = async (payload) => {
       description,
       startDate,
       urls,
+      isFlagship
     } = payload;
     let projectPayload = {
       name,
@@ -118,14 +124,20 @@ projectController.updateProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
+      projectPayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
+      projectPayload.image = urls;
+    } else {
+      projectPayload.images = [];
+      projectPayload.image = "";
     }
 
     const projectResponse = await projectModel.update(projectPayload, {
@@ -156,7 +168,7 @@ projectController.updateProject = async (payload) => {
  */
 projectController.projectList = async (payload) => {
   try {
-    const { userId, username } = payload;
+    const { userId, username, isFlagship } = payload;
 
     // If username is provided, search users by name
     if (username) {
@@ -200,11 +212,13 @@ projectController.projectList = async (payload) => {
           "status",
           "price",
           "package",
+          "image",
           "images",
           "location",
           "description",
           "startDate",
           "status",
+          "isFlagship"
         ],
         include: [
           {
@@ -230,6 +244,11 @@ projectController.projectList = async (payload) => {
       criteria.userId = userId;
     }
 
+    // Add flagship filter if provided
+    if (isFlagship !== undefined) {
+      criteria.isFlagship = isFlagship;
+    }
+
     const projectList = await projectModel.findAll({
       where: criteria,
       attributes: [
@@ -242,10 +261,12 @@ projectController.projectList = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",
         "startDate",
+        "isFlagship",
         "status",
       ],
       include: [
@@ -297,11 +318,13 @@ projectController.projectById = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",
         "startDate",
         "status",
+        "isFlagship"
       ],
     });
     return Object.assign(

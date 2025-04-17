@@ -1,11 +1,12 @@
 // "use strict";
 const HELPERS = require("../helpers");
 const { Op } = require("sequelize");
-const { MESSAGES, ERROR_TYPES, USER_TYPES } = require("../utils/constants");
+const { MESSAGES, ERROR_TYPES, USER_TYPES, PROJECT_STAGE_STATUS_LIST } = require("../utils/constants");
 const projectModel = require("../models/projectModel");
 const userModel = require("../models/userModel");
 const adminModel = require("../models/adminModel");
 const walletModel = require("../models/walletModel");
+const projectStageModel = require("../models/projectStageModel");
 const { encryptJwt } = require("../utils/utils");
 const s3Utils = require("../utils/s3Utils");
 
@@ -72,17 +73,26 @@ authController.userLogin = async (payload) => {
           "images",
           "location",
           "startDate",
-          "status",
+          "status"
         ],
       }),
     ]);
+
     let walletId = null;
+    let projectStage = null
     if (projectDetails) {
-      const walletDetails = await walletModel.findOne({
-        where: { projectId: projectDetails?.id, isDeleted: { [Op.ne]: true } },
-        attributes: ['id']
-      });
+      const [walletDetails, inProgressProjectStage] = await Promise.all([
+        walletModel.findOne({
+          where: { projectId: projectDetails?.id, isDeleted: { [Op.ne]: true } },
+          attributes: ['id']
+        }),
+        projectStageModel.findOne({
+          where: { projectId: projectDetails?.id, status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS, isDeleted: { [Op.ne]: true } },
+          attributes: ['id', 'name', 'status', 'percentage']
+        })
+      ])
       walletId = walletDetails?.id;
+      projectStage = inProgressProjectStage
     }
 
     if (!validPassword) {
@@ -97,6 +107,7 @@ authController.userLogin = async (payload) => {
       uniqueId: userDetails?.uniqueId,
       name: userDetails?.name,
       status: userDetails?.status,
+      currentProjectStage: projectStage,
       projectDetails: projectDetails,
       walletId: walletId,
       token: encryptJwt({

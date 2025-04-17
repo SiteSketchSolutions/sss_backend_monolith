@@ -10,7 +10,7 @@ let routes = [
       body: {
         projectId: Joi.number().required().description("Enter project id"),
         name: Joi.string().required().description("Enter stage name"),
-        description: Joi.string().description("Enter stage description"),
+        description: Joi.string().allow('').description("Enter stage description"),
         url: Joi.string().required().description("Enter stage image url"),
         order: Joi.number().required().description("Enter stage order number"),
       },
@@ -28,7 +28,7 @@ let routes = [
       body: {
         stageId: Joi.number().required().description("Development stage ID"),
         name: Joi.string().description("Enter stage name"),
-        description: Joi.string().description("Enter stage description"),
+        description: Joi.string().allow('').description("Enter stage description"),
         url: Joi.string().description("Enter stage image url"),
         order: Joi.number().description("Enter stage order number"),
       },

@@ -11,7 +11,7 @@ let routes = [
                 userId: Joi.number().required().description("ID of the user"),
                 amount: Joi.number().required().description("Expense amount"),
                 stageName: Joi.string().required().description("Name of the stage"),
-                note: Joi.string().description("Optional note about the expense")
+                note: Joi.string().allow('').description("Optional note about the expense")
             },
             group: "AdditionalExpense",
             description: "Route to create an additional expense",
@@ -28,7 +28,7 @@ let routes = [
                 additionalExpenseId: Joi.number().required().description("ID of the additional expense"),
                 amount: Joi.number().description("Expense amount"),
                 stageName: Joi.string().description("Name of the stage"),
-                note: Joi.string().description("Note about the expense"),
+                note: Joi.string().allow('').description("Note about the expense"),
                 status: Joi.string().valid('unpaid', 'settled').description("Status of the expense")
             },
             group: "AdditionalExpense",

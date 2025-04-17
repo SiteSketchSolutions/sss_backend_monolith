@@ -32,7 +32,7 @@ let routes = [
                     .description("Enter category id"),
                 name: Joi.string()
                     .description("Enter category name"),
-                description: Joi.string()
+                description: Joi.string().allow('')
                     .description("Enter category description"),
                 status: Joi.string()
                     .description("Enter category status")
