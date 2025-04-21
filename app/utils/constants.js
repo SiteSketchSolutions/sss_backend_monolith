@@ -182,4 +182,11 @@ CONSTANTS.PROJECT_STAGE_SUB_TASK_STATUS_LIST = {
   DELAYED: "delayed",
   CANCELLED: "delayed"
 }
+
+CONSTANTS.USER_STATUS_LIST = {
+  ACTIVE: "active",
+  TEST: "test",
+  INACTIVE: "inactive"
+}
+
 module.exports = CONSTANTS;

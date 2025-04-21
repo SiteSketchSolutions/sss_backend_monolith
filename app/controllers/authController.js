@@ -50,6 +50,8 @@ authController.userLogin = async (payload) => {
       where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },
       attributes: ["id", "uniqueId", "name", "status"],
     });
+    // TODO :n15 dummy user data fetch return below
+
     if (!userDetails) {
       throw HELPERS.responseHelper.createErrorResponse(
         MESSAGES.NO_USER_FOUND,
@@ -101,6 +103,8 @@ authController.userLogin = async (payload) => {
         ERROR_TYPES.BAD_REQUEST
       );
     }
+    //status == test dummy acount fetch return below.
+
 
     const response = {
       id: userDetails?.id,

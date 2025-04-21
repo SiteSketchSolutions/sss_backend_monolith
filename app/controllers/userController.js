@@ -18,14 +18,14 @@ let userController = {};
  */
 userController.createUser = async (payload) => {
     try {
-        const { name, email, password, phoneNumber } = payload;
+        const { name, email, password, phoneNumber, status } = payload;
         const userPayload = {
             name,
             email,
             password,
             phoneNumber,
             uniqueId: generateUniqueId(),
-            status: "pending"
+            status: status || USER_STATUS_LIST.ACTIVE
         }
         let userDetails = await userModel.findOne({
             where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },

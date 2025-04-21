@@ -78,10 +78,7 @@ projectStageController.createProjectStage = async (payload) => {
         } else if (urls) {
             // Handle backward compatibility if a single URL is sent
             projectStagePayload.images = [urls];
-        } else {
-            projectStagePayload.images = [];
         }
-
         const projectStage = await projectStageModel.create(projectStagePayload);
 
         const response = {
@@ -158,6 +155,12 @@ projectStageController.updateProjectStage = async (payload) => {
             }
         }
 
+        // First get the existing stage details
+        const existingStage = await projectStageModel.findOne({
+            where: { id: projectStageId },
+            attributes: ['images']
+        });
+
         // Prepare update payload
         const updatePayload = {};
         if (name) updatePayload.name = name;
@@ -168,11 +171,10 @@ projectStageController.updateProjectStage = async (payload) => {
         if (percentage !== undefined) updatePayload.percentage = percentage;
         if (status) updatePayload.status = status;
 
+        // Handle image updates
         if (urls && Array.isArray(urls)) {
-            updatePayload.images = urls;
-        } else if (urls) {
-            // Handle backward compatibility if a single URL is sent
-            updatePayload.images = [urls];
+            // Merge new URLs with existing images, removing duplicates
+            updatePayload.images = [...new Set([...(existingStage?.images || []), ...urls])];
         }
         // Update the project stage
         await projectStageModel.update(updatePayload, {

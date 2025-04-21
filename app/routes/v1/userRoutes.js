@@ -2,6 +2,7 @@
 const { Joi } = require("../../utils/joiUtils");
 //load controllers
 const userController = require("../../controllers/userController");
+const { USER_STATUS_LIST } = require("../../utils/constants");
 
 let routes = [
     {
@@ -16,7 +17,8 @@ let routes = [
                 password: Joi.string().required()
                     .description("Enter user password"),
                 phoneNumber: Joi.string().required()
-                    .description("Enter user phone number")
+                    .description("Enter user phone number"),
+                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE)
             },
             group: "User",
             description: "Route to create user",
@@ -40,7 +42,7 @@ let routes = [
                     .description("Enter user password"),
                 phoneNumber: Joi.string()
                     .description("Enter user phone number"),
-                status: Joi.string()
+                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE)
                     .description("Enter status"),
             },
             group: "User",
