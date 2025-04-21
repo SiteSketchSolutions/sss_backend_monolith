@@ -8,7 +8,7 @@ let routes = [
         path: "/v1/vendor-analytics",
         joiSchemaForSwagger: {
             query: {
-                vendorId: Joi.number().required()
+                vendorId: Joi.number()
                     .description("Enter vendor id"),
                 projectId: Joi.number()
                     .description("Enter project id (optional)"),

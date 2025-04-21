@@ -48,6 +48,7 @@ projectController.createProject = async (payload) => {
       isFlagship
     };
 
+    // TODO : Verify the image is resetiing or updating existing.
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
@@ -56,9 +57,6 @@ projectController.createProject = async (payload) => {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
       projectPayload.image = urls;
-    } else {
-      projectPayload.images = [];
-      projectPayload.image = "";
     }
 
     let projectDetails = await projectModel.findOne({
@@ -127,17 +125,20 @@ projectController.updateProject = async (payload) => {
       isFlagship
     };
 
+    // First get the existing project details to preserve existing images
+    const existingProject = await projectModel.findOne({
+      where: { id: projectId },
+      attributes: ['images', 'image']
+    });
+
     // Handle multiple images or backward compatibility with single image
-    if (urls && Array.isArray(urls)) {
-      projectPayload.images = urls;
-      projectPayload.image = urls[0];
-    } else if (urls) {
-      // Handle backward compatibility if a single URL is sent
-      projectPayload.images = [urls];
-      projectPayload.image = urls;
-    } else {
-      projectPayload.images = [];
-      projectPayload.image = "";
+    if (urls) {
+      if (Array.isArray(urls)) {
+        // Merge new URLs with existing images, removing duplicates
+        projectPayload.images = [...new Set([...(existingProject?.images || []), ...urls])];
+        // Update primary image only if new URLs are provided
+        projectPayload.image = urls[0] || existingProject?.image;
+      }
     }
 
     const projectResponse = await projectModel.update(projectPayload, {

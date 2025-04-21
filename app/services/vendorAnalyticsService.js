@@ -28,33 +28,38 @@ vendorAnalyticsService.formatCurrencyAmount = (amount) => {
  */
 vendorAnalyticsService.getVendorAnalytics = async (vendorId, projectId, startDate, endDate) => {
     try {
-        if (!vendorId) {
-            throw new Error("Vendor ID is required");
-        }
 
         // Get vendor details
-        const vendor = await vendorModel.findOne({
-            where: {
-                id: vendorId,
-                isDeleted: false
-            },
-            attributes: ['id', 'name', 'status']
-        });
+        let vendor = null;
+        if (vendorId) {
+            vendor = await vendorModel.findOne({
+                where: {
+                    id: vendorId,
+                    isDeleted: false
+                },
+                attributes: ['id', 'name', 'status']
+            });
 
-        if (!vendor) {
-            throw new Error("Vendor not found");
+            if (!vendor) {
+                throw new Error("Vendor not found");
+            }
         }
 
         // Build where clause for expenses and budget allocations
         let expenseWhereClause = {
-            vendorId,
+            isDeleted: false
+        };
+        if (vendorId) {
+            expenseWhereClause.vendorId = vendorId;
+        }
+
+        let budgetWhereClause = {
             isDeleted: false
         };
 
-        let budgetWhereClause = {
-            vendorId,
-            isDeleted: false
-        };
+        if (vendorId) {
+            budgetWhereClause.vendorId = vendorId;
+        }
 
         // Add project filter if provided
         if (projectId) {
@@ -139,13 +144,13 @@ vendorAnalyticsService.getVendorAnalytics = async (vendorId, projectId, startDat
 
         // Format the response
         const result = {
-            vendorId: vendor.id,
-            vendorName: vendor.name,
-            vendorStatus: vendor.status,
-            totalExpenses: vendorAnalyticsService.formatCurrencyAmount(totalExpenses),
-            totalBudgetAllocated: vendorAnalyticsService.formatCurrencyAmount(totalBudgetAllocated),
-            remainingBudget: vendorAnalyticsService.formatCurrencyAmount(remainingBudget),
-            budgetUtilizationPercentage: parseFloat(budgetUtilizationPercentage.toFixed(2)),
+            vendorId: vendor?.id || null,
+            vendorName: vendor?.name || null,
+            vendorStatus: vendor?.status || null,
+            totalExpenses: vendorAnalyticsService.formatCurrencyAmount(totalExpenses) || null,
+            totalBudgetAllocated: vendorAnalyticsService.formatCurrencyAmount(totalBudgetAllocated) || null,
+            remainingBudget: vendorAnalyticsService.formatCurrencyAmount(remainingBudget) || null,
+            budgetUtilizationPercentage: parseFloat(budgetUtilizationPercentage.toFixed(2)) || null,
             projectWiseAnalytics: projectWiseAnalytics
         };
 

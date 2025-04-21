@@ -31,9 +31,6 @@ siteUpdateController.createSiteUpdate = async (payload) => {
       // Handle backward compatibility if a single URL is sent
       siteUpdatePayload.images = [urls];
       siteUpdatePayload.image = urls;
-    } else {
-      siteUpdatePayload.images = [];
-      siteUpdatePayload.image = "";
     }
     const siteUpdate = await siteUpdateModel.create(siteUpdatePayload);
     const response = {
@@ -62,21 +59,22 @@ siteUpdateController.updateSiteUpdate = async (payload) => {
   try {
     const { name, description, author, siteUpdateId, urls } = payload;
 
+    // First get the existing site update details
+    const existingUpdate = await siteUpdateModel.findOne({
+      where: { id: siteUpdateId },
+      attributes: ['images', 'image']
+    });
+
     let updatePayload = {
       name,
       description,
       author
     };
     if (urls && Array.isArray(urls)) {
-      updatePayload.images = urls;
-      updatePayload.image = urls[0];
-    } else if (urls) {
-      // Handle backward compatibility if a single URL is sent
-      updatePayload.images = [urls];
-      updatePayload.image = urls;
-    } else {
-      updatePayload.images = [];
-      updatePayload.image = "";
+      // Merge new URLs with existing images, removing duplicates
+      updatePayload.images = [...new Set([...(existingUpdate?.images || []), ...urls])];
+      // Update primary image only if new URLs are provided
+      updatePayload.image = urls[0] || existingUpdate?.image;
     }
     await siteUpdateModel.update(updatePayload, {
       where: { id: siteUpdateId, isDeleted: { [Op.ne]: true } },

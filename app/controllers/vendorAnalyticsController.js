@@ -17,9 +17,6 @@ vendorAnalyticsController.getVendorAnalytics = async (payload) => {
     try {
         const { vendorId, projectId, startDate, endDate } = payload;
 
-        if (!vendorId) {
-            return HELPERS.responseHelper.createErrorResponse("Vendor ID is required", ERROR_TYPES.BAD_REQUEST);
-        }
 
         const analyticsData = await vendorAnalyticsService.getVendorAnalytics(vendorId, projectId, startDate, endDate);
 
