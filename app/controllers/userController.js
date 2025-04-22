@@ -151,5 +151,47 @@ userController.deleteUser = async (payload) => {
     }
 };
 
+/**
+ * Function to reset user password
+ * @param {*} payload 
+ * @returns 
+ */
+userController.resetPassword = async (payload) => {
+    try {
+        const { phoneNumber, newPassword } = payload;
+
+        // Find user by phone number
+        const user = await userModel.findOne({
+            where: {
+                phoneNumber: phoneNumber,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (!user) {
+            return HELPERS.responseHelper.createErrorResponse(
+                MESSAGES.USER_NOT_FOUND,
+                ERROR_TYPES.DATA_NOT_FOUND
+            );
+        }
+
+        // Update the password
+        await userModel.update(
+            { password: newPassword },
+            { where: { id: user.id } }
+        );
+
+        return HELPERS.responseHelper.createSuccessResponse(
+            MESSAGES.PASSWORD_RESET_SUCCESSFULLY
+        );
+    } catch (error) {
+        console.error("Error in resetPassword:", error);
+        throw HELPERS.responseHelper.createErrorResponse(
+            error.msg || "Something went wrong",
+            ERROR_TYPES.SOMETHING_WENT_WRONG
+        );
+    }
+};
+
 /* export userController */
 module.exports = userController;

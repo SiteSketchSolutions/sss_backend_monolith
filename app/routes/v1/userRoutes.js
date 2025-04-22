@@ -97,6 +97,23 @@ let routes = [
         auth: false,
         handler: userController.deleteUser,
     },
+    {
+        method: "POST",
+        path: "/v1/user/reset-password",
+        joiSchemaForSwagger: {
+            body: {
+                phoneNumber: Joi.string().required()
+                    .description("Enter user phone number"),
+                newPassword: Joi.string().required()
+                    .description("Enter new password")
+            },
+            group: "User",
+            description: "Route to reset user password",
+            model: "resetPassword",
+        },
+        auth: false,
+        handler: userController.resetPassword,
+    },
 ];
 
 module.exports = routes;

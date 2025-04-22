@@ -1,13 +1,13 @@
 // "use strict";
 const HELPERS = require("../helpers");
 const { Op } = require("sequelize");
-const { MESSAGES, ERROR_TYPES, USER_TYPES, PROJECT_STAGE_STATUS_LIST } = require("../utils/constants");
+const { MESSAGES, ERROR_TYPES, USER_TYPES, PROJECT_STAGE_STATUS_LIST, USER_STATUS_LIST } = require("../utils/constants");
 const projectModel = require("../models/projectModel");
 const userModel = require("../models/userModel");
 const adminModel = require("../models/adminModel");
 const walletModel = require("../models/walletModel");
 const projectStageModel = require("../models/projectStageModel");
-const { encryptJwt } = require("../utils/utils");
+const { encryptJwt, generateUniqueId } = require("../utils/utils");
 const s3Utils = require("../utils/s3Utils");
 
 /**************************************************
@@ -46,11 +46,11 @@ authController.userLogin = async (payload) => {
         ERROR_TYPES.BAD_REQUEST
       );
     }
+
     let userDetails = await userModel.findOne({
       where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },
       attributes: ["id", "uniqueId", "name", "status"],
     });
-    // TODO :n15 dummy user data fetch return below
 
     if (!userDetails) {
       throw HELPERS.responseHelper.createErrorResponse(
@@ -58,13 +58,18 @@ authController.userLogin = async (payload) => {
         ERROR_TYPES.DATA_NOT_FOUND
       );
     }
+
     const [validPassword, projectDetails] = await Promise.all([
       userModel.findOne({
         where: { id: userDetails?.id, password: password },
         attributes: ["id"],
       }),
+      // If user is test status, fetch dummy user's project (id=1)
       projectModel.findOne({
-        where: { userId: userDetails?.id, isDeleted: { [Op.ne]: true } },
+        where: {
+          userId: userDetails?.status === USER_STATUS_LIST.PENDING ? 17 : userDetails?.id,
+          isDeleted: { [Op.ne]: true }
+        },
         attributes: [
           "id",
           "name",
@@ -80,31 +85,44 @@ authController.userLogin = async (payload) => {
       }),
     ]);
 
-    let walletId = null;
-    let projectStage = null
-    if (projectDetails) {
-      const [walletDetails, inProgressProjectStage] = await Promise.all([
-        walletModel.findOne({
-          where: { projectId: projectDetails?.id, isDeleted: { [Op.ne]: true } },
-          attributes: ['id']
-        }),
-        projectStageModel.findOne({
-          where: { projectId: projectDetails?.id, status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS, isDeleted: { [Op.ne]: true } },
-          attributes: ['id', 'name', 'status', 'percentage']
-        })
-      ])
-      walletId = walletDetails?.id;
-      projectStage = inProgressProjectStage
-    }
-
     if (!validPassword) {
       return HELPERS.responseHelper.createErrorResponse(
         MESSAGES.INVALID_PASSWORD,
         ERROR_TYPES.BAD_REQUEST
       );
     }
-    //status == test dummy acount fetch return below.
 
+    let walletId = null;
+    let projectStage = null;
+    if (projectDetails) {
+      const [walletDetails, inProgressProjectStage] = await Promise.all([
+        walletModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id']
+        }),
+        projectStageModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id', 'name', 'status', 'percentage']
+        })
+      ]);
+      walletId = walletDetails?.id;
+      projectStage = inProgressProjectStage;
+    }
+
+    // If user is test status, fetch dummy user details (id=1)
+    if (userDetails.status === USER_STATUS_LIST.PENDING) {
+      userDetails = await userModel.findOne({
+        where: { id: 17, isDeleted: { [Op.ne]: true } },
+        attributes: ["id", "uniqueId", "name", "status"],
+      });
+    }
 
     const response = {
       id: userDetails?.id,
@@ -221,5 +239,61 @@ authController.generatePresignedUrl = async (payload) => {
     );
   }
 }
+
+/**
+ * Function to handle user signup
+ * @param {*} payload 
+ * @returns 
+ */
+authController.userSignup = async (payload) => {
+  try {
+    const { name, email, phoneNumber, password } = payload;
+
+    // Check if user already exists with the same phone number
+    const existingUser = await userModel.findOne({
+      where: {
+        phoneNumber: phoneNumber,
+        isDeleted: { [Op.ne]: true }
+      }
+    });
+
+    if (existingUser) {
+      throw HELPERS.responseHelper.createErrorResponse(
+        MESSAGES.USER_ALREADY_EXIST,
+        ERROR_TYPES.ALREADY_EXISTS
+      );
+    }
+
+    // Create new user with test status
+    const userPayload = {
+      name,
+      email,
+      phoneNumber,
+      password,
+      uniqueId: generateUniqueId(),
+      status: USER_STATUS_LIST.PENDING
+    };
+
+    const userResponse = await userModel.create(userPayload);
+
+    const response = {
+      id: userResponse?.id,
+      uniqueId: userResponse?.uniqueId,
+      name: userResponse?.name,
+      status: userResponse?.status
+    };
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(MESSAGES.USER_CREATED_SUCCESSFULLY),
+      { data: response }
+    );
+  } catch (error) {
+    console.error("Error in userSignup:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg || "Something went wrong",
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
 /* export authController */
 module.exports = authController;

@@ -29,6 +29,7 @@ module.exports = {
   DATA_UPDATED_SUCCESSFULLY: "Data Updated Successfully",
   DATA_FETCHED_SUCCESSFULLY: "User Data Fetched Successfully",
   USER_NOT_FOUND: "User not found",
+  PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
   PROFILE_FETCHED_SUCCESSFULLY: "Profile fetched successfully.",
   LOGGED_OUT_SUCCESSFULLY: "Logged out successfully.",
   PROFILE_UPDATE_SUCCESSFULLY: "Profile updated successfully.",
