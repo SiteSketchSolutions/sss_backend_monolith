@@ -80,6 +80,27 @@ let routes = [
     auth: false,
     handler: authController.generatePresignedUrl,
   },
+  {
+    method: "POST",
+    path: "/v1/auth/user/signup",
+    joiSchemaForSwagger: {
+      body: {
+        name: Joi.string().required()
+          .description("Enter user name"),
+        email: Joi.string()
+          .description("Enter user email"),
+        phoneNumber: Joi.string().required()
+          .description("Enter user phone number"),
+        password: Joi.string().required()
+          .description("Enter user password")
+      },
+      group: "Auth",
+      description: "Route to user signup",
+      model: "userSignup",
+    },
+    auth: false,
+    handler: authController.userSignup,
+  },
 ];
 
 module.exports = routes;

@@ -185,7 +185,7 @@ CONSTANTS.PROJECT_STAGE_SUB_TASK_STATUS_LIST = {
 
 CONSTANTS.USER_STATUS_LIST = {
   ACTIVE: "active",
-  TEST: "test",
+  PENDING: "pending",
   INACTIVE: "inactive"
 }
 
