@@ -80,6 +80,8 @@ let routes = [
         mobileNumber: Joi.string().description("Mobile Number"),
         role: Joi.string().valid(ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.SITE_ENGINEER).description("Admin role"),
         status: Joi.string().description("Account status"),
+        deviceToken: Joi.string()
+          .description("Enter user device token"),
       },
       group: "Admin",
       description: "Route to update admin details",

@@ -40,6 +40,8 @@ let routes = [
           .required()
           .description("Enter client phone number"),
         password: Joi.string().required().description("User entered password"),
+        deviceToken: Joi.string()
+          .description("Enter user device token"),
       },
       group: "Auth",
       description: "Route to client login",
@@ -55,6 +57,8 @@ let routes = [
       body: {
         email: Joi.string().required().description("email id "),
         password: Joi.string().required().description("password"),
+        deviceToken: Joi.string()
+          .description("Enter user device token"),
       },
       group: "Auth",
       description: "Route to admin Login",
@@ -92,7 +96,9 @@ let routes = [
         phoneNumber: Joi.string().required()
           .description("Enter user phone number"),
         password: Joi.string().required()
-          .description("Enter user password")
+          .description("Enter user password"),
+        deviceToken: Joi.string()
+          .description("Enter user device token"),
       },
       group: "Auth",
       description: "Route to user signup",
