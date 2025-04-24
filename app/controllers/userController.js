@@ -54,13 +54,14 @@ userController.createUser = async (payload) => {
  */
 userController.updateUser = async (payload) => {
     try {
-        const { userId, name, email, password, phoneNumber, status } = payload;
+        const { userId, name, email, password, phoneNumber, status, deviceToken } = payload;
         const userPayload = {
             name,
             email,
             password,
             phoneNumber,
-            status
+            status,
+            deviceToken
         }
         let userDetails = await userModel.findOne({
             where: { id: userId, isDeleted: { [Op.ne]: true } },

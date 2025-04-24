@@ -18,7 +18,9 @@ let routes = [
                     .description("Enter user password"),
                 phoneNumber: Joi.string().required()
                     .description("Enter user phone number"),
-                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE)
+                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE),
+                deviceToken: Joi.string()
+                    .description("Enter user device token"),
             },
             group: "User",
             description: "Route to create user",
@@ -44,6 +46,8 @@ let routes = [
                     .description("Enter user phone number"),
                 status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE)
                     .description("Enter status"),
+                deviceToken: Joi.string()
+                    .description("Enter user device token")
             },
             group: "User",
             description: "Route to update user",

@@ -44,6 +44,10 @@ const Admin = sequelize.define("admin", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  deviceToken: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   isDeleted: {
     type: DataTypes.BOOLEAN,
     allowNull: true,

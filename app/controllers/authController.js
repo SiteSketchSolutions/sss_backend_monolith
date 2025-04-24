@@ -39,7 +39,7 @@ authController.authTest = async (payload) => {
  */
 authController.userLogin = async (payload) => {
   try {
-    const { phoneNumber, password } = payload;
+    const { phoneNumber, password, deviceToken } = payload;
     if (!phoneNumber && !password) {
       throw HELPERS.responseHelper.createErrorResponse(
         MESSAGES.USER_ID_OR_PASSWORD_REQUIRED,
@@ -57,6 +57,9 @@ authController.userLogin = async (payload) => {
         MESSAGES.NO_USER_FOUND,
         ERROR_TYPES.DATA_NOT_FOUND
       );
+    }
+    if (deviceToken) {
+      await userModel.update({ deviceToken }, { where: { id: userDetails?.id } });
     }
 
     const [validPassword, projectDetails] = await Promise.all([
@@ -169,6 +172,9 @@ authController.adminLogin = async (payload) => {
         ERROR_TYPES.UNAUTHORIZED
       );
     }
+    if (payload.deviceToken) {
+      await adminModel.update({ deviceToken: payload.deviceToken }, { where: { id: userInfo?.id } });
+    }
     const validatePassword = await adminModel.findOne({
       where: { id: userInfo.id, password: payload.password },
       attributes: ["id"],
@@ -247,7 +253,7 @@ authController.generatePresignedUrl = async (payload) => {
  */
 authController.userSignup = async (payload) => {
   try {
-    const { name, email, phoneNumber, password } = payload;
+    const { name, email, phoneNumber, password, deviceToken } = payload;
 
     // Check if user already exists with the same phone number
     const existingUser = await userModel.findOne({
@@ -264,6 +270,7 @@ authController.userSignup = async (payload) => {
       );
     }
 
+
     // Create new user with test status
     const userPayload = {
       name,
@@ -271,7 +278,8 @@ authController.userSignup = async (payload) => {
       phoneNumber,
       password,
       uniqueId: generateUniqueId(),
-      status: USER_STATUS_LIST.PENDING
+      status: USER_STATUS_LIST.PENDING,
+      deviceToken: deviceToken
     };
 
     const userResponse = await userModel.create(userPayload);

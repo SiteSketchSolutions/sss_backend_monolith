@@ -189,4 +189,8 @@ CONSTANTS.USER_STATUS_LIST = {
   INACTIVE: "inactive"
 }
 
+CONSTANTS.PUSH_NOTIFICATION_IMAGE_URL = {
+  LIGHT: "https://d1b6pcs0bxf31v.cloudfront.net/logo-light.png",
+  DARK: "https://d1b6pcs0bxf31v.cloudfront.net/logo-dark.png"
+}
 module.exports = CONSTANTS;
