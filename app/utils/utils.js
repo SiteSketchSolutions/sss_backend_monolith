@@ -4,13 +4,8 @@ const JWT = require("jsonwebtoken");
 const CONFIG = require("../../config");
 const fs = require("fs");
 const { Op } = require("sequelize");
-const R = require("ramda");
 let commonFunctions = {};
 
-const getWasteItemObjByWasteTypeId = R.pipe(
-  R.groupBy((wasteItem) => wasteItem.wasteTypeId),
-  R.map(R.ifElse(R.pipe(R.length, R.equals(1)), R.head, R.identity))
-);
 
 /**
  * generate otp
