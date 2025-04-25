@@ -406,7 +406,7 @@ commonFunctions.getPaginationResponse = (paginationData) => {
  * @returns {String} - Formatted date string (e.g., "11th January 2023")
  */
 commonFunctions.formatDate = (date) => {
-  if (!date) return '';
+  if (!date) return '-';
 
   const d = new Date(date);
 

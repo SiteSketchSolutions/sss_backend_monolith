@@ -51,6 +51,10 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
         allowNull: true,
         defaultValue: false,
     },
+    transactionDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
