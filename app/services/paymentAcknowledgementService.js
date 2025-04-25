@@ -172,8 +172,11 @@ paymentAcknowledgementService.sendPaymentAcknowledgementEmail = async (options) 
         // } else {
         data = await paymentAcknowledgementService.getPartPaymentDetails(partPaymentId);
         paymentAmount = data.partPayment.amount;
-        paymentMethod = `${data.partPayment.method} (${data.partPayment.referenceId})`;
-        transactionDate = formatDate(data.partPayment.createdAt);
+        paymentMethod = data.partPayment.method || '-';
+        if (data.partPayment.referenceId) {
+            paymentMethod += ` (${data.partPayment.referenceId})`;
+        }
+        transactionDate = formatDate(data.partPayment.transactionDate);
         referenceId = data.partPayment.invoiceNo;
         // }
 

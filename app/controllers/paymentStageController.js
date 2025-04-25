@@ -271,7 +271,7 @@ paymentStageController.paymentStageList = async (payload) => {
             include: [
                 {
                     model: partPaymentStage,
-                    attributes: ['id', 'referenceId', 'method', 'invoiceNo', 'amount']
+                    attributes: ['id', 'referenceId', 'method', 'invoiceNo', 'amount', 'transactionDate']
                 }
             ]
         });

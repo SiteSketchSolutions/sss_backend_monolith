@@ -270,7 +270,6 @@ authController.userSignup = async (payload) => {
       );
     }
 
-
     // Create new user with test status
     const userPayload = {
       name,
@@ -284,11 +283,69 @@ authController.userSignup = async (payload) => {
 
     const userResponse = await userModel.create(userPayload);
 
+    // Fetch dummy project for test status user (id=1)
+    const projectDetails = await projectModel.findOne({
+      where: {
+        userId: 17, // Using dummy user's project
+        isDeleted: { [Op.ne]: true }
+      },
+      attributes: [
+        "id",
+        "name",
+        "area",
+        "numberOfFloor",
+        "percentageOfCompletion",
+        "package",
+        "images",
+        "location",
+        "startDate",
+        "status"
+      ],
+    });
+
+    let walletId = null;
+    let projectStage = null;
+    if (projectDetails) {
+      const [walletDetails, inProgressProjectStage] = await Promise.all([
+        walletModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id']
+        }),
+        projectStageModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id', 'name', 'status', 'percentage']
+        })
+      ]);
+      walletId = walletDetails?.id;
+      projectStage = inProgressProjectStage;
+    }
+
+    // Fetch dummy user details (id=17)
+    const dummyUserDetails = await userModel.findOne({
+      where: { id: 17, isDeleted: { [Op.ne]: true } },
+      attributes: ["id", "uniqueId", "name", "status"],
+    });
+
     const response = {
-      id: userResponse?.id,
-      uniqueId: userResponse?.uniqueId,
-      name: userResponse?.name,
-      status: userResponse?.status
+      id: dummyUserDetails?.id,
+      uniqueId: dummyUserDetails?.uniqueId,
+      name: dummyUserDetails?.name,
+      status: dummyUserDetails?.status,
+      currentProjectStage: projectStage,
+      projectDetails: projectDetails,
+      walletId: walletId,
+      token: encryptJwt({
+        userId: dummyUserDetails?.id,
+        userType: USER_TYPES.USER,
+        uniqueId: dummyUserDetails?.uniqueId,
+      }),
     };
 
     return Object.assign(
