@@ -4,6 +4,8 @@ const { MESSAGES, ERROR_TYPES, PAGINATION } = require("../utils/constants");
 const siteUpdateModel = require("../models/siteUpdateModel");
 const { getPaginationResponse } = require("../utils/utils")
 const siteUpdateCommentModel = require("../models/siteUpdateCommentModel");
+const firebaseService = require('../services/firebaseService');
+const userModel = require('../models/userModel');
 
 /**************************************************
  ***************** Site Update Controller ***************
@@ -33,6 +35,39 @@ siteUpdateController.createSiteUpdate = async (payload) => {
       siteUpdatePayload.image = urls;
     }
     const siteUpdate = await siteUpdateModel.create(siteUpdatePayload);
+
+    // Send notification to the specific user about the new site update
+    try {
+      const user = await userModel.findOne({
+        where: {
+          id: userId,
+          deviceToken: { [Op.ne]: null },
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['deviceToken', 'name']
+      });
+
+      if (user && user.deviceToken) {
+        await firebaseService.sendPushNotification(
+          user.deviceToken,
+          "🏗️ New Site Update",
+          `Hey ${user.name || 'there'}! ${name} 📸`,
+          {
+            siteUpdateId: siteUpdate.id,
+            name,
+            description,
+            image: siteUpdatePayload.image
+          },
+          "/site-updates",
+          "site_updates",
+          { siteUpdateId: siteUpdate.id }
+        );
+      }
+    } catch (notificationError) {
+      console.error("Error sending notification:", notificationError);
+      // Don't fail the site update creation if notification fails
+    }
+
     const response = {
       id: siteUpdate?.id,
     };

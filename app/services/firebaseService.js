@@ -18,7 +18,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
         },
         android: {
             notification: {
-                imageUrl: PUSH_NOTIFICATION_IMAGE_URL.DARK,
+                imageUrl: "https://www.w3schools.com/html/pic_trulli.jpg",
                 sound: 'alert.mp3',
                 channel_id: channelType
             }
@@ -32,7 +32,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
                 }
             },
             fcm_options: {
-                image: PUSH_NOTIFICATION_IMAGE_URL.DARK
+                image: "https://www.w3schools.com/html/pic_trulli.jpg"
             }
         },
         data: {
@@ -41,6 +41,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
         },
         token: deviceToken
     };
+    console.log(messageData, "messageData");
     admin.messaging().send(messageData)
         .then((response) => {
             console.log('Successfully sent push notification:', response);

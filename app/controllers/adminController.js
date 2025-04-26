@@ -5,6 +5,8 @@ const HELPERS = require("../helpers");
 const { MESSAGES, ERROR_TYPES, ADMIN_ROLES } = require("../utils/constants");
 const adminModel = require("../models/adminModel");
 const { hashPassword } = require('../utils/utils')
+const firebaseService = require('../services/firebaseService');
+const userModel = require('../models/userModel'); // Assuming you have a user model
 
 /**************************************************
  ***************** ADMIN controller ***************
@@ -156,6 +158,102 @@ adminController.listAdmins = async (payload) => {
     );
   } catch (error) {
     throw HELPERS.responseHelper.createErrorResponse(error.message, ERROR_TYPES.SOMETHING_WENT_WRONG);
+  }
+};
+
+/**
+ * function to send custom notification to users
+ * @param {*} payload 
+ * @returns 
+ */
+adminController.sendNotification = async (payload) => {
+  try {
+    const {
+      userId,
+      messageTitle,
+      messageBody,
+      route = "/",
+      queryParams = {},
+      isBulkSend
+      // channelType
+    } = payload;
+
+    if (!isBulkSend && !userId) {
+      return HELPERS.responseHelper.createErrorResponse(
+        "UserId is required for individual notification",
+        ERROR_TYPES.BAD_REQUEST
+      );
+    }
+
+    if (isBulkSend) {
+      // Get device tokens for all users in the userIds array
+      const users = await userModel.findAll({
+        where: {
+          deviceToken: { [Op.ne]: null },
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['deviceToken', 'name']
+      });
+
+      const deviceTokens = users.map(user => user.deviceToken).filter(token => token);
+
+      if (deviceTokens.length === 0) {
+        return HELPERS.responseHelper.createErrorResponse(
+          "No valid device tokens found for the specified users",
+          ERROR_TYPES.NOT_FOUND
+        );
+      }
+
+      // Send notification to multiple users
+      await firebaseService.sendPushNotificationToMultipleDevice(
+        messageTitle,
+        messageBody,
+        null,
+        deviceTokens,
+        route,
+        null,
+        queryParams
+      );
+
+      return HELPERS.responseHelper.createSuccessResponse(
+        `Notification sent to ${deviceTokens.length} users successfully`
+      );
+    } else {
+      // Get the device token for the specified user
+      const user = await userModel.findOne({
+        where: {
+          id: userId,
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['deviceToken', 'name']
+      });
+
+      if (!user || !user.deviceToken) {
+        return HELPERS.responseHelper.createErrorResponse(
+          "User not found or has no device token",
+          ERROR_TYPES.NOT_FOUND
+        );
+      }
+
+      // Send notification to a single user
+      await firebaseService.sendPushNotification(
+        user.deviceToken,
+        messageTitle,
+        messageBody,
+        { messageTitle, messageBody },
+        route,
+        null,
+        queryParams
+      );
+
+      return HELPERS.responseHelper.createSuccessResponse("Notification sent successfully");
+    }
+  } catch (error) {
+    console.error("Error sending notification:", error);
+    return HELPERS.responseHelper.createErrorResponse(
+      error.message || "Failed to send notification",
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
   }
 };
 
