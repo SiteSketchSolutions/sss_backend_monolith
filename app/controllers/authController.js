@@ -49,7 +49,7 @@ authController.userLogin = async (payload) => {
 
     let userDetails = await userModel.findOne({
       where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },
-      attributes: ["id", "uniqueId", "name", "status"],
+      attributes: ["id", "uniqueId", "name", "status", "deviceToken"],
     });
 
     if (!userDetails) {
@@ -132,6 +132,7 @@ authController.userLogin = async (payload) => {
       uniqueId: userDetails?.uniqueId,
       name: userDetails?.name,
       status: userDetails?.status,
+      deviceToken: userDetails?.deviceToken,
       currentProjectStage: projectStage,
       projectDetails: projectDetails,
       walletId: walletId,
