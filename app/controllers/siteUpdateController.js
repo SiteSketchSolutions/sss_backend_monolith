@@ -52,15 +52,11 @@ siteUpdateController.createSiteUpdate = async (payload) => {
           user.deviceToken,
           "🏗️ New Site Update",
           `Hey ${user.name || 'there'}! ${name} 📸`,
-          {
-            siteUpdateId: siteUpdate.id,
-            name,
-            description,
-            image: siteUpdatePayload.image
-          },
+          null,
           "/site-updates",
           "site_updates",
-          { siteUpdateId: siteUpdate.id }
+          { siteUpdateId: siteUpdate.id },
+          siteUpdatePayload.image
         );
       }
     } catch (notificationError) {

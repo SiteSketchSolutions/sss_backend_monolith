@@ -174,8 +174,8 @@ adminController.sendNotification = async (payload) => {
       messageBody,
       route = "/",
       queryParams = {},
-      isBulkSend
-      // channelType
+      isBulkSend,
+      imageUrl
     } = payload;
 
     if (!isBulkSend && !userId) {
@@ -212,7 +212,8 @@ adminController.sendNotification = async (payload) => {
         deviceTokens,
         route,
         null,
-        queryParams
+        queryParams,
+        imageUrl
       );
 
       return HELPERS.responseHelper.createSuccessResponse(
@@ -243,7 +244,8 @@ adminController.sendNotification = async (payload) => {
         { messageTitle, messageBody },
         route,
         null,
-        queryParams
+        queryParams,
+        imageUrl
       );
 
       return HELPERS.responseHelper.createSuccessResponse("Notification sent successfully");

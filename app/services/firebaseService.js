@@ -3,7 +3,7 @@ const { PUSH_NOTIFICATION_IMAGE_URL } = require(`../utils/constants`);
 
 let firebaseService = {};
 
-firebaseService.sendPushNotification = async (deviceToken, messageTitle, messageBody, dynamicData = null, route = "/", channelType, queryParams = {}) => {
+firebaseService.sendPushNotification = async (deviceToken, messageTitle, messageBody, dynamicData = null, route = "/", channelType, queryParams = {}, imageUrl = null) => {
     let notificationRoute = `${route}?source=notification`
     if (Object.keys(queryParams).length > 0) {
         const queryString = Object.keys(queryParams)
@@ -18,7 +18,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
         },
         android: {
             notification: {
-                imageUrl: "https://www.w3schools.com/html/pic_trulli.jpg",
+                imageUrl: imageUrl || PUSH_NOTIFICATION_IMAGE_URL.DARK,
                 sound: 'alert.mp3',
                 channel_id: channelType
             }
@@ -32,7 +32,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
                 }
             },
             fcm_options: {
-                image: "https://www.w3schools.com/html/pic_trulli.jpg"
+                image: imageUrl || PUSH_NOTIFICATION_IMAGE_URL.DARK
             }
         },
         data: {
@@ -52,7 +52,7 @@ firebaseService.sendPushNotification = async (deviceToken, messageTitle, message
 }
 
 
-firebaseService.sendPushNotificationToMultipleDevice = async (messageTitle, messageBody, dynamicData = null, deviceTokens, route = "/", channelType, queryParams = {}) => {
+firebaseService.sendPushNotificationToMultipleDevice = async (messageTitle, messageBody, dynamicData = null, deviceTokens, route = "/", channelType, queryParams = {}, imageUrl = null) => {
     let notificationRoute = `${route}?source=notification`
 
     if (Object.keys(queryParams).length > 0) {
@@ -66,10 +66,9 @@ firebaseService.sendPushNotificationToMultipleDevice = async (messageTitle, mess
             title: messageTitle,
             body: messageBody
         },
-        //sending an image to specific platform
         android: {
             notification: {
-                imageUrl: PUSH_NOTIFICATION_IMAGE_URL.DARK,
+                imageUrl: imageUrl || PUSH_NOTIFICATION_IMAGE_URL.DARK,
                 sound: 'alert.mp3',
                 channel_id: channelType
             }
@@ -83,14 +82,9 @@ firebaseService.sendPushNotificationToMultipleDevice = async (messageTitle, mess
                 }
             },
             fcm_options: {
-                image: PUSH_NOTIFICATION_IMAGE_URL
+                image: imageUrl || PUSH_NOTIFICATION_IMAGE_URL.DARK
             }
         },
-        //   webpush: {
-        //     headers: {
-        //       image: PUSH_NOTIFICATION_IMAGE_URL
-        //     }
-        //   },
         data: {
             data: JSON.stringify(dynamicData),
             path: notificationRoute
