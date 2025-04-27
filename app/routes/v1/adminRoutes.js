@@ -104,7 +104,8 @@ let routes = [
         messageBody: Joi.string().required().description("Notification body/subtitle"),
         route: Joi.string().default("/").description("Destination route in app"),
         queryParams: Joi.object().description("Query parameters for the route"),
-        isBulkSend: Joi.boolean().default(false).description("Flag for bulk sending to multiple users")
+        isBulkSend: Joi.boolean().default(false).description("Flag for bulk sending to multiple users"),
+        imageUrl: Joi.string().description("Image URL for the notification")
         // channelType: Joi.string().required().description("Notification channel type")
       },
       group: "Admin",
