@@ -15,7 +15,7 @@ let materialSelectedItemController = {};
  */
 materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
   try {
-    const { userId, materialItemId } = payload;
+    const { userId, materialItemId, selected } = payload;
 
     // Check if the item already exists
     const materialItemExist = await materialSelectedItemModel.findOne({
@@ -27,25 +27,6 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
     });
 
     if (materialItemExist) {
-      // If it exists but is not selected, update it to selected
-      if (materialItemExist.selected !== true) {
-        await materialSelectedItemModel.update(
-          { selected: true },
-          {
-            where: {
-              id: materialItemExist.id
-            }
-          }
-        );
-
-        return Object.assign(
-          HELPERS.responseHelper.createSuccessResponse(
-            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
-          ),
-          { data: { id: materialItemExist.id } }
-        );
-      }
-
       // If it already exists and is selected, return error
       return HELPERS.responseHelper.createErrorResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_ALREADY_EXIST,
@@ -53,18 +34,17 @@ materialSelectedItemController.createMaterialSelectedItem = async (payload) => {
       );
     }
 
-    // Create new selected item with selected explicitly set to true
+    // Create new selected item
     const materialItemPayload = {
       userId,
       materialItemId,
-      selected: true,
+      selected: selected,  // Always create as selected
     };
 
     const materialItem = await materialSelectedItemModel.create(
       materialItemPayload
     );
 
-    console.log("Created new material selected item:", materialItem.id, "with selected =", materialItem.selected);
 
     const response = {
       id: materialItem?.id,
@@ -115,12 +95,12 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       });
 
       // If no selection record exists and we want to mark as selected, create one
-      if (!materialItem && selected === true) {
+      if (!materialItem) {
         // Create a new selection record
         const newMaterialItem = await materialSelectedItemModel.create({
           materialItemId,
           userId,
-          selected: true
+          selected: selected
         });
 
         return Object.assign(
@@ -131,23 +111,7 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
             data: {
               id: newMaterialItem.id,
               materialItemId: newMaterialItem.materialItemId,
-              selected: true
-            }
-          }
-        );
-      }
-
-      // If selection record doesn't exist and we're trying to set to false,
-      // there's nothing to do because it's already not selected
-      if (!materialItem && selected === false) {
-        return Object.assign(
-          HELPERS.responseHelper.createSuccessResponse(
-            MESSAGES.MATERIAL_SELECT_ITEM_UPDATED_SUCCESSFULLY
-          ),
-          {
-            data: {
-              materialItemId: materialItemId,
-              selected: false
+              selected: selected
             }
           }
         );
@@ -159,7 +123,6 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       );
     }
 
-
     if (!materialItem) {
       return HELPERS.responseHelper.createErrorResponse(
         "Material selected item not found",
@@ -167,7 +130,8 @@ materialSelectedItemController.updateMaterialSelectedItem = async (payload) => {
       );
     }
 
-    // Update the item
+
+    // Otherwise update the item to selected status
     await materialSelectedItemModel.update(
       { selected: selected },
       { where: { id: materialItem.id } }
@@ -306,59 +270,41 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
   try {
     const { materialCategoryId, userId } = payload;
 
-    // First get all material items for this category
-    const allMaterialItemList = await materialItemModel.findAll({
-      where: {
-        isDeleted: { [Op.ne]: true },
-        materialCategoryId: materialCategoryId,
-      },
-      attributes: ['id', 'name', 'image', 'description'],
-      raw: true,
-    });
-
-    // Extract all material item IDs for this category
-    const materialItemIds = allMaterialItemList.map(item => item.id);
-    // Now get only the selected items for this user AND for these material items
+    // Get all selected items for this user and category
     const materialSelectedItems = await materialSelectedItemModel.findAll({
       where: {
         isDeleted: { [Op.ne]: true },
-        userId: userId,
-        materialItemId: { [Op.in]: materialItemIds },
-        selected: true // Only get items that are actually selected
+        userId: userId
       },
       attributes: ['id', 'materialItemId', 'selected', 'approvalStatus', 'approvalNote', 'approvedAt'],
-      raw: true,
+      include: [
+        {
+          model: materialItemModel,
+          as: 'materialItem',
+          where: {
+            materialCategoryId: materialCategoryId,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id', 'name', 'image', 'description']
+        }
+      ]
     });
 
-    // Create a map of selected item IDs for faster lookup
-    const selectedItemMap = {};
-    materialSelectedItems.forEach(item => {
-      selectedItemMap[item.materialItemId] = {
-        selected: true,
-        selectionId: item.id,
-        approvalStatus: item.approvalStatus,
-        approvalNote: item.approvalNote,
-        approvedAt: item.approvedAt
-      };
-    });
-
-    // Map all material items with their selection status.
-    const response = allMaterialItemList.map((item) => ({
-      id: item.id,
-      selected: selectedItemMap[item.id]?.selected === true, // Explicitly check for true
-      selectionId: selectedItemMap[item.id]?.selectionId || null, // Include the selection ID when available
-      approvalStatus: selectedItemMap[item.id]?.approvalStatus || null,
-      approvalNote: selectedItemMap[item.id]?.approvalNote || null,
-      approvedAt: selectedItemMap[item.id]?.approvedAt || null,
-      itemName: item.name,
-      itemImage: item.image,
-      itemDescription: item.description,
+    // Format the response to include only selected items
+    const response = materialSelectedItems.map(item => ({
+      id: item.materialItem.id,
+      selected: item.selected, // These are all selected items
+      selectionId: item.id,
+      approvalStatus: item.approvalStatus || null,
+      approvalNote: item.approvalNote || null,
+      approvedAt: item.approvedAt || null,
+      itemName: item.materialItem.name,
+      itemImage: item.materialItem.image,
+      itemDescription: item.materialItem.description,
     }));
 
-    console.log("Selected items map:", selectedItemMap);
-    console.log("Response sample:", response.slice(0, 3));
 
-    // Return the formatted response
+    // Return the formatted response with only selected items
     return Object.assign(
       HELPERS.responseHelper.createSuccessResponse(
         MESSAGES.MATERIAL_SELECT_ITEM_LIST_SUCCESSFULLY
@@ -374,5 +320,31 @@ materialSelectedItemController.materialSelectedItemList = async (payload) => {
     );
   }
 };
+
+/**
+ * Function to delete material selected item
+ * @param {*} payload
+ * @returns
+ */
+materialSelectedItemController.deleteMaterialSelectedItem = async (payload) => {
+  try {
+    const { materialSelectedItemId } = payload;
+
+    await materialSelectedItemModel.update({ isDeleted: true }, { where: { id: materialSelectedItemId } });
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(
+        MESSAGES.MATERIAL_SELECT_ITEM_DELETED_SUCCESSFULLY
+      ),
+      { data: null }
+    );
+  } catch (error) {
+    console.error("Error in deleteMaterialSelectedItem:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.message || error.msg,
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+}
 
 module.exports = materialSelectedItemController;

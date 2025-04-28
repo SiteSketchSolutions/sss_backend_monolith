@@ -30,7 +30,7 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
-      url
+      urls
     } = payload;
     const projectPayload = {
       userId,
@@ -45,9 +45,17 @@ projectController.createProject = async (payload) => {
       description,
       startDate,
     };
-    if (url) {
-      projectPayload.image = url
+
+    // Handle multiple images or backward compatibility with single image
+    if (urls && Array.isArray(urls)) {
+      projectPayload.images = urls;
+    } else if (urls) {
+      // Handle backward compatibility if a single URL is sent
+      projectPayload.images = [urls];
+    } else {
+      projectPayload.images = [];
     }
+
     let projectDetails = await projectModel.findOne({
       where: { userId: parseInt(userId), isDeleted: { [Op.ne]: true } },
       attributes: ["id"],
@@ -97,7 +105,7 @@ projectController.updateProject = async (payload) => {
       location,
       description,
       startDate,
-      url,
+      urls,
     } = payload;
     let projectPayload = {
       name,
@@ -111,9 +119,15 @@ projectController.updateProject = async (payload) => {
       description,
       startDate,
     };
-    if (url) {
-      projectPayload.image = url
+
+    // Handle multiple images or backward compatibility with single image
+    if (urls && Array.isArray(urls)) {
+      projectPayload.images = urls;
+    } else if (urls) {
+      // Handle backward compatibility if a single URL is sent
+      projectPayload.images = [urls];
     }
+
     const projectResponse = await projectModel.update(projectPayload, {
       where: { id: projectId },
     });
@@ -186,7 +200,7 @@ projectController.projectList = async (payload) => {
           "status",
           "price",
           "package",
-          "image",
+          "images",
           "location",
           "description",
           "startDate",
@@ -228,7 +242,7 @@ projectController.projectList = async (payload) => {
         "status",
         "price",
         "package",
-        "image",
+        "images",
         "location",
         "description",
         "startDate",
@@ -283,7 +297,7 @@ projectController.projectById = async (payload) => {
         "status",
         "price",
         "package",
-        "image",
+        "images",
         "location",
         "description",
         "startDate",

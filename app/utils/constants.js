@@ -152,4 +152,28 @@ CONSTANTS.ADMIN_ROLES = {
   SITE_ENGINEER: "site_engineer"
 }
 
+CONSTANTS.PROJECT_STAGE_STATUS_LIST = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  DELAYED: "delayed",
+  CANCELLED: "delayed"
+}
+
+
+CONSTANTS.PROJECT_STAGE_TASK_STATUS_LIST = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  DELAYED: "delayed",
+  CANCELLED: "delayed"
+}
+
+CONSTANTS.PROJECT_STAGE_SUB_TASK_STATUS_LIST = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  DELAYED: "delayed",
+  CANCELLED: "delayed"
+}
 module.exports = CONSTANTS;

@@ -15,15 +15,20 @@ let siteUpdateController = {};
  */
 siteUpdateController.createSiteUpdate = async (payload) => {
   try {
-    const { name, description, author, userId, url } = payload;
+    const { name, description, author, userId, urls } = payload;
     const siteUpdatePayload = {
       name,
       description,
       userId: userId,
       author: author
     };
-    if (url) {
-      siteUpdatePayload.image = url
+    if (urls && Array.isArray(urls)) {
+      siteUpdatePayload.images = urls;
+    } else if (urls) {
+      // Handle backward compatibility if a single URL is sent
+      siteUpdatePayload.images = [urls];
+    } else {
+      siteUpdatePayload.images = [];
     }
     const siteUpdate = await siteUpdateModel.create(siteUpdatePayload);
     const response = {
@@ -50,15 +55,18 @@ siteUpdateController.createSiteUpdate = async (payload) => {
  */
 siteUpdateController.updateSiteUpdate = async (payload) => {
   try {
-    const { name, description, author, siteUpdateId, url } = payload;
+    const { name, description, author, siteUpdateId, urls } = payload;
 
     let updatePayload = {
       name,
       description,
       author
     };
-    if (url) {
-      updatePayload.image = url
+    if (urls && Array.isArray(urls)) {
+      updatePayload.images = urls;
+    } else if (urls) {
+      // Handle backward compatibility if a single URL is sent
+      updatePayload.images = [urls];
     }
     await siteUpdateModel.update(updatePayload, {
       where: { id: siteUpdateId, isDeleted: { [Op.ne]: true } },
@@ -104,7 +112,7 @@ siteUpdateController.getSiteUpdateList = async (payload) => {
         "id",
         "name",
         "description",
-        "image",
+        "images",
         "author",
         "createdAt",
         "updatedAt",
