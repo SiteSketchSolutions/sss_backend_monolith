@@ -12,6 +12,74 @@ const { getPaginationResponse } = require("../utils/utils");
 let projectStageTaskController = {};
 
 /**
+ * Helper function to update project stage status and percentage based on tasks
+ * @param {Number} projectStageId 
+ */
+projectStageTaskController.updateProjectStageStatusAndPercentage = async (projectStageId) => {
+    try {
+        const tasks = await projectStageTaskModel.findAll({
+            where: {
+                projectStageId,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (tasks.length === 0) return;
+
+        // Calculate percentage of completed tasks
+        const completedTasks = tasks.filter(task => task.status === 'completed');
+        // Calculate percentage as a number (0-100)
+        const percentageValue = (completedTasks.length / tasks.length) * 100;
+        // Format to two decimal places for storage in database
+        const percentage = parseFloat(percentageValue.toFixed(2));
+
+        // Determine stage status based on task statuses
+        let stageStatus = 'pending';
+
+        // Count different statuses
+        const hasCompleted = tasks.some(task => task.status === 'completed');
+        const hasInProgress = tasks.some(task => task.status === 'in_progress');
+        const hasDelayed = tasks.some(task => task.status === 'delayed');
+        const hasPending = tasks.some(task => task.status === 'pending');
+        const hasCancelled = tasks.some(task => task.status === 'cancelled');
+
+        // If all tasks are completed, mark as completed
+        if (completedTasks.length === tasks.length) {
+            stageStatus = 'completed';
+        }
+        // If any task is in progress or delayed, or if we have a mix of pending and completed tasks
+        else if (hasInProgress || hasDelayed || (hasCompleted && hasPending)) {
+            stageStatus = 'in_progress';
+        }
+        // If all tasks are cancelled, mark as cancelled
+        else if (hasCancelled && tasks.length === tasks.filter(task => task.status === 'cancelled').length) {
+            stageStatus = 'cancelled';
+        }
+        // Otherwise, it remains pending (all tasks are pending)
+
+        // Update the project stage - pass percentage as a number
+        await projectStageModel.update(
+            {
+                percentage: percentage,
+                status: stageStatus
+            },
+            { where: { id: projectStageId } }
+        );
+
+        // After updating the stage, also update the project
+        // First, get the updated stage with project ID
+        const updatedStage = await projectStageModel.findByPk(projectStageId);
+        if (updatedStage) {
+            // Import and call the projectStageController's update function
+            const projectStageController = require('./projectStageController');
+            await projectStageController.updateProjectPercentage(updatedStage.projectId);
+        }
+    } catch (error) {
+        console.error("Error in updateProjectStageStatusAndPercentage:", error);
+    }
+};
+
+/**
  * Function to create a project stage task
  * @param {*} payload
  * @returns
@@ -57,6 +125,9 @@ projectStageTaskController.createProjectStageTask = async (payload) => {
         };
 
         const task = await projectStageTaskModel.create(taskPayload);
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(projectStageId);
 
         const response = {
             id: task?.id,
@@ -124,6 +195,9 @@ projectStageTaskController.updateProjectStageTask = async (payload) => {
         await projectStageTaskModel.update(updatePayload, {
             where: { id: projectStageTaskId }
         });
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(task.projectStageId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
@@ -301,6 +375,9 @@ projectStageTaskController.deleteProjectStageTask = async (payload) => {
             { isDeleted: true },
             { where: { id: projectStageTaskId } }
         );
+
+        // Update the parent stage status and percentage
+        await projectStageTaskController.updateProjectStageStatusAndPercentage(task.projectStageId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(

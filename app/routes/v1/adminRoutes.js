@@ -80,6 +80,8 @@ let routes = [
         mobileNumber: Joi.string().description("Mobile Number"),
         role: Joi.string().valid(ADMIN_ROLES.SUPER_ADMIN, ADMIN_ROLES.SITE_ENGINEER).description("Admin role"),
         status: Joi.string().description("Account status"),
+        deviceToken: Joi.string()
+          .description("Enter user device token"),
       },
       group: "Admin",
       description: "Route to update admin details",
@@ -87,6 +89,31 @@ let routes = [
     },
     auth: AVAILABLE_AUTHS.ADMIN,
     handler: adminController.update,
+  },
+
+  {
+    method: "POST",
+    path: "/v1/admin/send-notification",
+    joiSchemaForSwagger: {
+      headers: {
+        authorization: Joi.string().required().description("Admin's JWT token."),
+      },
+      body: {
+        userId: Joi.number().description("User ID to send notification (not required if isBulkSend is true)"),
+        messageTitle: Joi.string().required().description("Notification title"),
+        messageBody: Joi.string().required().description("Notification body/subtitle"),
+        route: Joi.string().default("/").description("Destination route in app"),
+        queryParams: Joi.object().description("Query parameters for the route"),
+        isBulkSend: Joi.boolean().default(false).description("Flag for bulk sending to multiple users"),
+        imageUrl: Joi.string().description("Image URL for the notification")
+        // channelType: Joi.string().required().description("Notification channel type")
+      },
+      group: "Admin",
+      description: "Route for admin to send custom notifications to users",
+      model: "sendNotification",
+    },
+    auth: AVAILABLE_AUTHS.ADMIN,
+    handler: adminController.sendNotification,
   },
 ];
 

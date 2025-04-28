@@ -30,7 +30,8 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
-      urls
+      urls,
+      isFlagship
     } = payload;
     const projectPayload = {
       userId,
@@ -44,16 +45,18 @@ projectController.createProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
+    // TODO : Verify the image is resetiing or updating existing.
     // Handle multiple images or backward compatibility with single image
     if (urls && Array.isArray(urls)) {
       projectPayload.images = urls;
+      projectPayload.image = urls[0];
     } else if (urls) {
       // Handle backward compatibility if a single URL is sent
       projectPayload.images = [urls];
-    } else {
-      projectPayload.images = [];
+      projectPayload.image = urls;
     }
 
     let projectDetails = await projectModel.findOne({
@@ -106,6 +109,7 @@ projectController.updateProject = async (payload) => {
       description,
       startDate,
       urls,
+      isFlagship
     } = payload;
     let projectPayload = {
       name,
@@ -118,14 +122,23 @@ projectController.updateProject = async (payload) => {
       location,
       description,
       startDate,
+      isFlagship
     };
 
+    // First get the existing project details to preserve existing images
+    const existingProject = await projectModel.findOne({
+      where: { id: projectId },
+      attributes: ['images', 'image']
+    });
+
     // Handle multiple images or backward compatibility with single image
-    if (urls && Array.isArray(urls)) {
-      projectPayload.images = urls;
-    } else if (urls) {
-      // Handle backward compatibility if a single URL is sent
-      projectPayload.images = [urls];
+    if (urls) {
+      if (Array.isArray(urls)) {
+        // Merge new URLs with existing images, removing duplicates
+        projectPayload.images = [...new Set([...(existingProject?.images || []), ...urls])];
+        // Update primary image only if new URLs are provided
+        projectPayload.image = urls[0] || existingProject?.image;
+      }
     }
 
     const projectResponse = await projectModel.update(projectPayload, {
@@ -156,7 +169,7 @@ projectController.updateProject = async (payload) => {
  */
 projectController.projectList = async (payload) => {
   try {
-    const { userId, username } = payload;
+    const { userId, username, isFlagship } = payload;
 
     // If username is provided, search users by name
     if (username) {
@@ -200,11 +213,13 @@ projectController.projectList = async (payload) => {
           "status",
           "price",
           "package",
+          "image",
           "images",
           "location",
           "description",
           "startDate",
           "status",
+          "isFlagship"
         ],
         include: [
           {
@@ -230,6 +245,11 @@ projectController.projectList = async (payload) => {
       criteria.userId = userId;
     }
 
+    // Add flagship filter if provided
+    if (isFlagship !== undefined) {
+      criteria.isFlagship = isFlagship;
+    }
+
     const projectList = await projectModel.findAll({
       where: criteria,
       attributes: [
@@ -242,10 +262,12 @@ projectController.projectList = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",
         "startDate",
+        "isFlagship",
         "status",
       ],
       include: [
@@ -297,11 +319,13 @@ projectController.projectById = async (payload) => {
         "status",
         "price",
         "package",
+        "image",
         "images",
         "location",
         "description",
         "startDate",
         "status",
+        "isFlagship"
       ],
     });
     return Object.assign(

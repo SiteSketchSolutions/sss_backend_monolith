@@ -26,9 +26,9 @@ partPaymentStageController.createPartPayment = async (payload) => {
          * 1.payement stage 10 lakh wallet deduct 10lakh. -10lakh status completed
          * 2.part payment is add the amount to wallet
          */
-        const { stageId, amount, method, referenceId, note } = payload;
+        const { stageId, amount, method, referenceId, note, transactionDate } = payload;
         let stagePayload = {
-            stageId, amount, method, referenceId, note
+            stageId, amount, method, referenceId, note, transactionDate
         };
         const stageExist = await paymentStage.findOne({
             where: {
@@ -132,7 +132,7 @@ partPaymentStageController.createPartPayment = async (payload) => {
  */
 partPaymentStageController.updatePartPayment = async (payload) => {
     try {
-        const { paymentId, amount, method, referenceId, note } = payload;
+        const { paymentId, amount, method, referenceId, note, transactionDate } = payload;
 
         // Get the existing part payment to calculate the difference in amount
         const existingPartPayment = await partPaymentStageModel.findOne({
@@ -157,7 +157,7 @@ partPaymentStageController.updatePartPayment = async (payload) => {
         if (method !== undefined) updatePayload.method = method;
         if (referenceId !== undefined) updatePayload.referenceId = referenceId;
         if (note !== undefined) updatePayload.note = note;
-
+        if (transactionDate !== undefined) updatePayload.transactionDate = transactionDate;
         await partPaymentStageModel.update(updatePayload, {
             where: { id: paymentId, isDeleted: { [Op.ne]: true } },
         });
@@ -275,7 +275,7 @@ partPaymentStageController.getPartPaymentList = async (payload) => {
                 stageId: stageId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "amount", "method", "referenceId", "invoiceNo", "acknowledgementSent", "note"],
+            attributes: ["id", "amount", "method", "referenceId", "invoiceNo", "acknowledgementSent", "note", "transactionDate"],
             order: [["id", "ASC"]],
         });
 
@@ -307,7 +307,7 @@ partPaymentStageController.getPartPaymentDetails = async (payload) => {
                 id: paymentId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "amount", "method", "referenceId", "invoiceNo", "acknowledgementSent", "note"],
+            attributes: ["id", "amount", "method", "referenceId", "invoiceNo", "acknowledgementSent", "note", "transactionDate"],
             order: [["id", "ASC"]],
         });
 

@@ -12,7 +12,7 @@ let routes = [
           .required()
           .description("Enter material category id"),
         name: Joi.string().required().description("Enter item name"),
-        description: Joi.string().description("Enter item description"),
+        description: Joi.string().allow('').description("Enter item description"),
         url: Joi.string().required().description("Enter category doc url"),
       },
       group: "MaterialItem",
@@ -29,7 +29,7 @@ let routes = [
       body: {
         materialItemId: Joi.number().required().description("Material Item ID"),
         name: Joi.string().description("Enter material Item name"),
-        description: Joi.string().description(
+        description: Joi.string().allow('').description(
           "Enter material category description"
         ),
         url: Joi.string().description("Enter category doc url"),

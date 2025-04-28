@@ -18,14 +18,14 @@ let userController = {};
  */
 userController.createUser = async (payload) => {
     try {
-        const { name, email, password, phoneNumber } = payload;
+        const { name, email, password, phoneNumber, status } = payload;
         const userPayload = {
             name,
             email,
             password,
             phoneNumber,
             uniqueId: generateUniqueId(),
-            status: "pending"
+            status: status || USER_STATUS_LIST.ACTIVE
         }
         let userDetails = await userModel.findOne({
             where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },
@@ -54,13 +54,14 @@ userController.createUser = async (payload) => {
  */
 userController.updateUser = async (payload) => {
     try {
-        const { userId, name, email, password, phoneNumber, status } = payload;
+        const { userId, name, email, password, phoneNumber, status, deviceToken } = payload;
         const userPayload = {
             name,
             email,
             password,
             phoneNumber,
-            status
+            status,
+            deviceToken
         }
         let userDetails = await userModel.findOne({
             where: { id: userId, isDeleted: { [Op.ne]: true } },
@@ -148,6 +149,48 @@ userController.deleteUser = async (payload) => {
     } catch (error) {
         console.log(error, "error");
         throw HELPERS.responseHelper.createErrorResponse(error.msg || "Something went wrong", ERROR_TYPES.SOMETHING_WENT_WRONG);
+    }
+};
+
+/**
+ * Function to reset user password
+ * @param {*} payload 
+ * @returns 
+ */
+userController.resetPassword = async (payload) => {
+    try {
+        const { phoneNumber, newPassword } = payload;
+
+        // Find user by phone number
+        const user = await userModel.findOne({
+            where: {
+                phoneNumber: phoneNumber,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (!user) {
+            return HELPERS.responseHelper.createErrorResponse(
+                MESSAGES.USER_NOT_FOUND,
+                ERROR_TYPES.DATA_NOT_FOUND
+            );
+        }
+
+        // Update the password
+        await userModel.update(
+            { password: newPassword },
+            { where: { id: user.id } }
+        );
+
+        return HELPERS.responseHelper.createSuccessResponse(
+            MESSAGES.PASSWORD_RESET_SUCCESSFULLY
+        );
+    } catch (error) {
+        console.error("Error in resetPassword:", error);
+        throw HELPERS.responseHelper.createErrorResponse(
+            error.msg || "Something went wrong",
+            ERROR_TYPES.SOMETHING_WENT_WRONG
+        );
     }
 };
 

@@ -36,10 +36,6 @@ const ProjectStageTaskDelayReason = sequelize.define("projectStageTaskDelayReaso
     },
 });
 
-// Define association
-// ProjectStageTaskDelayReason.belongsTo(ProjectStageTask, { foreignKey: 'projectStageTaskId', as: 'projectStageTask' });
-// ProjectStageTask.hasMany(ProjectStageTaskDelayReason, { foreignKey: 'projectStageTaskId', as: 'delayReasons' });
-
 ProjectStageTaskDelayReason.sync({ alter: true });
 
 module.exports = ProjectStageTaskDelayReason; 

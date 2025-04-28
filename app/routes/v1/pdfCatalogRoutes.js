@@ -10,7 +10,7 @@ let routes = [
             body: {
                 userId: Joi.number().required().description("Enter user id"),
                 name: Joi.string().required().description("Enter PDF catalog name"),
-                description: Joi.string().description("Enter PDF catalog description"),
+                description: Joi.string().allow('').description("Enter PDF catalog description"),
                 fileUrl: Joi.string().required().description("Enter PDF file URL"),
                 fileSize: Joi.number().required().description("Enter file size in bytes"),
             },
@@ -28,7 +28,7 @@ let routes = [
             body: {
                 pdfCatalogId: Joi.number().required().description("PDF Catalog ID"),
                 name: Joi.string().description("Enter PDF catalog name"),
-                description: Joi.string().description("Enter PDF catalog description"),
+                description: Joi.string().allow('').description("Enter PDF catalog description"),
                 fileUrl: Joi.string().description("Enter PDF file URL"),
                 fileSize: Joi.number().description("Enter file size in bytes"),
             },

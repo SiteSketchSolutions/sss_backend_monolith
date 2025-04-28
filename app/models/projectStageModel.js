@@ -52,6 +52,11 @@ const ProjectStage = sequelize.define("projectStage", {
         allowNull: false,
         defaultValue: 'pending',
     },
+    images: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
     isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
@@ -59,10 +64,7 @@ const ProjectStage = sequelize.define("projectStage", {
     },
 });
 
-// Define association
-// ProjectStage.belongsTo(Project, { foreignKey: 'projectId', as: 'project' });
-// Project.hasMany(ProjectStage, { foreignKey: 'projectId', as: 'stages' });
-
+// Note: Associations are defined in config/associations.js
 ProjectStage.sync({ alter: true });
 
 module.exports = ProjectStage; 

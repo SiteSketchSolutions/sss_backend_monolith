@@ -77,6 +77,12 @@ CONSTANTS.PAGINATION = {
   DEFAULT_PAGE: 1,
   DEFAULT_PAGE_LIMIT: 10,
 };
+CONSTANTS.PROJECT_STATUS_LIST = {
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled"
+}
 
 CONSTANTS.PAYMENT_STAGE_STATUS = {
   UPCOMING: "upcoming",
@@ -175,5 +181,16 @@ CONSTANTS.PROJECT_STAGE_SUB_TASK_STATUS_LIST = {
   COMPLETED: "completed",
   DELAYED: "delayed",
   CANCELLED: "delayed"
+}
+
+CONSTANTS.USER_STATUS_LIST = {
+  ACTIVE: "active",
+  PENDING: "pending",
+  INACTIVE: "inactive"
+}
+
+CONSTANTS.PUSH_NOTIFICATION_IMAGE_URL = {
+  LIGHT: "https://d1b6pcs0bxf31v.cloudfront.net/logo-light.png",
+  DARK: "https://d1b6pcs0bxf31v.cloudfront.net/logo-dark.png"
 }
 module.exports = CONSTANTS;

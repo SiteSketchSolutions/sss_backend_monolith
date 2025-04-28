@@ -2,6 +2,7 @@
 const { Joi } = require("../../utils/joiUtils");
 //load controllers
 const userController = require("../../controllers/userController");
+const { USER_STATUS_LIST } = require("../../utils/constants");
 
 let routes = [
     {
@@ -16,7 +17,10 @@ let routes = [
                 password: Joi.string().required()
                     .description("Enter user password"),
                 phoneNumber: Joi.string().required()
-                    .description("Enter user phone number")
+                    .description("Enter user phone number"),
+                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE),
+                deviceToken: Joi.string()
+                    .description("Enter user device token"),
             },
             group: "User",
             description: "Route to create user",
@@ -40,8 +44,10 @@ let routes = [
                     .description("Enter user password"),
                 phoneNumber: Joi.string()
                     .description("Enter user phone number"),
-                status: Joi.string()
+                status: Joi.string().valid(...Object.values(USER_STATUS_LIST)).default(USER_STATUS_LIST.ACTIVE)
                     .description("Enter status"),
+                deviceToken: Joi.string()
+                    .description("Enter user device token")
             },
             group: "User",
             description: "Route to update user",
@@ -94,6 +100,23 @@ let routes = [
         },
         auth: false,
         handler: userController.deleteUser,
+    },
+    {
+        method: "POST",
+        path: "/v1/user/reset-password",
+        joiSchemaForSwagger: {
+            body: {
+                phoneNumber: Joi.string().required()
+                    .description("Enter user phone number"),
+                newPassword: Joi.string().required()
+                    .description("Enter new password")
+            },
+            group: "User",
+            description: "Route to reset user password",
+            model: "resetPassword",
+        },
+        auth: false,
+        handler: userController.resetPassword,
     },
 ];
 

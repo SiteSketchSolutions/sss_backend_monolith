@@ -13,6 +13,64 @@ const projectStageModel = require("../models/projectStageModel");
 let projectSubTaskController = {};
 
 /**
+ * Helper function to update task status based on subtasks
+ * @param {Number} projectStageTaskId 
+ */
+const updateTaskStatusBasedOnSubtasks = async (projectStageTaskId) => {
+    try {
+        const subTasks = await projectSubTaskModel.findAll({
+            where: {
+                projectStageTaskId,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (subTasks.length === 0) return;
+
+        // Determine parent task status based on subtask statuses
+        let taskStatus = 'pending';
+
+        // Count different statuses
+        const completedSubTasks = subTasks.filter(subTask => subTask.status === 'completed');
+        const hasCompleted = subTasks.some(subTask => subTask.status === 'completed');
+        const hasInProgress = subTasks.some(subTask => subTask.status === 'in_progress');
+        const hasDelayed = subTasks.some(subTask => subTask.status === 'delayed');
+        const hasPending = subTasks.some(subTask => subTask.status === 'pending');
+        const hasCancelled = subTasks.some(subTask => subTask.status === 'cancelled');
+
+        // If all subtasks are completed, mark as completed
+        if (completedSubTasks.length === subTasks.length) {
+            taskStatus = 'completed';
+        }
+        // If any subtask is in progress or delayed, or if we have a mix of pending and completed subtasks
+        else if (hasInProgress || hasDelayed || (hasCompleted && hasPending)) {
+            taskStatus = 'in_progress';
+        }
+        // If all subtasks are cancelled, mark as cancelled
+        else if (hasCancelled && subTasks.length === subTasks.filter(subTask => subTask.status === 'cancelled').length) {
+            taskStatus = 'cancelled';
+        }
+        // Otherwise, it remains pending (all subtasks are pending)
+
+        // Update the parent task
+        await projectStageTaskModel.update(
+            { status: taskStatus },
+            { where: { id: projectStageTaskId } }
+        );
+
+        // Get the updated task to update the parent stage
+        const updatedTask = await projectStageTaskModel.findByPk(projectStageTaskId);
+        if (updatedTask) {
+            // Find the task's controller and call its update function
+            const projectStageTaskController = require('./projectStageTaskController');
+            await projectStageTaskController.updateProjectStageStatusAndPercentage(updatedTask.projectStageId);
+        }
+    } catch (error) {
+        console.error("Error in updateTaskStatusBasedOnSubtasks:", error);
+    }
+};
+
+/**
  * Function to create a project sub task
  * @param {*} payload
  * @returns
@@ -58,6 +116,9 @@ projectSubTaskController.createProjectSubTask = async (payload) => {
         };
 
         const subTask = await projectSubTaskModel.create(subTaskPayload);
+
+        // Update the parent task status
+        await updateTaskStatusBasedOnSubtasks(projectStageTaskId);
 
         const response = {
             id: subTask?.id,
@@ -125,6 +186,9 @@ projectSubTaskController.updateProjectSubTask = async (payload) => {
         await projectSubTaskModel.update(updatePayload, {
             where: { id: projectSubTaskId }
         });
+
+        // Update the parent task status
+        await updateTaskStatusBasedOnSubtasks(subTask.projectStageTaskId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(
@@ -302,6 +366,9 @@ projectSubTaskController.deleteProjectSubTask = async (payload) => {
             { isDeleted: true },
             { where: { id: projectSubTaskId } }
         );
+
+        // Update the parent task status
+        await updateTaskStatusBasedOnSubtasks(subTask.projectStageTaskId);
 
         return Object.assign(
             HELPERS.responseHelper.createSuccessResponse(

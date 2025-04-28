@@ -29,6 +29,7 @@ module.exports = {
   DATA_UPDATED_SUCCESSFULLY: "Data Updated Successfully",
   DATA_FETCHED_SUCCESSFULLY: "User Data Fetched Successfully",
   USER_NOT_FOUND: "User not found",
+  PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
   PROFILE_FETCHED_SUCCESSFULLY: "Profile fetched successfully.",
   LOGGED_OUT_SUCCESSFULLY: "Logged out successfully.",
   PROFILE_UPDATE_SUCCESSFULLY: "Profile updated successfully.",
@@ -174,6 +175,7 @@ module.exports = {
   ANALYTICS_FETCHED_SUCCESSFULLY: "Analytics data fetched successfully",
   PROJECT_ANALYTICS_FETCHED_SUCCESSFULLY: "Project analytics data fetched successfully",
   CLIENT_ANALYTICS_FETCHED_SUCCESSFULLY: "Client analytics data fetched successfully",
+  VENDOR_ANALYTICS_FETCHED_SUCCESSFULLY: "Vendor analytics data fetched successfully",
 
   // Vendor
   VENDOR_CREATED_SUCCESSFULLY: "Vendor created successfully",
@@ -267,6 +269,11 @@ module.exports = {
   ADDITIONAL_EXPENSE_FETCHED_SUCCESSFULLY: "Additional expense details fetched successfully",
   ADDITIONAL_EXPENSE_LIST_FETCHED_SUCCESSFULLY: "Additional expenses fetched successfully",
   ADDITIONAL_EXPENSE_NOT_FOUND: "Additional expense not found",
-  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully"
+  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully",
+
+  // Migration
+  MIGRATION_COMPLETED_SUCCESSFULLY: "Migration completed successfully",
+  MIGRATION_FAILED: "Migration failed",
+  MIGRATION_UNAUTHORIZED: "Unauthorized migration attempt"
 
 };    
