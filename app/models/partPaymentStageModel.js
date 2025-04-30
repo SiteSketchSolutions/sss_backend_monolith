@@ -23,7 +23,7 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
     },
     referenceId: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     method: {
         type: DataTypes.STRING,
@@ -50,6 +50,10 @@ const partPaymentStage = sequelize.define("partPaymentStage", {
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: false,
+    },
+    transactionDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
     },
     isDeleted: {
         type: DataTypes.BOOLEAN,

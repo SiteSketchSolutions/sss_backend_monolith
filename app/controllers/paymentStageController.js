@@ -271,7 +271,7 @@ paymentStageController.paymentStageList = async (payload) => {
             include: [
                 {
                     model: partPaymentStage,
-                    attributes: ['id', 'referenceId', 'method', 'invoiceNo', 'amount']
+                    attributes: ['id', 'referenceId', 'method', 'invoiceNo', 'amount', 'transactionDate']
                 }
             ]
         });
@@ -306,7 +306,7 @@ paymentStageController.getPaymentStageDetails = async (payload) => {
                 id: stageId,
                 isDeleted: { [Op.ne]: true },
             },
-            attributes: ["id", "name", "description", "totalAmount", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
+            attributes: ["id", "name", "description", "paidAmount", "dueDate", "status", "paymentStatus", 'approved', 'order'],
         });
 
         if (!stage) {

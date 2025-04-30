@@ -10,9 +10,9 @@ let routes = [
       body: {
         userId: Joi.number().required().description("Enter user id"),
         name: Joi.string().required().description("Enter update name"),
-        description: Joi.string().description("Enter update description"),
+        description: Joi.string().allow('').description("Enter update description"),
         author: Joi.string().description("Enter author name"),
-        url: Joi.string().required().description("Enter image url"),
+        urls: Joi.array().items(Joi.string()).required().description("Array of image URLs"),
       },
       group: "SiteUpdate",
       description: "Route to create update",
@@ -28,9 +28,9 @@ let routes = [
       body: {
         siteUpdateId: Joi.number().required().description("Site Update ID"),
         name: Joi.string().description("Enter update name"),
-        description: Joi.string().description("Enter update description"),
+        description: Joi.string().allow('').description("Enter update description"),
         author: Joi.string().description("Enter author name"),
-        url: Joi.string().description("Enter image url"),
+        urls: Joi.array().items(Joi.string()).description("Array of image URLs"),
       },
       group: "SiteUpdate",
       description: "Route to update site update",
@@ -71,6 +71,109 @@ let routes = [
     auth: false,
     handler: siteUpdateController.deleteSiteUpdate,
   },
+
+  // Like toggle route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/toggleLike",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update")
+      },
+      group: "SiteUpdate",
+      description: "Route to toggle like status for a site update",
+      model: "toggleLike",
+    },
+    auth: false,
+    handler: siteUpdateController.toggleLike,
+  },
+
+  // User comment route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/userComment",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        userId: Joi.number().required().description("User ID"),
+        message: Joi.string().required().description("Comment message")
+      },
+      group: "SiteUpdate",
+      description: "Route for a user to add a comment",
+      model: "addUserComment",
+    },
+    auth: false,
+    handler: siteUpdateController.addUserComment,
+  },
+
+  // Admin reply route
+  {
+    method: "POST",
+    path: "/v1/siteUpdate/adminReply",
+    joiSchemaForSwagger: {
+      body: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        adminId: Joi.number().required().description("Admin ID"),
+        message: Joi.string().required().description("Reply message")
+      },
+      group: "SiteUpdate",
+      description: "Route for an admin to reply to comments",
+      model: "addAdminReply",
+    },
+    auth: false,
+    handler: siteUpdateController.addAdminReply,
+  },
+
+  // Get comments route for users
+  {
+    method: "GET",
+    path: "/v1/siteUpdate/comments",
+    joiSchemaForSwagger: {
+      query: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        userId: Joi.number().required().description("User ID"),
+        page: Joi.number().description("Page number"),
+        size: Joi.number().description("Page size")
+      },
+      group: "SiteUpdate",
+      description: "Route to get comments for a site update (user view)",
+      model: "getComments",
+    },
+    auth: false,
+    handler: siteUpdateController.getComments,
+  },
+
+  // Get all comments route for admin
+  {
+    method: "GET",
+    path: "/v1/siteUpdate/allComments",
+    joiSchemaForSwagger: {
+      query: {
+        siteUpdateId: Joi.number().required().description("ID of the site update"),
+        page: Joi.number().description("Page number"),
+        size: Joi.number().description("Page size")
+      },
+      group: "SiteUpdate",
+      description: "Route to get all comments for a site update (admin view)",
+      model: "getAllCommentsForAdmin",
+    },
+    auth: false,
+    handler: siteUpdateController.getAllCommentsForAdmin,
+  },
+  {
+    method: "DELETE",
+    path: "/v1/siteUpdate/comment",
+    joiSchemaForSwagger: {
+      body: {
+        commentId: Joi.number().required().description("ID of the comment to delete")
+      },
+      group: "SiteUpdate",
+      description: "Route to delete a comment",
+      model: "deleteComment",
+    },
+    auth: false,
+    handler: siteUpdateController.deleteComment,
+  }
 ];
 
 module.exports = routes;

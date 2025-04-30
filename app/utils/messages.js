@@ -29,6 +29,7 @@ module.exports = {
   DATA_UPDATED_SUCCESSFULLY: "Data Updated Successfully",
   DATA_FETCHED_SUCCESSFULLY: "User Data Fetched Successfully",
   USER_NOT_FOUND: "User not found",
+  PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
   PROFILE_FETCHED_SUCCESSFULLY: "Profile fetched successfully.",
   LOGGED_OUT_SUCCESSFULLY: "Logged out successfully.",
   PROFILE_UPDATE_SUCCESSFULLY: "Profile updated successfully.",
@@ -174,6 +175,7 @@ module.exports = {
   ANALYTICS_FETCHED_SUCCESSFULLY: "Analytics data fetched successfully",
   PROJECT_ANALYTICS_FETCHED_SUCCESSFULLY: "Project analytics data fetched successfully",
   CLIENT_ANALYTICS_FETCHED_SUCCESSFULLY: "Client analytics data fetched successfully",
+  VENDOR_ANALYTICS_FETCHED_SUCCESSFULLY: "Vendor analytics data fetched successfully",
 
   // Vendor
   VENDOR_CREATED_SUCCESSFULLY: "Vendor created successfully",
@@ -200,5 +202,78 @@ module.exports = {
   VENDOR_EXPENSE_CATEGORY_LIST_SUCCESSFULLY: "Vendor expense categories fetched successfully",
   VENDOR_EXPENSE_CATEGORY_NOT_FOUND: "Vendor expense category not found",
   VENDOR_EXPENSE_CATEGORY_ALREADY_EXISTS: "Vendor expense category with this name already exists",
+
+  // PDF Catalog
+  PDF_CATALOG_CREATED_SUCCESSFULLY: "PDF catalog created successfully",
+  PDF_CATALOG_UPDATED_SUCCESSFULLY: "PDF catalog updated successfully",
+  PDF_CATALOG_LIST_SUCCESSFULLY: "PDF catalogs listed successfully",
+  PDF_CATALOG_DELETED_SUCCESSFULLY: "PDF catalog deleted successfully",
+
+  // Project Stage
+  PROJECT_STAGE_CREATED_SUCCESSFULLY: "Project stage created successfully",
+  PROJECT_STAGE_UPDATED_SUCCESSFULLY: "Project stage updated successfully",
+  PROJECT_STAGE_LIST_SUCCESSFULLY: "Project stages listed successfully",
+  PROJECT_STAGE_DELETED_SUCCESSFULLY: "Project stage deleted successfully",
+  PROJECT_STAGE_DETAILS_FETCHED_SUCCESSFULLY: "Project stage details fetched successfully",
+  PROJECT_STAGE_ALREADY_EXISTS: "Project stage with this name already exists for this project",
+  PROJECT_STAGE_NOT_FOUND: "Project stage not found",
+
+  // Project Stage Delay Reason
+  PROJECT_STAGE_DELAY_REASON_CREATED_SUCCESSFULLY: "Project stage delay reason added successfully",
+  PROJECT_STAGE_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project stage delay reason updated successfully",
+  PROJECT_STAGE_DELAY_REASON_DELETED_SUCCESSFULLY: "Project stage delay reason deleted successfully",
+  PROJECT_STAGE_DELAY_REASON_NOT_FOUND: "Project stage delay reason not found",
+
+  // Project Stage Task
+  PROJECT_STAGE_TASK_CREATED_SUCCESSFULLY: "Project stage task created successfully",
+  PROJECT_STAGE_TASK_UPDATED_SUCCESSFULLY: "Project stage task updated successfully",
+  PROJECT_STAGE_TASK_LIST_SUCCESSFULLY: "Project stage tasks listed successfully",
+  PROJECT_STAGE_TASK_DELETED_SUCCESSFULLY: "Project stage task deleted successfully",
+  PROJECT_STAGE_TASK_DETAILS_FETCHED_SUCCESSFULLY: "Project stage task details fetched successfully",
+  PROJECT_STAGE_TASK_NOT_FOUND: "Project stage task not found",
+
+  // Project Stage Task Delay Reason
+  PROJECT_STAGE_TASK_DELAY_REASON_CREATED_SUCCESSFULLY: "Project stage task delay reason added successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project stage task delay reason updated successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_DELETED_SUCCESSFULLY: "Project stage task delay reason deleted successfully",
+  PROJECT_STAGE_TASK_DELAY_REASON_NOT_FOUND: "Project stage task delay reason not found",
+
+  // Project Sub Task
+  PROJECT_SUB_TASK_CREATED_SUCCESSFULLY: "Project sub task created successfully",
+  PROJECT_SUB_TASK_UPDATED_SUCCESSFULLY: "Project sub task updated successfully",
+  PROJECT_SUB_TASK_LIST_SUCCESSFULLY: "Project sub tasks listed successfully",
+  PROJECT_SUB_TASK_DELETED_SUCCESSFULLY: "Project sub task deleted successfully",
+  PROJECT_SUB_TASK_DETAILS_FETCHED_SUCCESSFULLY: "Project sub task details fetched successfully",
+  PROJECT_SUB_TASK_NOT_FOUND: "Project sub task not found",
+
+  // Project Sub Task Delay Reason
+  PROJECT_SUB_TASK_DELAY_REASON_CREATED_SUCCESSFULLY: "Project sub task delay reason added successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_UPDATED_SUCCESSFULLY: "Project sub task delay reason updated successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_DELETED_SUCCESSFULLY: "Project sub task delay reason deleted successfully",
+  PROJECT_SUB_TASK_DELAY_REASON_NOT_FOUND: "Project sub task delay reason not found",
+
+  // Budget Allocation
+  BUDGET_ALLOCATION_CREATED_SUCCESSFULLY: "Budget allocated successfully",
+  BUDGET_ALLOCATION_UPDATED_SUCCESSFULLY: "Budget allocation updated successfully",
+  BUDGET_ALLOCATION_DELETED_SUCCESSFULLY: "Budget allocation deleted successfully",
+  BUDGET_ALLOCATION_FETCHED_SUCCESSFULLY: "Budget allocation details fetched successfully",
+  BUDGET_ALLOCATION_LIST_FETCHED_SUCCESSFULLY: "Budget allocations fetched successfully",
+  BUDGET_ALLOCATION_NOT_FOUND: "Budget allocation not found",
+  PROJECT_BUDGET_SUMMARY_FETCHED_SUCCESSFULLY: "Project budget summary fetched successfully",
+  BUDGET_ALLOCATION_EXCEEDS_PROJECT_BUDGET: "Budget allocation exceeds the total project budget",
+
+  // Additional Expense
+  ADDITIONAL_EXPENSE_CREATED_SUCCESSFULLY: "Additional expense added successfully",
+  ADDITIONAL_EXPENSE_UPDATED_SUCCESSFULLY: "Additional expense updated successfully",
+  ADDITIONAL_EXPENSE_DELETED_SUCCESSFULLY: "Additional expense deleted successfully",
+  ADDITIONAL_EXPENSE_FETCHED_SUCCESSFULLY: "Additional expense details fetched successfully",
+  ADDITIONAL_EXPENSE_LIST_FETCHED_SUCCESSFULLY: "Additional expenses fetched successfully",
+  ADDITIONAL_EXPENSE_NOT_FOUND: "Additional expense not found",
+  ADDITIONAL_EXPENSE_STATUS_UPDATED_SUCCESSFULLY: "Additional expense status updated successfully",
+
+  // Migration
+  MIGRATION_COMPLETED_SUCCESSFULLY: "Migration completed successfully",
+  MIGRATION_FAILED: "Migration failed",
+  MIGRATION_UNAUTHORIZED: "Unauthorized migration attempt"
 
 };    

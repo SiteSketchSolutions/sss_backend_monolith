@@ -8,6 +8,9 @@ let v1Routes = [
   ...require("./adminRoutes"),
   ...require("./userRoutes"),
   ...require("./projectRoutes"),
+  ...require("./projectStageRoutes"),
+  ...require("./projectStageTaskRoutes"),
+  ...require("./projectSubTaskRoutes"),
   ...require("./developmentStageRoutes"),
   ...require("./documentRoutes"),
   ...require("./folderRoutes"),
@@ -16,6 +19,7 @@ let v1Routes = [
   ...require("./materialItemRoutes"),
   ...require("./materialSelectedItemRoute"),
   ...require("./siteUpdatesRoutes"),
+  ...require("./pdfCatalogRoutes"),
   ...require("./latestUpdateRoute"),
   ...require("./walletRoutes"),
   ...require("./paymentStageRoutes"),
@@ -27,7 +31,11 @@ let v1Routes = [
   ...require("./vendorRoutes"),
   ...require("./vendorExpenseTrackerRoutes"),
   ...require("./vendorExpenseCategoryRoutes"),
-  ...require("./projectAnalyticsRoutes")
+  ...require("./projectAnalyticsRoutes"),
+  ...require("./vendorAnalyticsRoutes"),
+  ...require("./budgetAllocationRoutes"),
+  ...require("./additionalExpenseRoutes"),
+  ...require("./migrationRoutes")
 ];
 
 module.exports = v1Routes;

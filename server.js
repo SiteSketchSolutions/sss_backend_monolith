@@ -10,6 +10,16 @@ const path = require("path");
 /**creating express server app for server */
 const app = EXPRESS();
 
+if (process.env.MAINTENANCE_MODE === "true") {
+  app.use((req, res, next) => {
+    return res.status(503).json({
+      statusCode: 503,
+      msg: "The system is currently under maintenance. Please try again later.",
+      status: false,
+      type: "SERVER_ERROR"
+    });
+  })
+}
 /********************************
  ***** Server Configuration *****
  ********************************/

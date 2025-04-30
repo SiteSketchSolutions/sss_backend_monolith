@@ -27,6 +27,11 @@ const SiteUpdate = sequelize.define("siteUpdate", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  images: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: [],
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -39,6 +44,11 @@ const SiteUpdate = sequelize.define("siteUpdate", {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
+  },
+  liked: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
 });
 

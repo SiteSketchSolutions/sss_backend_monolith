@@ -33,9 +33,9 @@ sesEmailService.sendEmail = async (toAddress, subject, htmlBody, textBody = "") 
         let params = {
             Destination: {
                 //Enable this for sending cc address
-                // CcAddresses: [
-                //     /* more items */
-                //   ],
+                CcAddresses: [
+                    process.env.SES_SOURCE_CC_EMAIL
+                ],
                 ToAddresses: [toAddress]
             },
             Message: {

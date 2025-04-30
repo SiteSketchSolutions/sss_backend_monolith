@@ -1,6 +1,7 @@
 "use strict";
 const { Joi } = require("../../utils/joiUtils");
 const materialItemSelectController = require("../../controllers/materialItemSelectController");
+const materialItemController = require("../../controllers/materialItemController");
 
 let routes = [
   {
@@ -12,6 +13,9 @@ let routes = [
           .required()
           .description("Enter material item id"),
         userId: Joi.number().required().description("Enter user id"),
+        selected: Joi.boolean()
+          .required()
+          .description("Enter selected true or false"),
       },
       group: "MaterialSelectedItem",
       description: "Route to mark material Item as selected",
@@ -54,8 +58,7 @@ let routes = [
           .required()
           .valid("approved", "rejected")
           .description("Approval status - must be either 'approved' or 'rejected'"),
-        approvalNote: Joi.string()
-          .description("Optional note about the approval or rejection reason"),
+        approvalNote: Joi.string().allow('').description("Optional note about the approval or rejection reason"),
       },
       group: "MaterialSelectedItem",
       description: "Route to approve or reject a selected material item by client. Each item can only be approved/rejected once.",
@@ -80,6 +83,20 @@ let routes = [
     },
     auth: false,
     handler: materialItemSelectController.materialSelectedItemList,
+  },
+  {
+    method: "DELETE",
+    path: "/v1/materialSelectedItem",
+    joiSchemaForSwagger: {
+      body: {
+        materialSelectedItemId: Joi.number().required().description("Material selected item ID"),
+      },
+      group: "MaterialSelectedItem",
+      description: "Route to delete material selected item",
+      model: "deleteMaterialSelectedItem",
+    },
+    auth: false,
+    handler: materialItemSelectController.deleteMaterialSelectedItem,
   },
 ];
 

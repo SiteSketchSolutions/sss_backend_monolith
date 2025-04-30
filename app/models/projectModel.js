@@ -53,7 +53,12 @@ const Project = sequelize.define("project", {
   },
   image: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  images: {
+    type: DataTypes.JSON,
     allowNull: true,
+    defaultValue: [],
   },
   location: {
     type: DataTypes.STRING,
@@ -75,6 +80,11 @@ const Project = sequelize.define("project", {
   isDeleted: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
+    defaultValue: false,
+  },
+  isFlagship: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
     defaultValue: false,
   },
 });

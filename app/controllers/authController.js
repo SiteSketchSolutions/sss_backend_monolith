@@ -1,12 +1,13 @@
 // "use strict";
 const HELPERS = require("../helpers");
 const { Op } = require("sequelize");
-const { MESSAGES, ERROR_TYPES, USER_TYPES } = require("../utils/constants");
+const { MESSAGES, ERROR_TYPES, USER_TYPES, PROJECT_STAGE_STATUS_LIST, USER_STATUS_LIST } = require("../utils/constants");
 const projectModel = require("../models/projectModel");
 const userModel = require("../models/userModel");
 const adminModel = require("../models/adminModel");
 const walletModel = require("../models/walletModel");
-const { encryptJwt } = require("../utils/utils");
+const projectStageModel = require("../models/projectStageModel");
+const { encryptJwt, generateUniqueId } = require("../utils/utils");
 const s3Utils = require("../utils/s3Utils");
 
 /**************************************************
@@ -38,30 +39,40 @@ authController.authTest = async (payload) => {
  */
 authController.userLogin = async (payload) => {
   try {
-    const { phoneNumber, password } = payload;
+    const { phoneNumber, password, deviceToken } = payload;
     if (!phoneNumber && !password) {
       throw HELPERS.responseHelper.createErrorResponse(
         MESSAGES.USER_ID_OR_PASSWORD_REQUIRED,
         ERROR_TYPES.BAD_REQUEST
       );
     }
+
     let userDetails = await userModel.findOne({
       where: { phoneNumber: phoneNumber, isDeleted: { [Op.ne]: true } },
-      attributes: ["id", "uniqueId", "name", "status"],
+      attributes: ["id", "uniqueId", "name", "status", "deviceToken"],
     });
+
     if (!userDetails) {
       throw HELPERS.responseHelper.createErrorResponse(
         MESSAGES.NO_USER_FOUND,
         ERROR_TYPES.DATA_NOT_FOUND
       );
     }
+    if (deviceToken) {
+      await userModel.update({ deviceToken }, { where: { id: userDetails?.id } });
+    }
+
     const [validPassword, projectDetails] = await Promise.all([
       userModel.findOne({
         where: { id: userDetails?.id, password: password },
         attributes: ["id"],
       }),
+      // If user is test status, fetch dummy user's project (id=1)
       projectModel.findOne({
-        where: { userId: userDetails?.id, isDeleted: { [Op.ne]: true } },
+        where: {
+          userId: userDetails?.status === USER_STATUS_LIST.PENDING ? 17 : userDetails?.id,
+          isDeleted: { [Op.ne]: true }
+        },
         attributes: [
           "id",
           "name",
@@ -69,21 +80,13 @@ authController.userLogin = async (payload) => {
           "numberOfFloor",
           "percentageOfCompletion",
           "package",
-          "image",
+          "images",
           "location",
           "startDate",
-          "status",
+          "status"
         ],
       }),
     ]);
-    let walletId = null;
-    if (projectDetails) {
-      const walletDetails = await walletModel.findOne({
-        where: { projectId: projectDetails?.id, isDeleted: { [Op.ne]: true } },
-        attributes: ['id']
-      });
-      walletId = walletDetails?.id;
-    }
 
     if (!validPassword) {
       return HELPERS.responseHelper.createErrorResponse(
@@ -92,11 +95,45 @@ authController.userLogin = async (payload) => {
       );
     }
 
+    let walletId = null;
+    let projectStage = null;
+    if (projectDetails) {
+      const [walletDetails, inProgressProjectStage] = await Promise.all([
+        walletModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id']
+        }),
+        projectStageModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id', 'name', 'status', 'percentage']
+        })
+      ]);
+      walletId = walletDetails?.id;
+      projectStage = inProgressProjectStage;
+    }
+
+    // If user is test status, fetch dummy user details (id=1)
+    if (userDetails.status === USER_STATUS_LIST.PENDING) {
+      userDetails = await userModel.findOne({
+        where: { id: 17, isDeleted: { [Op.ne]: true } },
+        attributes: ["id", "uniqueId", "name", "status"],
+      });
+    }
+
     const response = {
       id: userDetails?.id,
       uniqueId: userDetails?.uniqueId,
       name: userDetails?.name,
       status: userDetails?.status,
+      deviceToken: userDetails?.deviceToken,
+      currentProjectStage: projectStage,
       projectDetails: projectDetails,
       walletId: walletId,
       token: encryptJwt({
@@ -135,6 +172,9 @@ authController.adminLogin = async (payload) => {
         MESSAGES.USER_NOT_FOUND,
         ERROR_TYPES.UNAUTHORIZED
       );
+    }
+    if (payload.deviceToken) {
+      await adminModel.update({ deviceToken: payload.deviceToken }, { where: { id: userInfo?.id } });
     }
     const validatePassword = await adminModel.findOne({
       where: { id: userInfo.id, password: payload.password },
@@ -206,5 +246,120 @@ authController.generatePresignedUrl = async (payload) => {
     );
   }
 }
+
+/**
+ * Function to handle user signup
+ * @param {*} payload 
+ * @returns 
+ */
+authController.userSignup = async (payload) => {
+  try {
+    const { name, email, phoneNumber, password, deviceToken } = payload;
+
+    // Check if user already exists with the same phone number
+    const existingUser = await userModel.findOne({
+      where: {
+        phoneNumber: phoneNumber,
+        isDeleted: { [Op.ne]: true }
+      }
+    });
+
+    if (existingUser) {
+      throw HELPERS.responseHelper.createErrorResponse(
+        MESSAGES.USER_ALREADY_EXIST,
+        ERROR_TYPES.ALREADY_EXISTS
+      );
+    }
+
+    // Create new user with test status
+    const userPayload = {
+      name,
+      email,
+      phoneNumber,
+      password,
+      uniqueId: generateUniqueId(),
+      status: USER_STATUS_LIST.PENDING,
+      deviceToken: deviceToken
+    };
+
+    const userResponse = await userModel.create(userPayload);
+
+    // Fetch dummy project for test status user (id=1)
+    const projectDetails = await projectModel.findOne({
+      where: {
+        userId: 17, // Using dummy user's project
+        isDeleted: { [Op.ne]: true }
+      },
+      attributes: [
+        "id",
+        "name",
+        "area",
+        "numberOfFloor",
+        "percentageOfCompletion",
+        "package",
+        "images",
+        "location",
+        "startDate",
+        "status"
+      ],
+    });
+
+    let walletId = null;
+    let projectStage = null;
+    if (projectDetails) {
+      const [walletDetails, inProgressProjectStage] = await Promise.all([
+        walletModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id']
+        }),
+        projectStageModel.findOne({
+          where: {
+            projectId: projectDetails?.id,
+            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+            isDeleted: { [Op.ne]: true }
+          },
+          attributes: ['id', 'name', 'status', 'percentage']
+        })
+      ]);
+      walletId = walletDetails?.id;
+      projectStage = inProgressProjectStage;
+    }
+
+    // Fetch dummy user details (id=17)
+    const dummyUserDetails = await userModel.findOne({
+      where: { id: 17, isDeleted: { [Op.ne]: true } },
+      attributes: ["id", "uniqueId", "name", "status"],
+    });
+
+    const response = {
+      id: dummyUserDetails?.id,
+      uniqueId: dummyUserDetails?.uniqueId,
+      name: dummyUserDetails?.name,
+      status: dummyUserDetails?.status,
+      currentProjectStage: projectStage,
+      projectDetails: projectDetails,
+      walletId: walletId,
+      token: encryptJwt({
+        userId: dummyUserDetails?.id,
+        userType: USER_TYPES.USER,
+        uniqueId: dummyUserDetails?.uniqueId,
+      }),
+    };
+
+    return Object.assign(
+      HELPERS.responseHelper.createSuccessResponse(MESSAGES.USER_CREATED_SUCCESSFULLY),
+      { data: response }
+    );
+  } catch (error) {
+    console.error("Error in userSignup:", error);
+    throw HELPERS.responseHelper.createErrorResponse(
+      error.msg || "Something went wrong",
+      ERROR_TYPES.SOMETHING_WENT_WRONG
+    );
+  }
+};
 /* export authController */
 module.exports = authController;
