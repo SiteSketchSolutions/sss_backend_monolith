@@ -50,8 +50,8 @@ siteUpdateController.createSiteUpdate = async (payload) => {
       if (user && user.deviceToken) {
         await firebaseService.sendPushNotification(
           user.deviceToken,
-          "🏗️ New Site Update",
-          `Hey ${user.name || 'there'}! ${name} 📸`,
+          "New Site Update",
+          `${name}`,
           null,
           "/site-updates",
           "site_updates",

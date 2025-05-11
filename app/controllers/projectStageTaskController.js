@@ -94,7 +94,8 @@ projectStageTaskController.createProjectStageTask = async (payload) => {
             endDate,
             adminId,
             order,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the project stage exists
@@ -112,6 +113,22 @@ projectStageTaskController.createProjectStageTask = async (payload) => {
             );
         }
 
+        // Check if a task with the same order already exists in this project stage
+        const existingTaskWithOrder = await projectStageTaskModel.findOne({
+            where: {
+                projectStageId,
+                order: order || 0,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (existingTaskWithOrder) {
+            return HELPERS.responseHelper.createErrorResponse(
+                "A task with this order already exists in the project stage",
+                ERROR_TYPES.ALREADY_EXISTS
+            );
+        }
+
         // Create new project stage task
         const taskPayload = {
             projectStageId,
@@ -121,8 +138,14 @@ projectStageTaskController.createProjectStageTask = async (payload) => {
             endDate,
             adminId,
             order: order || 0,
-            status: status || 'pending'
+            status: status || 'pending',
         };
+        if (urls && Array.isArray(urls)) {
+            taskPayload.images = urls;
+        } else if (urls) {
+            // Handle backward compatibility if a single URL is sent
+            taskPayload.images = [urls];
+        }
 
         const task = await projectStageTaskModel.create(taskPayload);
 
@@ -163,7 +186,8 @@ projectStageTaskController.updateProjectStageTask = async (payload) => {
             endDate,
             adminId,
             order,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the task exists
@@ -191,6 +215,10 @@ projectStageTaskController.updateProjectStageTask = async (payload) => {
         if (order !== undefined) updatePayload.order = order;
         if (status) updatePayload.status = status;
 
+        if (urls && Array.isArray(urls)) {
+            // Merge new URLs with existing images, removing duplicates
+            updatePayload.images = [...new Set([...(task?.images || []), ...urls])];
+        }
         // Update the task
         await projectStageTaskModel.update(updatePayload, {
             where: { id: projectStageTaskId }
