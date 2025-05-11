@@ -60,6 +60,11 @@ const ProjectSubTask = sequelize.define("projectSubTask", {
         allowNull: true,
         defaultValue: false,
     },
+    images: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
 });
 
 // // Define association

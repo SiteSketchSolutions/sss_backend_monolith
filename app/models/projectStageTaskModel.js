@@ -59,6 +59,11 @@ const ProjectStageTask = sequelize.define("projectStageTask", {
         allowNull: true,
         defaultValue: false,
     },
+    images: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
 });
 
 // Note: Associations are defined in config/associations.js
