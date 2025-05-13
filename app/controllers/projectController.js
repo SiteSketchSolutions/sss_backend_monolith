@@ -267,8 +267,7 @@ projectController.projectList = async (payload) => {
         "location",
         "description",
         "startDate",
-        "isFlagship",
-        "status",
+        "isFlagship"
       ],
       include: [
         {
@@ -324,7 +323,6 @@ projectController.projectById = async (payload) => {
         "location",
         "description",
         "startDate",
-        "status",
         "isFlagship"
       ],
     });

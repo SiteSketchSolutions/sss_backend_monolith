@@ -17,7 +17,8 @@ let routes = [
                 adminId: Joi.number().description("ID of the admin assigned to this sub-task"),
                 order: Joi.number().description("Order/sequence of the sub-task (default: 0)"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_SUB_TASK_STATUS_LIST)).default(PROJECT_STAGE_SUB_TASK_STATUS_LIST.PENDING)
-                    .description("Status of the sub task stage (default: pending)")
+                    .description("Status of the sub task stage (default: pending)"),
+                urls: Joi.array().items(Joi.string()).description("Array of project stage task image URLs")
             },
             group: "ProjectSubTask",
             description: "Route to create a project sub-task",
@@ -39,7 +40,8 @@ let routes = [
                 adminId: Joi.number().description("ID of the admin assigned to this sub-task"),
                 order: Joi.number().description("Order/sequence of the sub-task"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_SUB_TASK_STATUS_LIST)).default(PROJECT_STAGE_SUB_TASK_STATUS_LIST.PENDING)
-                    .description("Status of the sub task stage (default: pending)")
+                    .description("Status of the sub task stage (default: pending)"),
+                urls: Joi.array().items(Joi.string()).description("Array of project stage task image URLs")
             },
             group: "ProjectSubTask",
             description: "Route to update a project sub-task",
@@ -123,8 +125,8 @@ let routes = [
                 size: Joi.number().description("Number of items per page")
             },
             group: "Admin",
-            description: "Route to get both tasks and subtasks assigned to an admin with date filtering",
-            model: "getAdminTasksAndSubTasks",
+            description: "Route to get both tasks and subtasks assigned to an admin with date filtering, including project and user details",
+            model: "getAdminTasksAndSubTasks"
         },
         auth: false,
         handler: projectSubTaskController.getAdminTasksAndSubTasks,

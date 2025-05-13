@@ -17,7 +17,8 @@ let routes = [
                 adminId: Joi.number().description("ID of the admin assigned to this task"),
                 order: Joi.number().description("Order/sequence of the task (default: 0)"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_TASK_STATUS_LIST)).default(PROJECT_STAGE_TASK_STATUS_LIST.PENDING)
-                    .description("Status of the task (default: pending)")
+                    .description("Status of the task (default: pending)"),
+                urls: Joi.array().items(Joi.string()).description("Array of project stage task image URLs")
             },
             group: "ProjectStageTask",
             description: "Route to create a project stage task",
@@ -39,7 +40,8 @@ let routes = [
                 adminId: Joi.number().description("ID of the admin assigned to this task"),
                 order: Joi.number().description("Order/sequence of the task"),
                 status: Joi.string().valid(...Object.values(PROJECT_STAGE_TASK_STATUS_LIST)).default(PROJECT_STAGE_TASK_STATUS_LIST.PENDING)
-                    .description("Status of the task (default: pending)")
+                    .description("Status of the task (default: pending)"),
+                urls: Joi.array().items(Joi.string()).description("Array of project image URLs")
             },
             group: "ProjectStageTask",
             description: "Route to update a project stage task",

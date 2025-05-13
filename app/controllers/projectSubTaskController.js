@@ -6,6 +6,8 @@ const projectStageTaskModel = require("../models/projectStageTaskModel");
 const projectSubTaskDelayReasonModel = require("../models/projectSubTaskDelayReasonModel");
 const { getPaginationResponse } = require("../utils/utils");
 const projectStageModel = require("../models/projectStageModel");
+const projectModel = require("../models/projectModel");
+const userModel = require("../models/userModel");
 
 /**************************************************
  ************* Project Sub Task Controller *************
@@ -85,7 +87,8 @@ projectSubTaskController.createProjectSubTask = async (payload) => {
             endDate,
             adminId,
             order,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the parent task exists
@@ -103,6 +106,22 @@ projectSubTaskController.createProjectSubTask = async (payload) => {
             );
         }
 
+        // Check if a subtask with the same order already exists in this parent task
+        const existingSubTaskWithOrder = await projectSubTaskModel.findOne({
+            where: {
+                projectStageTaskId,
+                order: order || 0,
+                isDeleted: { [Op.ne]: true }
+            }
+        });
+
+        if (existingSubTaskWithOrder) {
+            return HELPERS.responseHelper.createErrorResponse(
+                "A subtask with this order already exists in the parent task",
+                ERROR_TYPES.ALREADY_EXISTS
+            );
+        }
+
         // Create new project sub task
         const subTaskPayload = {
             projectStageTaskId,
@@ -114,6 +133,12 @@ projectSubTaskController.createProjectSubTask = async (payload) => {
             order: order || 0,
             status: status || 'pending'
         };
+        if (urls && Array.isArray(urls)) {
+            subTaskPayload.images = urls;
+        } else if (urls) {
+            // Handle backward compatibility if a single URL is sent
+            subTaskPayload.images = [urls];
+        }
 
         const subTask = await projectSubTaskModel.create(subTaskPayload);
 
@@ -154,7 +179,8 @@ projectSubTaskController.updateProjectSubTask = async (payload) => {
             endDate,
             adminId,
             order,
-            status
+            status,
+            urls
         } = payload;
 
         // Check if the sub task exists
@@ -182,6 +208,11 @@ projectSubTaskController.updateProjectSubTask = async (payload) => {
         if (order !== undefined) updatePayload.order = order;
         if (status) updatePayload.status = status;
 
+        if (urls && Array.isArray(urls)) {
+            // If urls is an empty array, set images to an empty array
+            // If urls has items, merge new URLs with existing images, removing duplicates
+            updatePayload.images = urls.length === 0 ? [] : [...new Set([...(subTask?.images || []), ...urls])];
+        }
         // Update the sub task
         await projectSubTaskModel.update(updatePayload, {
             where: { id: projectSubTaskId }
@@ -484,7 +515,20 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                     attributes: ['id', 'name', 'projectId'],
                     where: {
                         isDeleted: { [Op.ne]: true }
-                    }
+                    },
+                    include: [
+                        {
+                            model: projectModel,
+                            attributes: ['id', 'name', 'userId'],
+                            include: [
+                                {
+                                    model: userModel,
+                                    as: 'user',
+                                    attributes: ['id', 'name']
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         });
@@ -509,7 +553,20 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                             attributes: ['id', 'name', 'projectId'],
                             where: {
                                 isDeleted: { [Op.ne]: true }
-                            }
+                            },
+                            include: [
+                                {
+                                    model: projectModel,
+                                    attributes: ['id', 'name', 'userId'],
+                                    include: [
+                                        {
+                                            model: userModel,
+                                            as: 'user',
+                                            attributes: ['id', 'name']
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }
@@ -529,10 +586,18 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                 endDate: task.endDate,
                 status: task.status,
                 type: 'task',
+                images: task.images,
                 projectStage: task.projectStage ? {
                     id: task.projectStage.id,
                     name: task.projectStage.name,
-                    projectId: task.projectStage.projectId
+                    project: task.projectStage.project ? {
+                        id: task.projectStage.project.id,
+                        name: task.projectStage.project.name,
+                        user: task.projectStage.project.user ? {
+                            id: task.projectStage.project.user.id,
+                            name: task.projectStage.project.user.name
+                        } : null
+                    } : null
                 } : null,
                 parentTask: null
             })),
@@ -544,10 +609,18 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                 endDate: subtask.endDate,
                 status: subtask.status,
                 type: 'subtask',
+                images: subtask.images,
                 projectStage: subtask.projectStageTask?.projectStage ? {
                     id: subtask.projectStageTask.projectStage.id,
                     name: subtask.projectStageTask.projectStage.name,
-                    projectId: subtask.projectStageTask.projectStage.projectId
+                    project: subtask.projectStageTask.projectStage.project ? {
+                        id: subtask.projectStageTask.projectStage.project.id,
+                        name: subtask.projectStageTask.projectStage.project.name,
+                        user: subtask.projectStageTask.projectStage.project.user ? {
+                            id: subtask.projectStageTask.projectStage.project.user.id,
+                            name: subtask.projectStageTask.projectStage.project.user.name
+                        } : null
+                    } : null
                 } : null,
                 parentTask: subtask.projectStageTask ? {
                     id: subtask.projectStageTask.id,
