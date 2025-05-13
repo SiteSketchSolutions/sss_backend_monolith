@@ -103,7 +103,7 @@ siteUpdateController.updateSiteUpdate = async (payload) => {
     };
     if (urls && Array.isArray(urls)) {
       // Merge new URLs with existing images, removing duplicates
-      updatePayload.images = [...new Set([...(existingUpdate?.images || []), ...urls])];
+      updatePayload.images = urls.length === 0 ? [] : [...new Set([...(existingUpdate?.images || []), ...urls])];
       // Update primary image only if new URLs are provided
       updatePayload.image = urls[0] || existingUpdate?.image;
     }
