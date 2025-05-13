@@ -216,8 +216,9 @@ projectStageTaskController.updateProjectStageTask = async (payload) => {
         if (status) updatePayload.status = status;
 
         if (urls && Array.isArray(urls)) {
-            // Merge new URLs with existing images, removing duplicates
-            updatePayload.images = [...new Set([...(task?.images || []), ...urls])];
+            // If urls is an empty array, set images to an empty array
+            // If urls has items, merge new URLs with existing images, removing duplicates
+            updatePayload.images = urls.length === 0 ? [] : [...new Set([...(task?.images || []), ...urls])];
         }
         // Update the task
         await projectStageTaskModel.update(updatePayload, {

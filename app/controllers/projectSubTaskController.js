@@ -209,8 +209,9 @@ projectSubTaskController.updateProjectSubTask = async (payload) => {
         if (status) updatePayload.status = status;
 
         if (urls && Array.isArray(urls)) {
-            // Merge new URLs with existing images, removing duplicates
-            updatePayload.images = [...new Set([...(subTask?.images || []), ...urls])];
+            // If urls is an empty array, set images to an empty array
+            // If urls has items, merge new URLs with existing images, removing duplicates
+            updatePayload.images = urls.length === 0 ? [] : [...new Set([...(subTask?.images || []), ...urls])];
         }
         // Update the sub task
         await projectSubTaskModel.update(updatePayload, {
@@ -585,6 +586,7 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                 endDate: task.endDate,
                 status: task.status,
                 type: 'task',
+                images: task.images,
                 projectStage: task.projectStage ? {
                     id: task.projectStage.id,
                     name: task.projectStage.name,
@@ -607,6 +609,7 @@ projectSubTaskController.getAdminTasksAndSubTasks = async (payload) => {
                 endDate: subtask.endDate,
                 status: subtask.status,
                 type: 'subtask',
+                images: subtask.images,
                 projectStage: subtask.projectStageTask?.projectStage ? {
                     id: subtask.projectStageTask.projectStage.id,
                     name: subtask.projectStageTask.projectStage.name,
