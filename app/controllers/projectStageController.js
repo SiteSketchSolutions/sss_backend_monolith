@@ -174,7 +174,7 @@ projectStageController.updateProjectStage = async (payload) => {
         // Handle image updates
         if (urls && Array.isArray(urls)) {
             // Merge new URLs with existing images, removing duplicates
-            updatePayload.images = [...new Set([...(existingStage?.images || []), ...urls])];
+            updatePayload.images =  urls.length === 0 ? [] :[...new Set([...(existingStage?.images || []), ...urls])];
         }
         // Update the project stage
         await projectStageModel.update(updatePayload, {
