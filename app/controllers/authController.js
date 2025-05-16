@@ -95,27 +95,35 @@ authController.userLogin = async (payload) => {
       );
     }
 
-    let walletId = null;
+    // let walletId = null;
     let projectStage = null;
     if (projectDetails) {
-      const [walletDetails, inProgressProjectStage] = await Promise.all([
-        walletModel.findOne({
-          where: {
-            projectId: projectDetails?.id,
-            isDeleted: { [Op.ne]: true }
-          },
-          attributes: ['id']
-        }),
-        projectStageModel.findOne({
-          where: {
-            projectId: projectDetails?.id,
-            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
-            isDeleted: { [Op.ne]: true }
-          },
-          attributes: ['id', 'name', 'status', 'percentage']
-        })
-      ]);
-      walletId = walletDetails?.id;
+      // const [inProgressProjectStage] = await Promise.all([
+      //   walletModel.findOne({
+      //     where: {
+      //       projectId: projectDetails?.id,
+      //       isDeleted: { [Op.ne]: true }
+      //     },
+      //     attributes: ['id']
+      //   }),
+      //   projectStageModel.findOne({
+      //     where: {
+      //       projectId: projectDetails?.id,
+      //       status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+      //       isDeleted: { [Op.ne]: true }
+      //     },
+      //     attributes: ['id', 'name', 'status', 'percentage']
+      //   })
+      // ]);
+      const inProgressProjectStage = await projectStageModel.findOne({
+        where: {
+          projectId: projectDetails?.id,
+          status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['id', 'name', 'status', 'percentage']
+      })
+      // walletId = walletDetails?.id;
       projectStage = inProgressProjectStage;
     }
 
@@ -135,7 +143,7 @@ authController.userLogin = async (payload) => {
       deviceToken: userDetails?.deviceToken,
       currentProjectStage: projectStage,
       projectDetails: projectDetails,
-      walletId: walletId,
+      // walletId: walletId,
       token: encryptJwt({
         userId: userDetails?.id,
         userType: USER_TYPES.USER,
@@ -304,27 +312,35 @@ authController.userSignup = async (payload) => {
       ],
     });
 
-    let walletId = null;
+    // let walletId = null;
     let projectStage = null;
     if (projectDetails) {
-      const [walletDetails, inProgressProjectStage] = await Promise.all([
-        walletModel.findOne({
-          where: {
-            projectId: projectDetails?.id,
-            isDeleted: { [Op.ne]: true }
-          },
-          attributes: ['id']
-        }),
-        projectStageModel.findOne({
-          where: {
-            projectId: projectDetails?.id,
-            status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
-            isDeleted: { [Op.ne]: true }
-          },
-          attributes: ['id', 'name', 'status', 'percentage']
-        })
-      ]);
-      walletId = walletDetails?.id;
+      // const [walletDetails, inProgressProjectStage] = await Promise.all([
+      //   walletModel.findOne({
+      //     where: {
+      //       projectId: projectDetails?.id,
+      //       isDeleted: { [Op.ne]: true }
+      //     },
+      //     attributes: ['id']
+      //   }),
+      //   projectStageModel.findOne({
+      //     where: {
+      //       projectId: projectDetails?.id,
+      //       status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+      //       isDeleted: { [Op.ne]: true }
+      //     },
+      //     attributes: ['id', 'name', 'status', 'percentage']
+      //   })
+      // ]);
+      const inProgressProjectStage = await projectStageModel.findOne({
+        where: {
+          projectId: projectDetails?.id,
+          status: PROJECT_STAGE_STATUS_LIST.IN_PROGRESS,
+          isDeleted: { [Op.ne]: true }
+        },
+        attributes: ['id', 'name', 'status', 'percentage']
+      })
+      // walletId = walletDetails?.id;
       projectStage = inProgressProjectStage;
     }
 
@@ -341,7 +357,7 @@ authController.userSignup = async (payload) => {
       status: dummyUserDetails?.status,
       currentProjectStage: projectStage,
       projectDetails: projectDetails,
-      walletId: walletId,
+      // walletId: walletId,
       token: encryptJwt({
         userId: dummyUserDetails?.id,
         userType: USER_TYPES.USER,
